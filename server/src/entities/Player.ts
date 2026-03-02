@@ -4,7 +4,7 @@ import {
   PLAYER_MAX_HP, PLAYER_MAX_HUNGER, PLAYER_MAX_TEMP, PLAYER_MAX_THIRST,
   PLAYER_RADIUS, PLAYER_SPEED, ATTACK_COOLDOWN, MAP_SIZE,
 } from '../../../shared/constants';
-import { ItemId } from '../../../shared/items';
+import { ItemId, ITEMS } from '../../../shared/items';
 import type { Socket } from 'socket.io';
 
 export interface InventorySlot {
@@ -40,6 +40,9 @@ export class Player extends Entity {
   // Equipment
   hatId: number = -1;
 
+  // Durability (slotIndex -> remaining uses)
+  durability: Map<number, number> = new Map();
+
   // Progress
   points = 0;
   level  = 1;
@@ -67,17 +70,28 @@ export class Player extends Entity {
     for (const s of this.inventory) {
       if (s.itemId === itemId && s.count > 0) { s.count += count; return true; }
     }
-    for (const s of this.inventory) {
-      if (s.count === 0) { s.itemId = itemId; s.count = count; return true; }
+    for (let i = 0; i < this.inventory.length; i++) {
+      const s = this.inventory[i];
+      if (s.count === 0) {
+        s.itemId = itemId;
+        s.count = count;
+        const maxDurability = ITEMS[itemId]?.maxDurability;
+        if (maxDurability) this.durability.set(i, maxDurability);
+        return true;
+      }
     }
     return false;
   }
 
   removeItem(itemId: number, count = 1): boolean {
-    for (const s of this.inventory) {
+    for (let i = 0; i < this.inventory.length; i++) {
+      const s = this.inventory[i];
       if (s.itemId === itemId && s.count >= count) {
         s.count -= count;
-        if (s.count === 0) s.itemId = -1;
+        if (s.count === 0) {
+          s.itemId = -1;
+          this.durability.delete(i);
+        }
         return true;
       }
     }
@@ -88,6 +102,25 @@ export class Player extends Entity {
     let n = 0;
     for (const s of this.inventory) if (s.itemId === itemId) n += s.count;
     return n;
+  }
+
+  useTool(slotIndex: number): void {
+    if (slotIndex < 0 || slotIndex >= this.inventory.length) return;
+    const slot = this.inventory[slotIndex];
+    if (!slot || slot.count <= 0) return;
+
+    const def = ITEMS[slot.itemId];
+    if (!def?.maxDurability) return;
+
+    const current = this.durability.get(slotIndex) ?? def.maxDurability;
+    const next = current - 1;
+    if (next <= 0) {
+      slot.itemId = ItemId.HAND;
+      slot.count = 1;
+      this.durability.delete(slotIndex);
+    } else {
+      this.durability.set(slotIndex, next);
+    }
   }
 
   update(dt: number): void {
@@ -142,6 +175,7 @@ export class Player extends Entity {
       this.selectedSlot,
       this.hatId,
       this.killStreak,
+      Array.from(this.durability.entries()).flatMap(([slot, remaining]) => [slot, remaining]),
     ];
   }
 }

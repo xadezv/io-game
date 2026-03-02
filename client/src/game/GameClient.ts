@@ -232,6 +232,8 @@ export class GameClient {
     inventory:    Array.from({ length: 10 }, () => [0, 0] as [number, number]),
     selectedSlot: 0,
     hatId:        -1,
+    killStreak:   0,
+    durability:   [],
   };
 
   // Leaderboard data
@@ -489,6 +491,7 @@ export class GameClient {
     this.stats.thirst = PLAYER_MAX_THIRST;
     this.stats.temp   = PLAYER_MAX_TEMP;
     this.stats.inventory = Array.from({ length: 10 }, () => [-1, 0] as [number, number]);
+    this.stats.durability = [];
 
     // Start game loop
     this.running     = true;
@@ -574,6 +577,7 @@ export class GameClient {
     this.stats.selectedSlot = (s[8] as number | undefined) ?? this.stats.selectedSlot;
     this.stats.hatId        = (s[9] as number | undefined) ?? this.stats.hatId;
     this.stats.killStreak   = (s[10] as number | undefined) ?? this.stats.killStreak;
+    this.stats.durability   = Array.isArray(s[11]) ? (s[11] as number[]) : this.stats.durability;
 
     // Keep myPlayer in sync
     if (this.myPlayer) {

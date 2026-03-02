@@ -11,6 +11,7 @@ export interface PlayerStats {
   selectedSlot: number;
   hatId: number;
   killStreak: number;
+  durability: number[];
 }
 
 interface Bar {
@@ -321,10 +322,16 @@ export default class HUD {
     const startX = (this.canvas.width - totalWidth) / 2;
     const startY = this.canvas.height - SLOT_SIZE - 14;
 
+    const durabilityBySlot = new Map<number, number>();
+    for (let di = 0; di < stats.durability.length; di += 2) {
+      durabilityBySlot.set(stats.durability[di], stats.durability[di + 1]);
+    }
+
     for (let i = 0; i < SLOT_COUNT; i++) {
       const sx = startX + i * (SLOT_SIZE + SLOT_GAP);
       const sy = startY;
       const [itemId, count] = stats.inventory[i] ?? [0, 0];
+      const durability = durabilityBySlot.get(i);
       const isSelected = i === stats.selectedSlot;
       const isHovered = i === this.hoveredSlot;
 
@@ -386,6 +393,21 @@ export default class HUD {
           sx + SLOT_SIZE / 2,
           sy + SLOT_SIZE / 2 - 2
         );
+
+        // Durability warning bar (orange) when below 50%
+        if (durability !== undefined) {
+          const ratio = Math.max(0, Math.min(1, durability / 200));
+          if (ratio < 0.5) {
+            const bw = SLOT_SIZE - 16;
+            const bh = 4;
+            const bx = sx + 8;
+            const by = sy + SLOT_SIZE - 10;
+            ctx.fillStyle = 'rgba(0,0,0,0.5)';
+            ctx.fillRect(bx, by, bw, bh);
+            ctx.fillStyle = '#f39c12';
+            ctx.fillRect(bx, by, bw * ratio, bh);
+          }
+        }
 
         // Count badge
         if (count > 1) {
