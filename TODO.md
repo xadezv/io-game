@@ -27,7 +27,7 @@ Do **not** change `shared/packets.ts` structure or packet IDs.
 
 ---
 
-### TASK-02 — Fix map sync between server and client
+### ~~TASK-02 — Fix map sync between server and client~~ [x] DONE (merged PR #8)
 **Priority:** HIGH  
 **Branch:** `fix/task-02-map-sync`
 
@@ -43,7 +43,7 @@ Do **not** change `MAP_SIZE`, `TILE_SIZE`, or `TILES_COUNT` constants.
 
 ---
 
-### TASK-03 — Implement respawn after death
+### ~~TASK-03 — Implement respawn after death~~ [x] DONE (merged PR #9)
 **Priority:** MEDIUM  
 **Branch:** `feat/task-03-respawn`
 
@@ -61,7 +61,7 @@ Add `RESPAWN = 22` to `shared/packets.ts` PacketType enum.
 
 ---
 
-### TASK-04 — Wire up food use (R key)
+### ~~TASK-04 — Wire up food use (R key)~~ [x] DONE (merged PR #10)
 **Priority:** MEDIUM  
 **Branch:** `feat/task-04-food-use`
 
@@ -79,7 +79,7 @@ Add `USE_ITEM = 23` to `shared/packets.ts` PacketType enum.
 
 ---
 
-### TASK-05 — Animal corpse despawn
+### ~~TASK-05 — Animal corpse despawn~~ [x] DONE (merged PR #11)
 **Priority:** LOW  
 **Branch:** `feat/task-05-corpse-despawn`
 
@@ -110,7 +110,10 @@ Specs:
 
 ## Completed Tasks
 
-_(none yet)_
+- [x] **TASK-02** — Fix map sync between server and client (PR #8, merged 2026-03-02)
+- [x] **TASK-03** — Implement respawn after death (PR #9, merged 2026-03-02)
+- [x] **TASK-04** — Wire up food use (R key) (PR #10, merged 2026-03-02)
+- [x] **TASK-05** — Animal corpse despawn (PR #11, merged 2026-03-02)
 
 ---
 
