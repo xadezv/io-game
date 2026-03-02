@@ -83,8 +83,6 @@ export class World {
   private animalGrid:    SpatialGrid = new SpatialGrid();
   private structureGrid: SpatialGrid = new SpatialGrid();
 
-  // Dead-animal despawn queue
-  deadAnimals: Map<number, number> = new Map(); // id → despawnTimer ms
 
   private rng: RNG;
 
@@ -285,16 +283,12 @@ export class World {
     // Update animals + track grid movement
     for (const a of this.animals.values()) {
       if (a.dead) {
-        // Despawn timer
-        const t = (this.deadAnimals.get(a.id) ?? 0) + dt * 1000;
-        if (t >= 4000) {
+        a.despawnTimer -= dt * 1000;
+        if (a.despawnTimer <= 0) {
           this.animals.delete(a.id);
           this.allById.delete(a.id);
           this.animalGrid.remove(a.id, a.x, a.y);
-          this.deadAnimals.delete(a.id);
           this.removedEntityIds.push(a.id);
-        } else {
-          this.deadAnimals.set(a.id, t);
         }
         continue;
       }
