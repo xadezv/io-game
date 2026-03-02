@@ -11,6 +11,7 @@ export interface PlayerStats {
   selectedSlot: number;
   hatId: number;
   killStreak: number;
+  durability: number[];
 }
 
 interface Bar {
@@ -387,6 +388,20 @@ export default class HUD {
           sy + SLOT_SIZE / 2 - 2
         );
 
+        const maxDurability = this._maxDurability(itemId);
+        const remainingDurability = this._durabilityForSlot(stats, i);
+        if (maxDurability > 0 && remainingDurability >= 0 && remainingDurability < maxDurability * 0.5) {
+          const ratio = Math.max(0, Math.min(1, remainingDurability / maxDurability));
+          const barX = sx + 7;
+          const barY = sy + SLOT_SIZE - 12;
+          const barW = SLOT_SIZE - 14;
+          const barH = 4;
+          ctx.fillStyle = 'rgba(0,0,0,0.7)';
+          ctx.fillRect(barX, barY, barW, barH);
+          ctx.fillStyle = '#f59e0b';
+          ctx.fillRect(barX, barY, barW * ratio, barH);
+        }
+
         // Count badge
         if (count > 1) {
           const badgeX = sx + SLOT_SIZE - 5;
@@ -497,6 +512,19 @@ export default class HUD {
     const g = Math.min(255, ((num >> 8) & 0xff) + amount);
     const b = Math.min(255, (num & 0xff) + amount);
     return `rgb(${r},${g},${b})`;
+  }
+
+
+  private _durabilityForSlot(stats: PlayerStats, slotIndex: number): number {
+    for (let i = 0; i < stats.durability.length; i += 2) {
+      if (stats.durability[i] === slotIndex) return stats.durability[i + 1] ?? -1;
+    }
+    return -1;
+  }
+
+  private _maxDurability(itemId: number): number {
+    if (itemId === 6 || itemId === 7 || itemId === 8) return 200;
+    return 0;
   }
 
   private _itemColor(itemId: number): string {
