@@ -43,7 +43,7 @@ export const ANIMAL_CONFIGS: Record<number, AnimalConfig> = {
   },
   [EntityType.MAMMOTH]: {
     type: EntityType.MAMMOTH,
-    hp: 500, radius: 40, speed: 110,
+    hp: 500, radius: 40, speed: 120,
     aggroRange: 300, attackRange: 70, attackDamage: 35, attackCooldown: 2000,
     fleeRange: 0,
     drops: [
