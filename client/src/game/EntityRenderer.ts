@@ -49,6 +49,7 @@ const ET_SPIKE      = 10;
 const ET_CACTUS     = 11;
 const ET_SNOW_TREE  = 12;
 const ET_MAMMOTH    = 13;
+const ET_MUSHROOM   = 18;
 
 // ---------------------------------------------------------------------------
 // Default maxHP per entity type
@@ -69,6 +70,7 @@ const DEFAULT_MAX_HP: Record<number, number> = {
   [ET_CACTUS]:     100,
   [ET_SNOW_TREE]:  200,
   [ET_MAMMOTH]:    500,
+  [ET_MUSHROOM]:    25,
 };
 
 // ---------------------------------------------------------------------------
@@ -96,6 +98,7 @@ const SPRITE_DEFS: Record<number, SpriteDef> = {
   [ET_WALL_STONE]: { key: 'wall_stone', w: 72, h: 72, rotate: false },
   [ET_SPIKE]:      { key: 'spike_wood', w: 60, h: 60, rotate: false },
   [ET_CACTUS]:     { key: 'cactus',     w: 52, h: 52, rotate: false },
+  [ET_MUSHROOM]:    { key: 'mushroom',   w: 40, h: 40, rotate: false },
 };
 
 // Weapon sprite lookup by itemId numeric value
@@ -188,6 +191,7 @@ export class EntityRenderer {
         case ET_WALL_STONE: this.renderWall(e, camera);    break;
         case ET_SPIKE:      this.renderSpike(e, camera);   break;
         case ET_CACTUS:     this.renderCactus(e, camera);  break;
+        case ET_MUSHROOM:   this.renderMushroom(e, camera); break;
         default:            this._renderGeneric(e, camera);break;
       }
     }
@@ -607,7 +611,28 @@ export class EntityRenderer {
     this._drawHpBar(e, screen.x, screen.y, 26 * z + 8 * z, camera);
   }
 
-  // -------------------------------------------------------------------------
+  
+
+  private renderMushroom(e: ClientEntity, camera: Camera): void {
+    const screen = camera.worldToScreen(e.renderX, e.renderY);
+    const z = camera.zoom;
+    const img = this.assets.get('mushroom');
+    if (img) {
+      this.renderer.drawImageCentered(img, screen.x, screen.y, 40 * z, 40 * z, 0);
+    } else {
+      const { ctx } = this.renderer;
+      ctx.save();
+      ctx.fillStyle = '#f8f8f0';
+      ctx.fillRect(screen.x - 3 * z, screen.y - 4 * z, 6 * z, 10 * z);
+      ctx.fillStyle = '#8e44ad';
+      ctx.beginPath();
+      ctx.arc(screen.x, screen.y - 6 * z, 10 * z, Math.PI, Math.PI * 2);
+      ctx.fill();
+      ctx.restore();
+    }
+    this._drawHpBar(e, screen.x, screen.y, 20 * z + 8 * z, camera);
+  }
+// -------------------------------------------------------------------------
   // Fallback for unknown entity types
   // -------------------------------------------------------------------------
 

@@ -171,6 +171,7 @@ const DAMAGE_COLORS: Record<number, string> = {
   6:  '#c0392b', // wolf
   11: '#4caf50', // cactus
   12: '#dce9f5', // snow tree
+  18: '#8e44ad', // mushroom
 };
 
 // ---------------------------------------------------------------------------
@@ -232,6 +233,7 @@ export class GameClient {
     inventory:    Array.from({ length: 10 }, () => [0, 0] as [number, number]),
     selectedSlot: 0,
     hatId:        -1,
+    killStreak:   0,
   };
 
   // Leaderboard data
@@ -750,7 +752,7 @@ export class GameClient {
     if (this.myPlayer) {
       const minimapEntities = new Map<number, MinimapEntity>();
       this.entities.forEach((e, id) => {
-        const mmType = e.type === 0 ? 0 : (e.type <= 4 || e.type === 11 || e.type === 12) ? 2
+        const mmType = e.type === 0 ? 0 : (e.type <= 4 || e.type === 11 || e.type === 12 || e.type === 18) ? 2
           : (e.type === 5 || e.type === 6 || e.type === 13) ? 1 : 3;
         minimapEntities.set(id, { x: e.x, y: e.y, type: mmType });
       });
@@ -768,7 +770,7 @@ export class GameClient {
       0: 'Hand', 1: 'Axe', 2: 'Pick', 3: 'Sword', 4: 'Big Axe', 5: 'Big Pick',
       6: 'Gold Axe', 7: 'Gold Sword', 8: 'Gold Pick',
       20: 'Berries', 21: 'Cooked Meat', 22: 'Raw Meat', 23: 'Cookie',
-      30: 'Wood', 31: 'Stone', 32: 'Gold', 33: 'Thread', 34: 'Coal', 35: 'Cactus', 36: 'Wheat',
+      30: 'Wood', 31: 'Stone', 32: 'Gold', 33: 'Thread', 34: 'Coal', 35: 'Cactus', 36: 'Wheat', 37: 'Mushroom', 38: 'Poison',
       40: 'Campfire', 41: 'Wall', 42: 'Stone Wall', 43: 'Spike', 44: 'Stone Spike',
       45: 'Windmill', 46: 'Chest',
       50: 'Winter Hat', 51: 'Cowboy Hat', 52: 'Hood', 53: 'Coat',
@@ -834,6 +836,7 @@ export class GameClient {
       11: 100, // cactus
       12: 200, // snow_tree
       13: 500, // mammoth
+      18: 25,  // mushroom
     };
     return table[type] ?? 100;
   }

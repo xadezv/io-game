@@ -51,6 +51,9 @@ export class Player extends Entity {
 
   // State
   nearFire = false;
+  poisonTimer = 0;
+  poisonCoated = false;
+  poisonCoatTimer = 0;
 
   constructor(socketId: string, nickname: string, x: number, y: number) {
     super(EntityType.PLAYER, x, y, PLAYER_MAX_HP, PLAYER_RADIUS);
