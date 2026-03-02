@@ -39,6 +39,9 @@ const PT_LEADERBOARD        = 14;
 const PT_TIME_UPDATE        = 15;
 const PT_DEATH              = 17;
 const PT_RESPAWN            = 22;
+const PT_PLACE              = 10;
+const PT_PING               = 20;
+const PT_PONG               = 21;
 
 // ---------------------------------------------------------------------------
 // Client map generation (must mirror server MapGen.ts exactly)
@@ -195,6 +198,9 @@ export class GameClient {
   // Crafting recipes (derived from shared RECIPES + live inventory)
   private craftRecipes: RecipeEntry[] = [];
 
+  // Latency
+  private _latencyMs = 0;
+
   // State
   private myId:      number = -1;
   private myPlayer:  ClientEntity | null = null;
@@ -230,6 +236,7 @@ export class GameClient {
 
   // Input state
   private lastMoveDir: number = 0;
+  private placementMode = false;
 
   // ---------------------------------------------------------------------------
 
@@ -301,6 +308,12 @@ export class GameClient {
         } else {
           this.sendAttack(angle);
         }
+      } else if (button === 2 && this.placementMode) {
+        const slot = this.stats.inventory[this.stats.selectedSlot];
+        if (slot && slot[0] >= 0) {
+          this.ws.send([PT_PLACE, slot[0], angle]);
+          this.placementMode = false; // exit placement mode after placing
+        }
       }
     };
 
@@ -315,6 +328,13 @@ export class GameClient {
       } else if (key === 'r' || key === 'R') {
         // Use selected item (food)
         this.ws.send([PT_USE_ITEM]);
+      } else if (key === 'b' || key === 'B') {
+        this.placementMode = !this.placementMode;
+        if (this.placementMode) {
+          this.chat.addMessage(-1, 'System', 'Placement mode ON — right-click to place selected item. Press B to cancel.');
+        }
+      } else if (key === 'Escape') {
+        this.placementMode = false;
       }
     };
 
@@ -343,6 +363,12 @@ export class GameClient {
     });
 
     this.ws.connect();
+
+    // Latency measurement — ping every 5 seconds
+    const pingInterval = setInterval(() => {
+      if (!this.running) { clearInterval(pingInterval); return; }
+      this.ws.send([PT_PING, Date.now()]);
+    }, 5000);
   }
 
   private async _loadAssets(): Promise<void> {
@@ -369,6 +395,7 @@ export class GameClient {
       case PT_DEATH:              this._onDeath(data);             break;
       case PT_LEADERBOARD:        this._onLeaderboard(data);       break;
       case PT_CHAT_BROADCAST:     this._onChatBroadcast(data);     break;
+      case PT_PONG:               this._onPong(data);              break;
     }
   }
 
@@ -378,6 +405,15 @@ export class GameClient {
 
   // Server: [3, myId, x, y, mapSeed, isNight(0|1), gameTime, leaderboard[], entities[]]
   private _onHandshakeResponse(data: unknown[]): void {
+    // Cancel any existing game loop before starting a new one (handles respawn)
+    if (this.animFrameId) {
+      cancelAnimationFrame(this.animFrameId);
+      this.animFrameId = 0;
+    }
+    // Clear stale entities and player ref from previous life
+    this.entities.clear();
+    this.myPlayer = null;
+
     this.myId = data[1] as number;
     const spawnX  = data[2] as number;
     const spawnY  = data[3] as number;
@@ -585,6 +621,11 @@ export class GameClient {
     this.chat.addMessage(playerId, nickname, message);
   }
 
+  private _onPong(data: unknown[]): void {
+    const sent = data[1] as number;
+    this._latencyMs = Date.now() - sent;
+  }
+
   // [16, success(bool), itemId, count]
   private _onCraftResult(data: unknown[]): void {
     const success = Boolean(data[1]);
@@ -632,6 +673,12 @@ export class GameClient {
     this.renderer.resetCamera();
     this.hud.render(this.stats, this.isNight);
     this.hud.renderInventory(this.stats);
+    this.renderer.drawText(`${this._latencyMs}ms`, this.canvas.width - 60, 20, 12, 'rgba(255,255,255,0.5)');
+
+    if (this.placementMode) {
+      this.renderer.drawTextShadow('PLACE MODE — right-click to place, B to cancel',
+        this.canvas.width / 2, 60, 16, '#f1c40f');
+    }
 
     // --- Craft menu (overlaid on canvas) ---
     this.craftMenu.render(this.craftRecipes);

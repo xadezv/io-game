@@ -74,6 +74,9 @@ export class World {
   animals:    Map<number, Animal>    = new Map();
   structures: Map<number, Structure> = new Map();
 
+  // BUG-17: spike damage events collected each tick for Game.ts to broadcast
+  spikeHits: Array<{ socketId: string; damage: number; playerId: number }> = [];
+
   // Fast lookup by entity id (all types)
   private allById: Map<number, Entity> = new Map();
 
@@ -269,6 +272,8 @@ export class World {
 
   update(dt: number): void {
     this.removedEntityIds = [];
+    // BUG-17: clear spike hits at start of each tick
+    this.spikeHits = [];
 
     // Respawn dead resources
     for (const r of this.resources.values()) {
@@ -296,6 +301,11 @@ export class World {
       a.update(dt, this.players);
       this.animalGrid.move(a.id, ox, oy, a.x, a.y);
       this.resolveAnimalCollisions(a);
+    }
+
+    // BUG-18: decrement spike damageTimer each tick so it can fire again
+    for (const s of this.structures.values()) {
+      if (s.damageTimer > 0) s.damageTimer -= dt * 1000;
     }
 
     // Update players + grid
@@ -330,11 +340,13 @@ export class World {
       if (e instanceof Structure && !e.dead) {
         this.pushOut(player, e.x, e.y, player.radius + e.radius);
 
-        // Spike damage
+        // Spike damage — BUG-17: collect hit for Game.ts to emit DAMAGE + killPlayer
         if ((e.type === EntityType.SPIKE) && e.ownerId !== player.id) {
           if (e.damageTimer <= 0) {
-            player.hp = Math.max(0, player.hp - (e.spikeDamage ?? 20));
+            const dmg = e.spikeDamage ?? 20;
+            player.hp = Math.max(0, player.hp - dmg);
             e.damageTimer = 1000;
+            this.spikeHits.push({ socketId: player.socketId, damage: dmg, playerId: player.id });
           }
         }
 

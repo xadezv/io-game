@@ -120,6 +120,15 @@ export class Game {
     // World physics + animal AI
     this.world.update(dt);
 
+    // Spike damage events — BUG-17: emit DAMAGE packet + trigger killPlayer
+    for (const hit of this.world.spikeHits) {
+      const p = this.world.players.get(hit.socketId);
+      if (!p || p.dead) continue;
+      const s = this.io.sockets.sockets.get(hit.socketId);
+      if (s) s.emit('msg', [PacketType.DAMAGE, hit.playerId, Math.round(hit.damage)]);
+      if (p.hp <= 0) this.killPlayer(p);
+    }
+
     // Survival drain
     for (const p of this.world.players.values()) {
       if (p.dead) continue;
@@ -164,6 +173,6 @@ export class Game {
     player.dead = true;
     player.hp   = 0;
     const s = this.io.sockets.sockets.get(player.socketId);
-    if (s) s.emit('msg', [PacketType.DEATH]);
+    if (s) s.emit('msg', [PacketType.DEATH, player.points]);
   }
 }

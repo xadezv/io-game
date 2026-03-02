@@ -116,6 +116,8 @@ export const ITEMS: Record<number, ItemDef> = {
   [ItemId.GOLD]:       { id: ItemId.GOLD,          name: 'Gold',         stackable: true,  maxStack: 999, isWeapon: false, isStructure: false, isFood: false, isHat: false, sprite: 'gold_item' },
   [ItemId.THREAD]:     { id: ItemId.THREAD,        name: 'Thread',       stackable: true,  maxStack: 999, isWeapon: false, isStructure: false, isFood: false, isHat: false, sprite: 'thread' },
   [ItemId.WHEAT]:      { id: ItemId.WHEAT,         name: 'Wheat',        stackable: true,  maxStack: 999, isWeapon: false, isStructure: false, isFood: false, isHat: false, sprite: 'wheat' },
+  [ItemId.COAL]:        { id: ItemId.COAL,         name: 'Coal',         stackable: true,  maxStack: 999, isWeapon: false, isStructure: false, isFood: false, isHat: false, sprite: 'coal' },
+  [ItemId.CACTUS_FLESH]:{ id: ItemId.CACTUS_FLESH, name: 'Cactus Flesh', stackable: true,  maxStack: 50,  isWeapon: false, isStructure: false, isFood: true,  isHat: false, foodHp: 3, foodHunger: 8, foodThirst: 12, sprite: 'cactus_flesh' },
 
   [ItemId.CAMPFIRE]:   { id: ItemId.CAMPFIRE,      name: 'Campfire',     stackable: true,  maxStack: 10,  isWeapon: false, isStructure: true,  isFood: false, isHat: false, structureHp: 100, sprite: 'campfire' },
   [ItemId.WALL_WOOD]:  { id: ItemId.WALL_WOOD,     name: 'Wood Wall',    stackable: true,  maxStack: 20,  isWeapon: false, isStructure: true,  isFood: false, isHat: false, structureHp: 200, sprite: 'wall_wood' },
