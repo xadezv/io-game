@@ -66,11 +66,20 @@ export class Animal extends Entity {
   attackAnimTimer = 0;
   despawnTimer = 0;
 
+  /** Whether this animal was spawned by the night pack system */
+  isNightWolf: boolean = false;
+  /** Instance aggro range — can be boosted at night */
+  aggroRange: number;
+  /** Original aggro range from config — used to restore after night */
+  baseAggroRange: number;
+
   constructor(type: EntityType, x: number, y: number) {
     const cfg = ANIMAL_CONFIGS[type];
     super(type, x, y, cfg.hp, cfg.radius);
-    this.config      = cfg;
-    this.wanderAngle = Math.random() * Math.PI * 2;
+    this.config         = cfg;
+    this.baseAggroRange = cfg.aggroRange;
+    this.aggroRange     = cfg.aggroRange;
+    this.wanderAngle    = Math.random() * Math.PI * 2;
     // Small initial random scatter so animals don't stack
     this.wanderTimer = Math.random() * 3000;
   }
@@ -92,7 +101,7 @@ export class Animal extends Entity {
       if (d < nearestDist) { nearestDist = d; nearest = p; }
     }
 
-    if (cfg.aggroRange > 0 && nearest && nearestDist < cfg.aggroRange) {
+    if (this.aggroRange > 0 && nearest && nearestDist < this.aggroRange) {
       // Chase
       const dx = nearest.x - this.x, dy = nearest.y - this.y;
       const len = Math.sqrt(dx * dx + dy * dy) || 1;
@@ -127,7 +136,7 @@ export class Animal extends Entity {
   }
 
   canAttack(target: Player): boolean {
-    return this.config.aggroRange > 0
+    return this.aggroRange > 0
       && this.attackTimer <= 0
       && this.distTo(target) <= this.config.attackRange + target.radius;
   }
