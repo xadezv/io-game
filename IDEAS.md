@@ -303,3 +303,20 @@ Ideas are ordered by category and tagged with complexity and implementation scop
 - Fishing at ocean edge: simple timing minigame yielding food and rare crafting mats.
 - Broken cart world prop: repair with wood/stone to unlock periodic shared resource drops.
 - Night owl perk hat: improves vision radius at night but slightly increases daytime thirst drain.
+
+---
+
+## [IDEA-26] Blood Moon world event
+**Complexity:** medium
+**Category:** gameplay
+**Description:** During rare nights, a Blood Moon increases hostile mob speed and aggro range, but doubles rare drop chances. Players get a high-risk, high-reward event to prepare for.
+
+## [IDEA-27] Fishing system on ocean edges
+**Complexity:** medium
+**Category:** content
+**Description:** Add a craftable fishing rod and fish catches by biome/time. Fish can be cooked for strong hunger and thirst recovery, creating a calmer alternative progression path.
+
+## [IDEA-28] Totem of Recall
+**Complexity:** medium
+**Category:** progression
+**Description:** Placeable totem that stores one respawn location with limited charges and cooldown. Encourages exploration while preserving meaningful death penalties.
