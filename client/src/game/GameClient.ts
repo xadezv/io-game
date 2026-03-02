@@ -29,7 +29,7 @@ const PT_ENTITY_UPDATE      = 4;
 const PT_ATTACK             = 5;
 const PT_PLAYER_STATS       = 6;
 const PT_SELECT_ITEM        = 7;
-const PT_USE_ITEM           = 9;
+const PT_USE_ITEM           = 23;
 const PT_CRAFT              = 11;
 const PT_ENTITY_REMOVE      = 8;
 const PT_CRAFT_RESULT       = 16;
@@ -206,10 +206,7 @@ export class GameClient {
         this.ws.send([PT_SELECT_ITEM, 9]);
       } else if (key === 'r' || key === 'R') {
         // Use selected item (food)
-        const slot = this.stats.inventory[this.stats.selectedSlot];
-        if (slot && slot[0] >= 0) {
-          this.ws.send([PT_USE_ITEM, slot[0]]);
-        }
+        this.ws.send([PT_USE_ITEM]);
       }
     };
 
