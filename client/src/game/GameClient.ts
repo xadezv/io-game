@@ -770,6 +770,7 @@ export class GameClient {
       10: 150, // spike
       11: 100, // cactus
       12: 200, // snow_tree
+      13: 500, // mammoth
     };
     return table[type] ?? 100;
   }

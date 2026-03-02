@@ -48,6 +48,7 @@ const ET_WALL_STONE = 9;
 const ET_SPIKE      = 10;
 const ET_CACTUS     = 11;
 const ET_SNOW_TREE  = 12;
+const ET_MAMMOTH    = 13;
 
 // ---------------------------------------------------------------------------
 // Default maxHP per entity type
@@ -67,6 +68,7 @@ const DEFAULT_MAX_HP: Record<number, number> = {
   [ET_SPIKE]:      150,
   [ET_CACTUS]:     100,
   [ET_SNOW_TREE]:  200,
+  [ET_MAMMOTH]:    500,
 };
 
 // ---------------------------------------------------------------------------
@@ -88,6 +90,7 @@ const SPRITE_DEFS: Record<number, SpriteDef> = {
   [ET_BERRY]:      { key: 'berry_bush', w: 50, h: 50, rotate: false },
   [ET_RABBIT]:     { key: 'rabbit',     w: 44, h: 44, rotate: true  },
   [ET_WOLF]:       { key: 'wolf',       w: 56, h: 56, rotate: true  },
+  [ET_MAMMOTH]:    { key: 'mammoth',    w: 96, h: 96, rotate: true  },
   [ET_FIRE]:       { key: 'campfire',   w: 64, h: 64, rotate: false },
   [ET_WALL_WOOD]:  { key: 'wall_wood',  w: 72, h: 72, rotate: false },
   [ET_WALL_STONE]: { key: 'wall_stone', w: 72, h: 72, rotate: false },
@@ -160,8 +163,8 @@ export class EntityRenderer {
 
     // 3. Sort: resources first (by Y), then animals, then players on top
     const sorted = Array.from(entities.values()).sort((a, b) => {
-      const rankA = a.type === ET_PLAYER ? 2 : (a.type === ET_RABBIT || a.type === ET_WOLF ? 1 : 0);
-      const rankB = b.type === ET_PLAYER ? 2 : (b.type === ET_RABBIT || b.type === ET_WOLF ? 1 : 0);
+      const rankA = a.type === ET_PLAYER ? 2 : (a.type === ET_RABBIT || a.type === ET_WOLF || a.type === ET_MAMMOTH ? 1 : 0);
+      const rankB = b.type === ET_PLAYER ? 2 : (b.type === ET_RABBIT || b.type === ET_WOLF || b.type === ET_MAMMOTH ? 1 : 0);
       if (rankA !== rankB) return rankA - rankB;
       return a.renderY - b.renderY;
     });
@@ -178,7 +181,8 @@ export class EntityRenderer {
         case ET_GOLD:       this.renderGold(e, camera);    break;
         case ET_BERRY:      this.renderBerry(e, camera);   break;
         case ET_RABBIT:
-        case ET_WOLF:       this.renderAnimal(e, camera);  break;
+        case ET_WOLF:
+        case ET_MAMMOTH:    this.renderAnimal(e, camera);  break;
         case ET_FIRE:       this.renderFire(e, camera);    break;
         case ET_WALL_WOOD:
         case ET_WALL_STONE: this.renderWall(e, camera);    break;
@@ -417,12 +421,26 @@ export class EntityRenderer {
       this.renderer.drawImageCentered(img, screen.x, screen.y, def.w * z, def.h * z, e.angle);
     } else {
       // Fallback coloured ellipse
-      const color = e.type === ET_WOLF ? '#5d4037' : '#f5f0e8';
-      const r     = (e.type === ET_WOLF ? 22 : 14) * z;
+      const color = e.type === ET_MAMMOTH ? '#4a4a4a' : (e.type === ET_WOLF ? '#5d4037' : '#f5f0e8');
+      const r     = (e.type === ET_MAMMOTH ? 40 : (e.type === ET_WOLF ? 22 : 14)) * z;
       this.renderer.drawCircle(screen.x, screen.y, r, color);
 
-      // Eyes
+      // Mammoth tusks
       const { ctx } = this.renderer;
+      if (e.type === ET_MAMMOTH) {
+        ctx.save();
+        ctx.strokeStyle = '#f5f0e8';
+        ctx.lineWidth = 3 * z;
+        ctx.beginPath();
+        ctx.moveTo(screen.x + 14 * z, screen.y + 6 * z);
+        ctx.lineTo(screen.x + 26 * z, screen.y + 16 * z);
+        ctx.moveTo(screen.x + 8 * z, screen.y + 10 * z);
+        ctx.lineTo(screen.x + 20 * z, screen.y + 22 * z);
+        ctx.stroke();
+        ctx.restore();
+      }
+
+      // Eyes
       const eyeColor = e.type === ET_WOLF ? '#ef5350' : '#333';
       ctx.save();
       ctx.fillStyle = eyeColor;

@@ -159,7 +159,7 @@ export class World {
 
     spawn(EntityType.RABBIT,  Math.floor(ANIMAL_COUNT * 0.5), [BiomeType.PLAINS, BiomeType.FOREST]);
     spawn(EntityType.WOLF,    Math.floor(ANIMAL_COUNT * 0.35), [BiomeType.PLAINS, BiomeType.FOREST, BiomeType.SNOW]);
-    spawn(EntityType.MAMMOTH, Math.floor(ANIMAL_COUNT * 0.1),  [BiomeType.SNOW]);
+    spawn(EntityType.MAMMOTH, 10, [BiomeType.SNOW]);
   }
 
   // ─── Player management ────────────────────────────────────────────────────
