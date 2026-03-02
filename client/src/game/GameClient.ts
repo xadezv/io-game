@@ -748,10 +748,9 @@ export class GameClient {
     // --- Minimap ---
     if (this.myPlayer) {
       const minimapEntities = new Map<number, MinimapEntity>();
+      // Pass raw entity type — Minimap filters and colors by EntityType directly
       this.entities.forEach((e, id) => {
-        const mmType = e.type === 0 ? 0 : (e.type <= 4 || e.type === 11 || e.type === 12) ? 2
-          : (e.type === 5 || e.type === 6 || e.type === 13) ? 1 : 3;
-        minimapEntities.set(id, { x: e.x, y: e.y, type: mmType });
+        minimapEntities.set(id, { x: e.x, y: e.y, type: e.type });
       });
       this.minimap.render(minimapEntities, this.myId, this.myPlayer.x, this.myPlayer.y);
     }

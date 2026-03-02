@@ -1,7 +1,7 @@
 export interface MinimapEntity {
   x: number;
   y: number;
-  type: number; // 0=player, 1=animal, 2=resource, 3=structure
+  type: number; // raw EntityType value from shared/packets.ts
 }
 
 const MAP_SIZE = 14400;
@@ -9,13 +9,35 @@ const MINIMAP_SIZE = 160;
 const PADDING = 4;
 const DRAW_SIZE = MINIMAP_SIZE - PADDING * 2;
 
-// Dot colors by entity type
+// EntityType constants (mirrored from shared/packets.ts — no import to avoid cross-bundle issues)
+const ET_PLAYER    = 0;
+const ET_BERRY     = 4;
+const ET_RABBIT    = 5;
+const ET_WOLF      = 6;
+const ET_MAMMOTH   = 13;
+
+// Set of entity types to show on the minimap (excludes resources/structures)
+const SHOW_ON_MAP = new Set<number>([ET_PLAYER, ET_BERRY, ET_RABBIT, ET_WOLF, ET_MAMMOTH]);
+
+// Dot color per raw EntityType
 const DOT_COLORS: Record<number, string> = {
-  0: "#ef4444", // other players — red
-  1: "#fbbf24", // animals — yellow
-  2: "#16a34a", // resources — dark green
-  3: "#60a5fa", // structures — blue
+  [ET_PLAYER]:  "#22c55e", // other players — green
+  [ET_BERRY]:   "#facc15", // berry bushes — yellow
+  [ET_RABBIT]:  "#ffffff", // rabbits — white
+  [ET_WOLF]:    "#ef4444", // wolves — red
+  [ET_MAMMOTH]: "#ef4444", // mammoths — red
 };
+
+// Dot radius per raw EntityType
+const DOT_RADIUS: Record<number, number> = {
+  [ET_PLAYER]:  2,
+  [ET_BERRY]:   2,
+  [ET_RABBIT]:  2,
+  [ET_WOLF]:    2,
+  [ET_MAMMOTH]: 2,
+};
+
+const MAX_DOTS_PER_FRAME = 200;
 
 // Biome approximation colors for background grid
 const BIOME_COLORS = [
@@ -77,13 +99,19 @@ export default class Minimap {
     this._drawBackground(ctx);
 
     // ---- Entities ----
+    let dotCount = 0;
     entities.forEach((ent, id) => {
       if (id === myId) return; // draw self last
-      this._drawDot(ctx, ent.x, ent.y, DOT_COLORS[ent.type] ?? "#fff", 2.5);
+      if (!SHOW_ON_MAP.has(ent.type)) return; // skip resources/structures
+      if (dotCount >= MAX_DOTS_PER_FRAME) return; // cap per frame
+      dotCount++;
+      const color  = DOT_COLORS[ent.type] ?? "#ffffff";
+      const radius = DOT_RADIUS[ent.type] ?? 2;
+      this._drawDot(ctx, ent.x, ent.y, color, radius);
     });
 
     // ---- Self (blue, larger) ----
-    this._drawDot(ctx, myX, myY, "#3b82f6", 4, true);
+    this._drawDot(ctx, myX, myY, "#3b82f6", 3, true);
 
     // ---- Camera view rectangle ----
     if (this.viewWidth > 0 && this.viewHeight > 0) {
