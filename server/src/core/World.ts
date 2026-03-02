@@ -255,11 +255,11 @@ export class World {
     return result;
   }
 
-  getLeaderboard(): { id: number; nickname: string; points: number }[] {
+  getLeaderboard(): [number, string, number][] {
     return Array.from(this.players.values())
       .sort((a, b) => b.points - a.points)
       .slice(0, 10)
-      .map(p => ({ id: p.id, nickname: p.nickname, points: p.points }));
+      .map(p => [p.id, p.nickname, p.points]);
   }
 
   findSpawnPos(): { x: number; y: number } {

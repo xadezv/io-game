@@ -61,8 +61,9 @@ export class Game {
     p.hunger  = PLAYER_MAX_HUNGER;
     p.thirst  = PLAYER_MAX_THIRST;
     p.temp    = PLAYER_MAX_TEMP;
-    p.dead    = false;
-    p.moveDir = 0;
+    p.dead       = false;
+    p.moveDir    = 0;
+    p.killStreak = 0;
     // Clear inventory on death (fresh start)
     p.inventory = Array(10).fill(null).map(() => ({ itemId: -1, count: 0 }));
 
@@ -170,8 +171,9 @@ export class Game {
   }
 
   private killPlayer(player: Player): void {
-    player.dead = true;
-    player.hp   = 0;
+    player.dead       = true;
+    player.hp         = 0;
+    player.killStreak = 0;
     const s = this.io.sockets.sockets.get(player.socketId);
     if (s) s.emit('msg', [PacketType.DEATH, player.points]);
   }

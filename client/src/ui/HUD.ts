@@ -10,6 +10,7 @@ export interface PlayerStats {
   inventory: [number, number][];
   selectedSlot: number;
   hatId: number;
+  killStreak: number;
 }
 
 interface Bar {
@@ -141,6 +142,11 @@ export default class HUD {
 
     // --- Day/Night indicator top-right ---
     this._drawDayNight(isNight);
+
+    // --- Kill streak badge ---
+    if (stats.killStreak >= 2) {
+      this._drawKillStreak(stats.killStreak);
+    }
   }
 
   private _drawBar(bar: Bar, x: number, y: number): void {
@@ -415,6 +421,48 @@ export default class HUD {
         ctx.fillText(name, sx + SLOT_SIZE / 2, tooltipY + 9);
       }
     }
+
+    ctx.textAlign = "left";
+    ctx.textBaseline = "alphabetic";
+  }
+
+  private _drawKillStreak(streak: number): void {
+    const ctx = this.ctx;
+    const label = `${streak}x STREAK`;
+    ctx.font = "bold 18px 'Fredoka One', sans-serif";
+    const textW = ctx.measureText(label).width;
+    const padX = 16;
+    const padY = 10;
+    const badgeW = textW + padX * 2;
+    const badgeH = 36;
+    const cx = this.canvas.width / 2;
+    const by = 14;
+
+    // Glow
+    ctx.save();
+    ctx.shadowColor = "#f1c40f";
+    ctx.shadowBlur = 18;
+
+    // Badge background
+    ctx.fillStyle = "rgba(30, 20, 0, 0.88)";
+    ctx.beginPath();
+    this._roundRect(cx - badgeW / 2, by, badgeW, badgeH, 8);
+    ctx.fill();
+    ctx.restore();
+
+    // Badge border
+    ctx.strokeStyle = "#f1c40f";
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    this._roundRect(cx - badgeW / 2, by, badgeW, badgeH, 8);
+    ctx.stroke();
+
+    // Badge text
+    ctx.fillStyle = "#f1c40f";
+    ctx.font = "bold 18px 'Fredoka One', sans-serif";
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    ctx.fillText(label, cx, by + badgeH / 2);
 
     ctx.textAlign = "left";
     ctx.textBaseline = "alphabetic";
