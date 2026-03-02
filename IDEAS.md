@@ -261,3 +261,15 @@ Ideas are ordered by category and tagged with complexity and implementation scop
 ### 5) Caravan NPC Trader
 - **Description:** Neutral caravan appears at random intervals and exchanges surplus materials for rare crafting components and cosmetic hats.
 - **Complexity:** medium
+
+## IDEA-26 — Biome Contracts
+**Description:** NPC boards in biomes give rotating mini-quests (gather, hunt, survive night) for XP and cosmetics.
+**Complexity:** medium
+
+## IDEA-27 — Caravan Event
+**Description:** Periodic neutral caravan crosses map; players can protect it for rewards or raid it for risky loot.
+**Complexity:** high
+
+## IDEA-28 — Fishing Holes
+**Description:** Add water-edge fishing with simple timing minigame and biome-specific fish buffs.
+**Complexity:** medium
