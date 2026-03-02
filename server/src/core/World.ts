@@ -255,15 +255,71 @@ export class World {
     return result;
   }
 
-  getLeaderboard(): [number, string, number][] {
+  getLeaderboard(): [number, string, number, number][] {
     return Array.from(this.players.values())
       .sort((a, b) => b.points - a.points)
       .slice(0, 10)
-      .map(p => [p.id, p.nickname, p.points]);
+      .map(p => [p.id, p.nickname, p.points, p.kills]);
   }
 
   findSpawnPos(): { x: number; y: number } {
     return this.randPos([BiomeType.PLAINS]) ?? { x: MAP_SIZE / 2, y: MAP_SIZE / 2 };
+  }
+
+  // ─── Night wolf pack ──────────────────────────────────────────────────────
+
+  /**
+   * Spawn 6 night wolves near the map edges (2 per corner area for 3 corners,
+   * 1 each for the remaining corner — totaling 6).
+   * Returns the IDs of the newly created wolves so Game.ts can broadcast them.
+   */
+  spawnNightWolves(): number[] {
+    const ids: number[] = [];
+    const NIGHT_AGGRO_MULT = 1.5;
+
+    // Four corner areas: [x0, x1, y0, y1]
+    const corners: [number, number, number, number][] = [
+      [200,  1000,                       200,  1000                      ],  // top-left
+      [MAP_SIZE - 1000, MAP_SIZE - 200,  200,  1000                      ],  // top-right
+      [200,  1000,                       MAP_SIZE - 1000, MAP_SIZE - 200 ],  // bottom-left
+      [MAP_SIZE - 1000, MAP_SIZE - 200,  MAP_SIZE - 1000, MAP_SIZE - 200 ],  // bottom-right
+    ];
+
+    // 2+2+1+1 = 6 total night wolves
+    const spawnCounts = [2, 2, 1, 1];
+
+    for (let ci = 0; ci < corners.length; ci++) {
+      const [x0, x1, y0, y1] = corners[ci];
+      for (let i = 0; i < spawnCounts[ci]; i++) {
+        const x = x0 + Math.random() * (x1 - x0);
+        const y = y0 + Math.random() * (y1 - y0);
+        const wolf = new Animal(EntityType.WOLF, x, y);
+        wolf.isNightWolf = true;
+        wolf.aggroRange  = wolf.baseAggroRange * NIGHT_AGGRO_MULT;
+        this.addAnimal(wolf);
+        ids.push(wolf.id);
+      }
+    }
+
+    console.log(`[Night] Spawned ${ids.length} night wolves`);
+    return ids;
+  }
+
+  /**
+   * Remove all night wolves from the world.
+   * Returns their IDs so Game.ts can broadcast ENTITY_REMOVE for each.
+   */
+  removeNightWolves(): number[] {
+    const ids: number[] = [];
+    for (const [id, animal] of this.animals) {
+      if (!animal.isNightWolf) continue;
+      this.animalGrid.remove(id, animal.x, animal.y);
+      this.allById.delete(id);
+      this.animals.delete(id);
+      ids.push(id);
+    }
+    console.log(`[Day] Removed ${ids.length} night wolves`);
+    return ids;
   }
 
   // ─── Update ───────────────────────────────────────────────────────────────

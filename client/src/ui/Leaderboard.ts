@@ -2,6 +2,7 @@ export interface LeaderboardEntry {
   id: number;
   nickname: string;
   points: number;
+  kills: number;
 }
 
 const MAX_ENTRIES = 10;
@@ -27,7 +28,7 @@ export default class Leaderboard {
       "position: fixed",
       "top: 14px",
       "right: 14px",
-      "width: 200px",
+      "width: 240px",
       "z-index: 100",
       "background: rgba(5,5,15,0.78)",
       "border: 1px solid rgba(255,255,255,0.1)",
@@ -66,6 +67,60 @@ export default class Leaderboard {
     header.appendChild(trophy);
     header.appendChild(title);
 
+    // --- Column headers ---
+    const colHeader = document.createElement("div");
+    colHeader.style.cssText = [
+      "display: flex",
+      "align-items: center",
+      "padding: 2px 10px",
+      "gap: 6px",
+      "background: rgba(255,255,255,0.04)",
+      "border-bottom: 1px solid rgba(255,255,255,0.06)",
+    ].join(";");
+
+    const colRankSpacer = document.createElement("span");
+    colRankSpacer.style.cssText = "min-width: 22px;";
+
+    const colNameHdr = document.createElement("span");
+    colNameHdr.textContent = "Player";
+    colNameHdr.style.cssText = [
+      "flex: 1",
+      "font-family: 'Fredoka One', sans-serif",
+      "font-size: 10px",
+      "color: rgba(255,255,255,0.4)",
+      "letter-spacing: 0.5px",
+      "text-transform: uppercase",
+    ].join(";");
+
+    const colPtsHdr = document.createElement("span");
+    colPtsHdr.textContent = "Pts";
+    colPtsHdr.style.cssText = [
+      "font-family: 'Fredoka One', sans-serif",
+      "font-size: 10px",
+      "color: rgba(255,255,255,0.4)",
+      "letter-spacing: 0.5px",
+      "text-transform: uppercase",
+      "min-width: 36px",
+      "text-align: right",
+    ].join(";");
+
+    const colKillsHdr = document.createElement("span");
+    colKillsHdr.textContent = "Kills";
+    colKillsHdr.style.cssText = [
+      "font-family: 'Fredoka One', sans-serif",
+      "font-size: 10px",
+      "color: rgba(255,180,180,0.55)",
+      "letter-spacing: 0.5px",
+      "text-transform: uppercase",
+      "min-width: 36px",
+      "text-align: right",
+    ].join(";");
+
+    colHeader.appendChild(colRankSpacer);
+    colHeader.appendChild(colNameHdr);
+    colHeader.appendChild(colPtsHdr);
+    colHeader.appendChild(colKillsHdr);
+
     // --- List ---
     this.listEl = document.createElement("div");
     this.listEl.style.cssText = [
@@ -75,6 +130,7 @@ export default class Leaderboard {
     ].join(";");
 
     this.container.appendChild(header);
+    this.container.appendChild(colHeader);
     this.container.appendChild(this.listEl);
     document.body.appendChild(this.container);
   }
@@ -133,12 +189,27 @@ export default class Leaderboard {
         "font-size: 11px",
         rankInfo ? `color: ${rankInfo.color}` : "color: rgba(255,255,255,0.5)",
         "white-space: nowrap",
+        "min-width: 36px",
+        "text-align: right",
       ].join(";");
       ptsEl.textContent = this._formatPoints(entry.points);
+
+      // Kills
+      const killsEl = document.createElement("span");
+      killsEl.style.cssText = [
+        "font-family: 'Fredoka One', sans-serif",
+        "font-size: 11px",
+        "color: rgba(255,120,120,0.85)",
+        "white-space: nowrap",
+        "min-width: 36px",
+        "text-align: right",
+      ].join(";");
+      killsEl.textContent = String(entry.kills ?? 0);
 
       row.appendChild(rankEl);
       row.appendChild(nameEl);
       row.appendChild(ptsEl);
+      row.appendChild(killsEl);
       this.listEl!.appendChild(row);
 
       // Divider (not after last)

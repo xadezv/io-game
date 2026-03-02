@@ -48,6 +48,12 @@ const PT_CHEST_DATA         = 25;
 const PT_PLACE              = 10;
 const PT_PING               = 20;
 const PT_PONG               = 21;
+const PT_INTERACT           = 28;
+const PT_INTERACT_RESULT    = 29;
+
+// ItemId numeric constants (mirrors shared/items.ts)
+const ITEM_FURNACE     = 47;
+const ITEM_COOKED_MEAT = 21;
 
 // ---------------------------------------------------------------------------
 // Client map generation (must mirror server MapGen.ts exactly)
@@ -351,6 +357,12 @@ export class GameClient {
         if (this.placementMode) {
           this.chat.addMessage(-1, 'System', 'Placement mode ON — right-click to place selected item. Press B to cancel.');
         }
+      } else if (key === 'e' || key === 'E') {
+        // Interact with nearby furnace (within 120px)
+        const furnace = Array.from(this.entities.values()).find(
+          e => e.itemId === ITEM_FURNACE && this.myPlayer && Math.hypot(e.x - this.myPlayer.x, e.y - this.myPlayer.y) <= 120
+        );
+        if (furnace) this.ws.send([PT_INTERACT, furnace.id]);
       } else if (key === 'f' || key === 'F') {
         // Open nearby chest (within 160px — aligned with server threshold)
         const chest = Array.from(this.entities.values()).find(
@@ -425,6 +437,7 @@ export class GameClient {
       case PT_PONG:               this._onPong(data);              break;
       case PT_KILL_FEED:          this._onKillFeed(data);          break;
       case PT_CHEST_DATA:         this._onChestData(data);         break;
+      case PT_INTERACT_RESULT:    this._onInteractResult(data);    break;
     }
   }
 
@@ -467,7 +480,7 @@ export class GameClient {
     if (Array.isArray(lbRaw)) {
       this.leaderboardEntries = (lbRaw as unknown[]).map((entry) => {
         const e = entry as unknown[];
-        return { id: e[0] as number, nickname: e[1] as string, points: e[2] as number };
+        return { id: e[0] as number, nickname: e[1] as string, points: e[2] as number, kills: ((e[3] as number) ?? 0) };
       });
       this.leaderboard.update(this.leaderboardEntries);
     }
@@ -632,14 +645,14 @@ export class GameClient {
     this.myId     = -1;
   }
 
-  // [14, [[id, nickname, points], ...]]
+  // [14, [[id, nickname, points, kills], ...]]
   private _onLeaderboard(data: unknown[]): void {
     const raw = data[1];
     if (!Array.isArray(raw)) return;
 
     this.leaderboardEntries = (raw as unknown[]).map((entry) => {
       const e = entry as unknown[];
-      return { id: e[0] as number, nickname: e[1] as string, points: e[2] as number };
+      return { id: e[0] as number, nickname: e[1] as string, points: e[2] as number, kills: ((e[3] as number) ?? 0) };
     });
     this.leaderboard.update(this.leaderboardEntries);
   }
@@ -679,6 +692,19 @@ export class GameClient {
       return `  Slot ${i + 1}: ${name} x${s[1]}`;
     });
     this.chat.addMessage(-1, `Chest #${chestId}`, lines.join('\n'));
+  }
+
+  // [29, structureId, success(0|1), itemId, count]
+  private _onInteractResult(data: unknown[]): void {
+    const success = (data[2] as number) === 1;
+    const itemId  = data[3] as number;
+    if (!success) {
+      this.chat.addMessage(-1, 'System', 'Cannot cook — no raw meat or furnace busy.');
+    } else if (itemId === ITEM_COOKED_MEAT) {
+      this.chat.addMessage(-1, 'System', 'Meat cooked!');
+    } else {
+      this.chat.addMessage(-1, 'System', 'Cooking... (5s)');
+    }
   }
 
   private _onPong(data: unknown[]): void {

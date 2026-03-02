@@ -103,6 +103,7 @@ export function processAttack(
     if (p.hp <= 0) {
       p.hp = 0;
       gainXP(attacker, 50);
+      attacker.kills++;
       kills.push({ killerId: attacker.id, killerNickname: attacker.nickname, victimId: p.id, victimNickname: p.nickname });
     }
     break;
