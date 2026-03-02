@@ -273,3 +273,25 @@ Ideas are ordered by category and tagged with complexity and implementation scop
 ## IDEA-28 — Fishing Holes
 **Description:** Add water-edge fishing with simple timing minigame and biome-specific fish buffs.
 **Complexity:** medium
+
+## New Ideas (2026-03-02)
+
+### 1) Tracking Totem
+- **Description:** Placeable totem that periodically pings direction/distance to the nearest hostile player within a limited radius.
+- **Complexity:** medium
+
+### 2) Meteor Shower Event
+- **Description:** Rare world event where small meteors impact random zones, creating temporary fire patches and dropping rare ore.
+- **Complexity:** high
+
+### 3) Water Skin Item
+- **Description:** Craftable consumable container that stores 2-3 thirst uses, useful in desert travel and long fights.
+- **Complexity:** low
+
+### 4) Decoy Dummy Structure
+- **Description:** Buildable dummy that attracts wolves/spiders for a short duration, enabling escape or trap setups.
+- **Complexity:** medium
+
+### 5) Biome Relic Hunts
+- **Description:** Hidden relic spawns once per cycle in each biome; delivering relics to campfire grants teamwide buffs.
+- **Complexity:** high
