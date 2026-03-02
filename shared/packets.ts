@@ -13,6 +13,8 @@ export const PacketType = {
   CRAFT:              11,
   PING:               20,
   RESPAWN:            22,
+  CHEST_OPEN:         24,
+  CHEST_STORE:        26,
 
   // Server → Client
   HANDSHAKE_RESPONSE: 3,
