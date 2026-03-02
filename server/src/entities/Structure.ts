@@ -7,7 +7,7 @@ export class Structure extends Entity {
   itemId:     ItemId;
   damageTimer: number = 0;
   spikeDamage: number = 20;
-  burning:     boolean = false;
+  isBurning: boolean = false;
   storage: { itemId: number; count: number }[] = Array(5).fill(null).map(() => ({ itemId: -1, count: 0 }));
 
   constructor(
@@ -30,7 +30,7 @@ export class Structure extends Entity {
       Math.round(this.x), Math.round(this.y),
       Math.round(this.angle * 100) / 100,
       this.hp,
-      this.itemId, -1, '', 1, 0, 0,
+      this.itemId, -1, '', 1, 0, 0, this.isBurning ? 1 : 0,
     ];
   }
 }

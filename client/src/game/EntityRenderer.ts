@@ -23,6 +23,7 @@ export interface ClientEntity {
   level:        number;
   isAttacking:  boolean;
   attackAngle:  number;
+  isBurning?:   boolean;
   renderX:      number;   // smoothed render position
   renderY:      number;
 }
@@ -528,21 +529,7 @@ export class EntityRenderer {
       ctx.restore();
     }
 
-    // Burning glow for low-HP wood walls (fire spread visual, TASK-27)
-    if (e.type === ET_WALL_WOOD) {
-      const maxHp = e.maxHp || DEFAULT_MAX_HP[e.type] || 200;
-      if (e.hp > 0 && e.hp < maxHp * 0.3) {
-        const { ctx } = this.renderer;
-        ctx.save();
-        ctx.globalAlpha = 0.45;
-        ctx.fillStyle   = 'rgba(255, 100, 0, 0.6)';
-        ctx.beginPath();
-        ctx.arc(screen.x, screen.y, size * 0.6, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.restore();
-      }
-    }
-
+    this._drawBurningGlow(e, screen.x, screen.y, size * 0.62, z);
     this._drawHpBar(e, screen.x, screen.y, size * 0.5 + 8 * z, camera);
   }
 
@@ -585,20 +572,26 @@ export class EntityRenderer {
       ctx.restore();
     }
 
-    // Burning glow for low-HP spikes (fire spread visual, TASK-27)
-    const maxHp = e.maxHp || DEFAULT_MAX_HP[e.type] || 150;
-    if (e.hp > 0 && e.hp < maxHp * 0.3) {
-      const { ctx } = this.renderer;
-      ctx.save();
-      ctx.globalAlpha = 0.45;
-      ctx.fillStyle   = 'rgba(255, 100, 0, 0.6)';
-      ctx.beginPath();
-      ctx.arc(screen.x, screen.y, 30 * z, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.restore();
-    }
-
+    this._drawBurningGlow(e, screen.x, screen.y, 28 * z, z);
     this._drawHpBar(e, screen.x, screen.y, 30 * z + 8 * z, camera);
+  }
+
+  private _drawBurningGlow(e: ClientEntity, sx: number, sy: number, radius: number, z: number): void {
+    if (!e.isBurning) return;
+    const { ctx } = this.renderer;
+    ctx.save();
+    ctx.globalCompositeOperation = 'lighter';
+    ctx.beginPath();
+    ctx.strokeStyle = 'rgba(255, 140, 0, 0.55)';
+    ctx.lineWidth = Math.max(2, 4 * z);
+    ctx.arc(sx, sy, radius, 0, Math.PI * 2);
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.strokeStyle = 'rgba(255, 210, 80, 0.75)';
+    ctx.lineWidth = Math.max(1, 2 * z);
+    ctx.arc(sx, sy, radius * 0.8, 0, Math.PI * 2);
+    ctx.stroke();
+    ctx.restore();
   }
 
   // -------------------------------------------------------------------------
