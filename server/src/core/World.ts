@@ -145,6 +145,7 @@ export class World {
     spawn(EntityType.STONE,     STONE_COUNT,                   [BiomeType.PLAINS, BiomeType.FOREST, BiomeType.SNOW, BiomeType.DESERT]);
     spawn(EntityType.GOLD,      GOLD_COUNT,                    [BiomeType.PLAINS, BiomeType.SNOW, BiomeType.DESERT]);
     spawn(EntityType.BERRY,     BERRY_COUNT,                   [BiomeType.PLAINS, BiomeType.FOREST]);
+    spawn(EntityType.MUSHROOM,  Math.floor(BERRY_COUNT * 0.25), [BiomeType.FOREST]);
     spawn(EntityType.CACTUS,    Math.floor(BERRY_COUNT * 0.6), [BiomeType.DESERT]);
   }
 
