@@ -45,6 +45,9 @@ export class Player extends Entity {
   level  = 1;
   xp     = 0;
 
+  // Kill streak (consecutive PvP kills without dying)
+  killStreak = 0;
+
   // State
   nearFire = false;
 
@@ -137,6 +140,7 @@ export class Player extends Entity {
       this.inventory.map(s => [s.itemId, s.count]),
       this.selectedSlot,
       this.hatId,
+      this.killStreak,
     ];
   }
 }
