@@ -172,6 +172,7 @@ export class Game {
   private killPlayer(player: Player): void {
     player.dead = true;
     player.hp   = 0;
+    player.killStreak = 0;
     const s = this.io.sockets.sockets.get(player.socketId);
     if (s) s.emit('msg', [PacketType.DEATH, player.points]);
   }

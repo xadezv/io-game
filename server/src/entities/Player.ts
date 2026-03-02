@@ -44,6 +44,7 @@ export class Player extends Entity {
   points = 0;
   level  = 1;
   xp     = 0;
+  killStreak = 0;
 
   // State
   nearFire = false;
@@ -137,6 +138,7 @@ export class Player extends Entity {
       this.inventory.map(s => [s.itemId, s.count]),
       this.selectedSlot,
       this.hatId,
+      this.killStreak,
     ];
   }
 }

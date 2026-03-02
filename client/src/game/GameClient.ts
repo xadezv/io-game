@@ -230,6 +230,7 @@ export class GameClient {
     inventory:    Array.from({ length: 10 }, () => [0, 0] as [number, number]),
     selectedSlot: 0,
     hatId:        -1,
+    killStreak:   0,
   };
 
   // Leaderboard data
@@ -539,7 +540,7 @@ export class GameClient {
     }
   }
 
-  // Server: [6, [hp,hunger,thirst,temp,xp,level,points,inv[],selectedSlot,hatId]]
+  // Server: [6, [hp,hunger,thirst,temp,xp,level,points,inv[],selectedSlot,hatId,killStreak]]
   // (serializeStats() returns an array, which becomes data[1])
   private _onPlayerStats(data: unknown[]): void {
     const s = data[1] as unknown[];
@@ -564,6 +565,7 @@ export class GameClient {
 
     this.stats.selectedSlot = (s[8] as number | undefined) ?? this.stats.selectedSlot;
     this.stats.hatId        = (s[9] as number | undefined) ?? this.stats.hatId;
+    this.stats.killStreak   = (s[10] as number | undefined) ?? this.stats.killStreak;
 
     // Keep myPlayer in sync
     if (this.myPlayer) {
