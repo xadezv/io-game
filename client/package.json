@@ -1,0 +1,16 @@
+{
+  "name": "io-game-client",
+  "version": "1.0.0",
+  "scripts": {
+    "build": "esbuild src/main.ts --bundle --outfile=public/bundle.js --sourcemap --target=es2020",
+    "dev": "esbuild src/main.ts --bundle --outfile=public/bundle.js --sourcemap --target=es2020 --watch"
+  },
+  "devDependencies": {
+    "esbuild": "^0.20.0",
+    "typescript": "^5.3.3",
+    "@types/node": "^20.11.0"
+  },
+  "dependencies": {
+    "socket.io-client": "^4.7.5"
+  }
+}
