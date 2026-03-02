@@ -27,6 +27,7 @@ export const PacketType = {
   DEATH:              17,
   PONG:               21,
   KILL_FEED:          23,
+  CHEST_DATA:         25,
 } as const;
 
 export type PacketType = typeof PacketType[keyof typeof PacketType];
@@ -56,6 +57,7 @@ export const EntityType = {
   CACTUS:     11,
   SNOW_TREE:  12,
   MAMMOTH:    13,
+  CHEST:      14,
 } as const;
 
 export type EntityType = typeof EntityType[keyof typeof EntityType];

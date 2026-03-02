@@ -16,6 +16,7 @@ import CraftMenu, { RecipeEntry } from '../ui/CraftMenu';
 import Minimap, { MinimapEntity } from '../ui/Minimap';
 import TouchControls from '../ui/TouchControls';
 import KillFeed from '../ui/KillFeed';
+import ChestUI from '../ui/ChestUI';
 import { MAP_SIZE, PLAYER_MAX_HP, PLAYER_MAX_HUNGER, PLAYER_MAX_THIRST, PLAYER_MAX_TEMP } from '../../../shared/constants';
 import { RECIPES } from '../../../shared/items';
 
@@ -46,6 +47,8 @@ const PT_KILL_FEED          = 23;
 const PT_PLACE              = 10;
 const PT_PING               = 20;
 const PT_PONG               = 21;
+const PT_OPEN_CHEST         = 24;
+const PT_CHEST_DATA         = 25;
 
 // ---------------------------------------------------------------------------
 // Client map generation (must mirror server MapGen.ts exactly)
@@ -200,6 +203,7 @@ export class GameClient {
   private readonly minimap:     Minimap;
   private readonly sound:       SoundManager;
   private readonly killFeed:    KillFeed;
+  private readonly chestUI:     ChestUI;
 
   // Crafting recipes (derived from shared RECIPES + live inventory)
   private craftRecipes: RecipeEntry[] = [];
@@ -230,6 +234,7 @@ export class GameClient {
     inventory:    Array.from({ length: 10 }, () => [0, 0] as [number, number]),
     selectedSlot: 0,
     hatId:        -1,
+    killStreak:   0,
   };
 
   // Leaderboard data
@@ -266,6 +271,7 @@ export class GameClient {
     this.minimap     = new Minimap();
     this.sound       = new SoundManager();
     this.killFeed    = new KillFeed();
+    this.chestUI     = new ChestUI();
     // Renderer already handles resize; no additional listener needed.
   }
 
@@ -352,6 +358,8 @@ export class GameClient {
       } else if (key === 'm' || key === 'M') {
         const on = this.sound.toggle();
         this.chat.addMessage(-1, 'Sound', on ? 'Sound ON' : 'Sound OFF');
+      } else if (key === 'e' || key === 'E') {
+        this.ws.send([PT_OPEN_CHEST]);
       } else if (key === 'Escape') {
         this.placementMode = false;
       }
@@ -416,6 +424,7 @@ export class GameClient {
       case PT_CHAT_BROADCAST:     this._onChatBroadcast(data);     break;
       case PT_PONG:               this._onPong(data);              break;
       case PT_KILL_FEED:          this._onKillFeed(data);          break;
+      case PT_CHEST_DATA:         this._onChestData(data);         break;
     }
   }
 
@@ -564,6 +573,7 @@ export class GameClient {
 
     this.stats.selectedSlot = (s[8] as number | undefined) ?? this.stats.selectedSlot;
     this.stats.hatId        = (s[9] as number | undefined) ?? this.stats.hatId;
+    this.stats.killStreak    = (s[10] as number | undefined) ?? this.stats.killStreak;
 
     // Keep myPlayer in sync
     if (this.myPlayer) {
@@ -649,6 +659,11 @@ export class GameClient {
     this.killFeed.addKill(killer, victim);
   }
 
+  private _onChestData(data: unknown[]): void {
+    const slots = data[2] as [number, number][] | undefined;
+    if (Array.isArray(slots)) this.chestUI.show(slots);
+  }
+
   private _onPong(data: unknown[]): void {
     const sent = data[1] as number;
     this._latencyMs = Date.now() - sent;
@@ -703,6 +718,7 @@ export class GameClient {
     this.renderer.resetCamera();
     this.hud.render(this.stats, this.isNight);
     this.hud.renderInventory(this.stats);
+    this.chestUI.render(this.renderer.ctx, this.canvas);
     this.renderer.drawText(`${this._latencyMs}ms`, this.canvas.width - 60, 20, 12, 'rgba(255,255,255,0.5)');
 
     if (this.placementMode) {
@@ -801,6 +817,7 @@ export class GameClient {
       11: 100, // cactus
       12: 200, // snow_tree
       13: 500, // mammoth
+      14: 300, // chest
     };
     return table[type] ?? 100;
   }

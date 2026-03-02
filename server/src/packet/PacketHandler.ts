@@ -7,6 +7,9 @@ import { processCraft }  from '../systems/CraftSystem';
 import { processPlace }  from '../systems/BuildSystem';
 import { useFood }       from '../systems/SurvivalSystem';
 import { ItemId, ITEMS } from '../../../shared/items';
+import { EntityType } from '../../../shared/packets';
+
+const PT_OPEN_CHEST = 24;
 
 export function handlePacket(
   player: Player,
@@ -85,6 +88,28 @@ export function handlePacket(
       const angle  = data[2] as number;
       processPlace(player, itemId, angle, world);
       // New structure included in next ENTITY_UPDATE
+      break;
+    }
+
+
+    case PT_OPEN_CHEST: {
+      const chestId = (data[1] as number | undefined) ?? -1;
+      let chest = world.structures.get(chestId);
+      if (!chest || chest.dead || chest.type !== EntityType.CHEST) {
+        let nearest: typeof chest | undefined;
+        let best = Infinity;
+        for (const s of world.structures.values()) {
+          if (s.dead || s.type !== EntityType.CHEST) continue;
+          const d = Math.hypot(s.x - player.x, s.y - player.y);
+          if (d < best) { best = d; nearest = s; }
+        }
+        chest = nearest;
+      }
+      if (!chest) break;
+      const dist = Math.hypot(chest.x - player.x, chest.y - player.y);
+      if (dist > 160) break;
+      const sock = (player as any).socket as Socket | undefined;
+      sock?.emit('msg', [PacketType.CHEST_DATA, chest.id, chest.chestSlots]);
       break;
     }
 
