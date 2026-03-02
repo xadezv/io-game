@@ -574,6 +574,7 @@ export class GameClient {
     this.stats.selectedSlot = (s[8] as number | undefined) ?? this.stats.selectedSlot;
     this.stats.hatId        = (s[9] as number | undefined) ?? this.stats.hatId;
     this.stats.killStreak   = (s[10] as number | undefined) ?? this.stats.killStreak;
+    this.stats.durability   = Array.isArray(s[11]) ? (s[11] as number[]) : this.stats.durability;
 
     // Keep myPlayer in sync
     if (this.myPlayer) {

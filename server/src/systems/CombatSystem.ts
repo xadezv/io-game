@@ -44,6 +44,7 @@ export function processAttack(
   const hitX   = attacker.x + Math.cos(angle) * range * 0.6;
   const hitY   = attacker.y + Math.sin(angle) * range * 0.6;
   const hitR   = range * 0.55;
+  let landedHit = false;
 
   // Resources (use spatial grid)
   const resources = world.getNearbyResources(hitX, hitY, hitR + 30);
@@ -51,6 +52,7 @@ export function processAttack(
     if (r.dead) continue;
     const d = Math.sqrt((r.x - hitX) ** 2 + (r.y - hitY) ** 2);
     if (d > hitR + r.radius) continue;
+    landedHit = true;
 
     let dmg = damage;
     if (r.config.preferredTool?.includes(itemId as import('../../../shared/items').ItemId)) dmg *= 2;
@@ -75,6 +77,7 @@ export function processAttack(
     if (a.dead) continue;
     const d = Math.sqrt((a.x - hitX) ** 2 + (a.y - hitY) ** 2);
     if (d > hitR + a.radius) continue;
+    landedHit = true;
 
     a.hp -= damage;
     damages.push({ targetId: a.id, damage, targetType: 'animal' });
@@ -96,6 +99,7 @@ export function processAttack(
     if (p === attacker || p.dead) continue;
     const d = Math.sqrt((p.x - hitX) ** 2 + (p.y - hitY) ** 2);
     if (d > hitR + p.radius) continue;
+    landedHit = true;
 
     p.hp -= damage;
     damages.push({ targetId: p.id, damage, targetType: 'player' });
@@ -114,6 +118,7 @@ export function processAttack(
     if (s.dead) continue;
     const d = Math.sqrt((s.x - hitX) ** 2 + (s.y - hitY) ** 2);
     if (d > hitR + s.radius) continue;
+    landedHit = true;
 
     s.hp -= damage;
     damages.push({ targetId: s.id, damage, targetType: 'structure' });
@@ -121,6 +126,7 @@ export function processAttack(
     break;
   }
 
+  if (landedHit) attacker.useTool(attacker.selectedSlot);
   return { damages, kills };
 }
 

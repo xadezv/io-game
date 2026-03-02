@@ -4,7 +4,7 @@ import {
   PLAYER_MAX_HP, PLAYER_MAX_HUNGER, PLAYER_MAX_TEMP, PLAYER_MAX_THIRST,
   PLAYER_RADIUS, PLAYER_SPEED, ATTACK_COOLDOWN, MAP_SIZE,
 } from '../../../shared/constants';
-import { ItemId } from '../../../shared/items';
+import { ItemId, ITEMS } from '../../../shared/items';
 import type { Socket } from 'socket.io';
 
 export interface InventorySlot {
@@ -52,6 +52,9 @@ export class Player extends Entity {
   // State
   nearFire = false;
 
+  // Tool durability (slotIndex -> remaining uses)
+  durability: Map<number, number> = new Map();
+
   constructor(socketId: string, nickname: string, x: number, y: number) {
     super(EntityType.PLAYER, x, y, PLAYER_MAX_HP, PLAYER_RADIUS);
     this.socketId = socketId;
@@ -88,6 +91,26 @@ export class Player extends Entity {
     let n = 0;
     for (const s of this.inventory) if (s.itemId === itemId) n += s.count;
     return n;
+  }
+
+
+  useTool(slotIndex: number): void {
+    if (slotIndex < 0 || slotIndex >= this.inventory.length) return;
+    const slot = this.inventory[slotIndex];
+    if (!slot || slot.count <= 0) return;
+    const item = ITEMS[slot.itemId];
+    if (!item?.maxDurability) return;
+
+    const current = this.durability.get(slotIndex) ?? item.maxDurability;
+    const next = current - 1;
+    if (next <= 0) {
+      this.durability.delete(slotIndex);
+      slot.itemId = ItemId.HAND;
+      slot.count = 1;
+      if (this.selectedSlot === slotIndex) this.selectedSlot = slotIndex;
+      return;
+    }
+    this.durability.set(slotIndex, next);
   }
 
   update(dt: number): void {
@@ -142,6 +165,7 @@ export class Player extends Entity {
       this.selectedSlot,
       this.hatId,
       this.killStreak,
+      Array.from(this.durability.entries()).flatMap(([slot, remaining]) => [slot, remaining]),
     ];
   }
 }
