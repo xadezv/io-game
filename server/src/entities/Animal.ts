@@ -64,6 +64,7 @@ export class Animal extends Entity {
   wanderAngle  = 0;
   isAttacking  = false;
   attackAnimTimer = 0;
+  despawnTimer = 0;
 
   constructor(type: EntityType, x: number, y: number) {
     const cfg = ANIMAL_CONFIGS[type];
