@@ -37,3 +37,8 @@ export const DAY_DURATION = 60000;  // ms per day
 export const NIGHT_DURATION = 30000;
 
 export const LEADERBOARD_SIZE = 10;
+
+export const HUNGER_SLOW_THRESHOLD_1 = 0.25;  // below 25% hunger
+export const HUNGER_SLOW_THRESHOLD_2 = 0.10;  // below 10% hunger
+export const HUNGER_SPEED_MULT_1 = 0.70;       // 30% slower
+export const HUNGER_SPEED_MULT_2 = 0.50;       // 50% slower

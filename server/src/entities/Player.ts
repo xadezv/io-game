@@ -3,6 +3,8 @@ import { EntityType, MoveDir } from '../../../shared/packets';
 import {
   PLAYER_MAX_HP, PLAYER_MAX_HUNGER, PLAYER_MAX_TEMP, PLAYER_MAX_THIRST,
   PLAYER_RADIUS, PLAYER_SPEED, ATTACK_COOLDOWN, MAP_SIZE,
+  HUNGER_SLOW_THRESHOLD_1, HUNGER_SLOW_THRESHOLD_2,
+  HUNGER_SPEED_MULT_1, HUNGER_SPEED_MULT_2,
 } from '../../../shared/constants';
 import { ItemId } from '../../../shared/items';
 import type { Socket } from 'socket.io';
@@ -57,6 +59,13 @@ export class Player extends Entity {
     this.nickname = nickname.substring(0, 16).trim() || 'Anon';
   }
 
+  getEffectiveSpeed(): number {
+    const ratio = this.hunger / PLAYER_MAX_HUNGER;
+    if (ratio < HUNGER_SLOW_THRESHOLD_2) return PLAYER_SPEED * HUNGER_SPEED_MULT_2;
+    if (ratio < HUNGER_SLOW_THRESHOLD_1) return PLAYER_SPEED * HUNGER_SPEED_MULT_1;
+    return PLAYER_SPEED;
+  }
+
   getSelectedItem(): number {
     const slot = this.inventory[this.selectedSlot];
     return slot && slot.count > 0 ? slot.itemId : ItemId.HAND;
@@ -101,8 +110,9 @@ export class Player extends Entity {
     const len = Math.sqrt(dx * dx + dy * dy);
     if (len > 0) { dx /= len; dy /= len; }
 
-    this.vx = dx * PLAYER_SPEED;
-    this.vy = dy * PLAYER_SPEED;
+    const speed = this.getEffectiveSpeed();
+    this.vx = dx * speed;
+    this.vy = dy * speed;
     this.x  = Math.max(PLAYER_RADIUS, Math.min(MAP_SIZE - PLAYER_RADIUS, this.x + this.vx * dt));
     this.y  = Math.max(PLAYER_RADIUS, Math.min(MAP_SIZE - PLAYER_RADIUS, this.y + this.vy * dt));
 
