@@ -98,6 +98,7 @@ export function processAttack(
     if (d > hitR + p.radius) continue;
 
     p.hp -= damage;
+    if (attacker.poisonCoated) p.poisonTimer = Math.max(p.poisonTimer, 3000);
     damages.push({ targetId: p.id, damage, targetType: 'player' });
 
     if (p.hp <= 0) {

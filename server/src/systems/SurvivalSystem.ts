@@ -57,6 +57,16 @@ export function updateSurvival(player: Player, world: World, dt: number, isNight
 
   if (player.temp <= 5)             player.hp = Math.max(0, player.hp - 2.0 * dt);
   else if (player.temp >= 95)       player.hp = Math.max(0, player.hp - 1.5 * dt);
+
+  if (player.poisonTimer > 0) {
+    player.hp = Math.max(0, player.hp - 2.0 * dt);
+    player.poisonTimer = Math.max(0, player.poisonTimer - dt * 1000);
+  }
+
+  if (player.poisonCoatTimer > 0) {
+    player.poisonCoatTimer = Math.max(0, player.poisonCoatTimer - dt * 1000);
+    if (player.poisonCoatTimer <= 0) player.poisonCoated = false;
+  }
 }
 
 export function useFood(player: Player, itemId: ItemId): boolean {
@@ -65,7 +75,11 @@ export function useFood(player: Player, itemId: ItemId): boolean {
   if (player.countItem(itemId) <= 0) return false;
 
   player.removeItem(itemId, 1);
-  if (item.foodHp)     player.hp     = Math.min(100, player.hp     + item.foodHp);
+  if (itemId === ItemId.MUSHROOM && (item.foodHp ?? 0) < 0) {
+    player.poisonTimer = 10000;
+  } else if (item.foodHp) {
+    player.hp = Math.min(100, player.hp + item.foodHp);
+  }
   if (item.foodHunger) player.hunger = Math.min(100, player.hunger + item.foodHunger);
   if (item.foodThirst) player.thirst = Math.min(100, player.thirst + item.foodThirst);
 
