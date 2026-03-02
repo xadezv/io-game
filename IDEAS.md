@@ -361,3 +361,10 @@ Rare longer night event with stronger mobs and boosted drops/XP. Server announce
 - World relic shrines that grant team-wide buffs when activated
 - Fishing spots in lake/ocean edges with rare food + crafting materials
 - Traveling trader NPC that appears at dusk with rotating item deals
+
+## Fresh ideas (2026-03-02 cron run)
+- Dynamic eclipse event: short global darkness with boosted rare mob spawns and unique drops.
+- Biome relic shrines: capture-and-hold structures granting small team buffs (warmth, regen, mining speed).
+- Caravan NPCs: neutral traders that roam map edges and offer rotating barter deals.
+- River fishing mini-system: craft rod, fish at water edges, cook for buffs.
+- Seasonal migration: herds move between biomes by time of day, changing risk/reward routes.
