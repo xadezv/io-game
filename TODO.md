@@ -433,7 +433,7 @@ Spider drops: `THREAD x1` (50% chance)
 
 ---
 
-### TASK-27 — Campfire fire spread to wood structures  [ ]
+### TASK-27 — Campfire fire spread to wood structures  [~] PRs #32/#36 open
 **Priority:** MEDIUM
 **Branch:** `feat/task-27-fire-spread`
 **Source:** IDEA-06
@@ -457,7 +457,7 @@ No new packets needed — use `DAMAGE` packet to notify clients of burning damag
 
 ---
 
-### TASK-28 — Anti-cheat: server-side position validation  [ ]
+### TASK-28 — Anti-cheat: server-side position validation  [~] PRs #33/#37 open
 **Priority:** HIGH
 **Branch:** `feat/task-28-anticheat`
 
