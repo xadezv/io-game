@@ -23,3 +23,23 @@
 ## 6) Portable Bedroll
 - **Description:** Craftable bedroll allows one-time faster respawn with reduced penalties, adding tactical preparation before raids.
 - **Complexity:** low
+
+## 7) Heatstroke & Mirage Windows
+- **Description:** In desert daytime, prolonged exposure triggers mirage effects (slight camera wobble, fake resource silhouettes) and faster thirst loss; shade/cactus juice counters it.
+- **Complexity:** medium
+
+## 8) Herd Panic System
+- **Description:** Nearby animals react as a group when one is attacked, causing short stampedes that can trample players and structures if badly positioned.
+- **Complexity:** medium
+
+## 9) Campfire Cooking Queue
+- **Description:** Campfires can queue multiple raw foods and produce cooked items over time, encouraging base hubs and raid targets.
+- **Complexity:** low
+
+## 10) Snow Footprints Tracking
+- **Description:** Players and large animals leave temporary footprints in snow that others can follow for hunting, stalking, or baiting.
+- **Complexity:** medium
+
+## 11) Ruined Outposts POIs
+- **Description:** Procedurally place small ruined structures with guarded loot and environmental hazards to create mid-game hotspots.
+- **Complexity:** high
