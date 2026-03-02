@@ -13,6 +13,8 @@ export const PacketType = {
   CRAFT:              11,
   PING:               20,
   RESPAWN:            22,
+  CHEST_OPEN:         24,
+  CHEST_STORE:        26,
 
   // Server → Client
   HANDSHAKE_RESPONSE: 3,
@@ -26,7 +28,8 @@ export const PacketType = {
   CRAFT_RESULT:       16,
   DEATH:              17,
   PONG:               21,
-  KILL_FEED:          23,
+  KILL_FEED:          27,
+  CHEST_DATA:         25,
 } as const;
 
 export type PacketType = typeof PacketType[keyof typeof PacketType];
@@ -56,6 +59,7 @@ export const EntityType = {
   CACTUS:     11,
   SNOW_TREE:  12,
   MAMMOTH:    13,
+  CHEST:      14,
 } as const;
 
 export type EntityType = typeof EntityType[keyof typeof EntityType];

@@ -42,7 +42,9 @@ const PT_LEADERBOARD        = 14;
 const PT_TIME_UPDATE        = 15;
 const PT_DEATH              = 17;
 const PT_RESPAWN            = 22;
-const PT_KILL_FEED          = 23;
+const PT_KILL_FEED          = 27;
+const PT_CHEST_OPEN         = 24;
+const PT_CHEST_DATA         = 25;
 const PT_PLACE              = 10;
 const PT_PING               = 20;
 const PT_PONG               = 21;
@@ -349,6 +351,12 @@ export class GameClient {
         if (this.placementMode) {
           this.chat.addMessage(-1, 'System', 'Placement mode ON — right-click to place selected item. Press B to cancel.');
         }
+      } else if (key === 'f' || key === 'F') {
+        // Open nearby chest (within 160px — aligned with server threshold)
+        const chest = Array.from(this.entities.values()).find(
+          e => e.itemId === 46 && this.myPlayer && Math.hypot(e.x - this.myPlayer.x, e.y - this.myPlayer.y) < 160
+        );
+        if (chest) this.ws.send([PT_CHEST_OPEN, chest.id]);
       } else if (key === 'm' || key === 'M') {
         const on = this.sound.toggle();
         this.chat.addMessage(-1, 'Sound', on ? 'Sound ON' : 'Sound OFF');
@@ -416,6 +424,7 @@ export class GameClient {
       case PT_CHAT_BROADCAST:     this._onChatBroadcast(data);     break;
       case PT_PONG:               this._onPong(data);              break;
       case PT_KILL_FEED:          this._onKillFeed(data);          break;
+      case PT_CHEST_DATA:         this._onChestData(data);         break;
     }
   }
 
@@ -647,6 +656,29 @@ export class GameClient {
     const killer = String(data[2] ?? 'Unknown');
     const victim = String(data[4] ?? 'Unknown');
     this.killFeed.addKill(killer, victim);
+  }
+
+  // [25, chestId, [[itemId, count], ...]]
+  private _onChestData(data: unknown[]): void {
+    const chestId = data[1] as number;
+    const slots   = data[2] as [number, number][];
+    if (!Array.isArray(slots)) return;
+
+    const ITEM_NAMES: Record<number, string> = {
+      0: 'Hand', 1: 'Axe', 2: 'Pick', 3: 'Sword', 4: 'Big Axe', 5: 'Big Pick',
+      6: 'Gold Axe', 7: 'Gold Sword',
+      20: 'Berries', 21: 'Cooked Meat', 22: 'Raw Meat',
+      30: 'Wood', 31: 'Stone', 32: 'Gold', 33: 'Thread',
+      40: 'Campfire', 41: 'Wall', 42: 'Stone Wall', 43: 'Spike', 44: 'Stone Spike', 46: 'Chest',
+      50: 'Winter Hat', 51: 'Cowboy Hat',
+    };
+
+    const lines = slots.map((s, i) => {
+      if (!Array.isArray(s) || s[0] < 0) return `  Slot ${i + 1}: empty`;
+      const name = ITEM_NAMES[s[0]] ?? `Item ${s[0]}`;
+      return `  Slot ${i + 1}: ${name} x${s[1]}`;
+    });
+    this.chat.addMessage(-1, `Chest #${chestId}`, lines.join('\n'));
   }
 
   private _onPong(data: unknown[]): void {
