@@ -4,6 +4,7 @@ import { PacketType } from '../../../shared/packets';
 import { handlePacket } from '../packet/PacketHandler';
 import { updateSurvival } from '../systems/SurvivalSystem';
 import { processAnimalAttacks } from '../systems/CombatSystem';
+import { processFireSpread } from '../systems/FireSystem';
 import {
   TICK_MS, DAY_DURATION, NIGHT_DURATION, PLAYER_MAX_HP,
   PLAYER_MAX_HUNGER, PLAYER_MAX_THIRST, PLAYER_MAX_TEMP,
@@ -144,6 +145,9 @@ export class Game {
     // World physics + animal AI
     this.world.update(dt);
 
+    // Campfire spread + burning structures
+    processFireSpread(this.world, dt);
+
     // Spike damage events — BUG-17: emit DAMAGE packet + trigger killPlayer
     for (const hit of this.world.spikeHits) {
       const p = this.world.players.get(hit.socketId);
@@ -151,6 +155,12 @@ export class Game {
       const s = this.io.sockets.sockets.get(hit.socketId);
       if (s) s.emit('msg', [PacketType.DAMAGE, hit.playerId, Math.round(hit.damage)]);
       if (p.hp <= 0) this.killPlayer(p);
+    }
+
+    // Fire spread + burn damage over time
+    processFireSpread(this.world, dt);
+    for (const evt of this.world.fireDamageEvents) {
+      this.io.emit('msg', [PacketType.DAMAGE, evt.targetId, evt.damage]);
     }
 
     // Survival drain

@@ -73,9 +73,12 @@ export class World {
   resources:  Map<number, Resource>  = new Map();
   animals:    Map<number, Animal>    = new Map();
   structures: Map<number, Structure> = new Map();
+  isNight = false;
 
   // BUG-17: spike damage events collected each tick for Game.ts to broadcast
   spikeHits: Array<{ socketId: string; damage: number; playerId: number }> = [];
+  burningStructures: Set<number> = new Set();
+  fireDamageEvents: Array<{ targetId: number; damage: number }> = [];
 
   // Fast lookup by entity id (all types)
   private allById: Map<number, Entity> = new Map();
@@ -129,6 +132,18 @@ export class World {
     this.structures.set(s.id, s);
     this.allById.set(s.id, s);
     this.structureGrid.add(s.id, s.x, s.y);
+  }
+
+  removeStructure(structureId: number): void {
+    const s = this.structures.get(structureId);
+    if (!s) return;
+    s.dead = true;
+    s.isBurning = false;
+    this.burningStructures.delete(structureId);
+    this.structures.delete(structureId);
+    this.allById.delete(structureId);
+    this.structureGrid.remove(structureId, s.x, s.y);
+    this.removedEntityIds.push(structureId);
   }
 
   private spawnResources(): void {
@@ -320,14 +335,42 @@ export class World {
     return removedIds;
   }
 
+  spawnNightSpiders(): Animal[] {
+    const count = 5 + Math.floor(this.rng.nextFloat(0, 1) * 4);
+    const spawned: Animal[] = [];
+    for (let i = 0; i < count; i++) {
+      const pos = this.randPos([BiomeType.FOREST]);
+      if (!pos) continue;
+      const spider = new Animal(EntityType.SPIDER, pos.x, pos.y);
+      spider.isNightSpider = true;
+      this.addAnimal(spider);
+      spawned.push(spider);
+    }
+    return spawned;
+  }
+
+  removeNightSpiders(): number[] {
+    const removedIds: number[] = [];
+    for (const a of this.animals.values()) {
+      if (!a.isNightSpider) continue;
+      this.animals.delete(a.id);
+      this.allById.delete(a.id);
+      this.animalGrid.remove(a.id, a.x, a.y);
+      removedIds.push(a.id);
+    }
+    return removedIds;
+  }
+
   // ─── Update ───────────────────────────────────────────────────────────────
 
   removedEntityIds: number[] = [];
 
-  update(dt: number): void {
+  update(dt: number, isNight: boolean = this.isNight): void {
+    this.isNight = isNight;
     this.removedEntityIds = [];
     // BUG-17: clear spike hits at start of each tick
     this.spikeHits = [];
+    this.fireDamageEvents = [];
 
     // Respawn dead resources
     for (const r of this.resources.values()) {
@@ -352,7 +395,7 @@ export class World {
         continue;
       }
       const ox = a.x, oy = a.y;
-      a.update(dt, this.players);
+      a.update(dt, this.players, this.isNight);
       this.animalGrid.move(a.id, ox, oy, a.x, a.y);
       this.resolveAnimalCollisions(a);
     }

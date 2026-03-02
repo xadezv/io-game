@@ -23,6 +23,7 @@ export interface ClientEntity {
   level:        number;
   isAttacking:  boolean;
   attackAngle:  number;
+  isBurning?:   boolean;
   renderX:      number;   // smoothed render position
   renderY:      number;
 }
@@ -528,6 +529,7 @@ export class EntityRenderer {
       ctx.restore();
     }
 
+    this._drawBurningGlow(e, screen.x, screen.y, size * 0.62, z);
     this._drawHpBar(e, screen.x, screen.y, size * 0.5 + 8 * z, camera);
   }
 
@@ -570,7 +572,26 @@ export class EntityRenderer {
       ctx.restore();
     }
 
+    this._drawBurningGlow(e, screen.x, screen.y, 28 * z, z);
     this._drawHpBar(e, screen.x, screen.y, 30 * z + 8 * z, camera);
+  }
+
+  private _drawBurningGlow(e: ClientEntity, sx: number, sy: number, radius: number, z: number): void {
+    if (!e.isBurning) return;
+    const { ctx } = this.renderer;
+    ctx.save();
+    ctx.globalCompositeOperation = 'lighter';
+    ctx.beginPath();
+    ctx.strokeStyle = 'rgba(255, 140, 0, 0.55)';
+    ctx.lineWidth = Math.max(2, 4 * z);
+    ctx.arc(sx, sy, radius, 0, Math.PI * 2);
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.strokeStyle = 'rgba(255, 210, 80, 0.75)';
+    ctx.lineWidth = Math.max(1, 2 * z);
+    ctx.arc(sx, sy, radius * 0.8, 0, Math.PI * 2);
+    ctx.stroke();
+    ctx.restore();
   }
 
   // -------------------------------------------------------------------------
@@ -641,6 +662,23 @@ export class EntityRenderer {
       e.hp, maxHp,
       '#e74c3c', '#333333',
     );
+  }
+
+  private _drawBurningGlow(sx: number, sy: number, r: number): void {
+    const { ctx } = this.renderer;
+    ctx.save();
+    ctx.globalAlpha = 0.22;
+    ctx.fillStyle = '#ff9800';
+    ctx.beginPath();
+    ctx.arc(sx, sy, r, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.globalAlpha = 0.35;
+    ctx.strokeStyle = '#ffeb3b';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.arc(sx, sy, r * 0.72, 0, Math.PI * 2);
+    ctx.stroke();
+    ctx.restore();
   }
 
   /** Draw a weapon-swing arc centred at (sx, sy). */
