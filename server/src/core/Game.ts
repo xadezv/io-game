@@ -145,6 +145,9 @@ export class Game {
     // World physics + animal AI
     this.world.update(dt);
 
+    // Campfire spread + burning structures
+    processFireSpread(this.world, dt);
+
     // Spike damage events — BUG-17: emit DAMAGE packet + trigger killPlayer
     for (const hit of this.world.spikeHits) {
       const p = this.world.players.get(hit.socketId);
