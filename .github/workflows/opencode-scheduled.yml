@@ -1,0 +1,49 @@
+name: opencode-scheduled
+
+on:
+  schedule:
+    # Every 10 minutes
+    - cron: "*/10 * * * *"
+  workflow_dispatch: {}   # also allow manual trigger from Actions tab
+
+jobs:
+  triage:
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: write
+      pull-requests: write
+      issues: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - uses: anomalyco/opencode/github@latest
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          model: anthropic/claude-sonnet-4-20250514
+          prompt: |
+            You are OpenCode, the project owner of io-game (starve.io-style multiplayer survival game).
+            Your job runs automatically every 10 minutes. Do the following in order:
+
+            1. Read AGENTS.md (your collaboration guide) and TODO.md (the task list for OpenClaw).
+
+            2. Check all open pull requests on xadezv/io-game:
+               - For any PR that has no review yet: perform a full code review (see AGENTS.md for PR requirements).
+                 Leave a comment with your findings and either approve or request changes.
+               - For any PR that has been approved and not yet merged: merge it into master.
+               - For any PR that has requested changes: check if the author has addressed them; if so, re-review.
+
+            3. After processing PRs, update TODO.md:
+               - Mark tasks as [done] if their PR was merged.
+               - If there are no open tasks in TODO.md, identify the next most valuable feature or bugfix
+                 from the "Needs Work / Known Issues" or "Next Features" section in AGENTS.md,
+                 write a new TASK entry in TODO.md for OpenClaw to pick up, with clear acceptance criteria.
+
+            4. Commit and push any changes to TODO.md directly to master with message:
+               "chore(tasks): automated TODO update by OpenCode"
+
+            Keep your actions minimal and precise. Do not break the build.

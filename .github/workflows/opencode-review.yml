@@ -1,0 +1,48 @@
+name: opencode-review
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
+  issue_comment:
+    types: [created]
+  pull_request_review_comment:
+    types: [created]
+
+jobs:
+  review:
+    # For comments: only run if /oc or /opencode mentioned
+    # For PRs: always run
+    if: |
+      github.event_name == 'pull_request' ||
+      contains(github.event.comment.body, '/oc') ||
+      contains(github.event.comment.body, '/opencode')
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: write
+      pull-requests: write
+      issues: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - uses: anomalyco/opencode/github@latest
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          model: anthropic/claude-sonnet-4-20250514
+          prompt: |
+            You are OpenCode, the senior code reviewer for the io-game project (starve.io-style multiplayer survival game).
+            Read AGENTS.md and TODO.md first to understand the project and task workflow.
+
+            For this pull request:
+            1. Check that the PR title follows the [TASK-XX] format and references a real task in TODO.md
+            2. Review the code changes for correctness, TypeScript type safety, and adherence to project conventions in AGENTS.md
+            3. Verify the PR does not break shared/packets.ts or shared/constants.ts unless the task explicitly allows it
+            4. Check that no new npm dependencies were added without approval
+            5. Verify `npm run build` would pass (check for obvious TS errors in changed files)
+            6. Leave a detailed review comment: what's good, what needs fixing, and either APPROVE or REQUEST CHANGES
+            7. If the PR is ready to merge, add a comment saying "LGTM - ready to merge" and approve it
+            8. After reviewing, update TODO.md: mark the task as done if approved, or add a comment about what needs fixing
