@@ -368,3 +368,14 @@ Rare longer night event with stronger mobs and boosted drops/XP. Server announce
 - Caravan NPCs: neutral traders that roam map edges and offer rotating barter deals.
 - River fishing mini-system: craft rod, fish at water edges, cook for buffs.
 - Seasonal migration: herds move between biomes by time of day, changing risk/reward routes.
+
+## Fresh Ideas (2026-03-02 nightly)
+
+- Dynamic biome events: heatwave in desert / blizzard in snow that temporarily changes resource yields.
+- Hunter contracts: rotating mini-quests ("hunt 3 wolves", "collect 20 wood") with XP + cosmetic rewards.
+- Camp upgrades: evolve campfire into bonfire with aura buffs and larger warmth radius.
+- Traveling trader NPC: appears at random edge each day cycle, swaps rare crafting mats.
+- Territory totems: small buildable objectives that grant nearby team buffs if defended.
+- Echo caves: hidden underground pocket zones with high-risk mobs and rare drops.
+- Fishing system near ocean tiles with biome-specific fish and cooking recipes.
+- Seasonal world seeds: weekly modifiers (double animals, scarce berries, longer nights).
