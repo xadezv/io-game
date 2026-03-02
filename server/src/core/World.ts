@@ -145,6 +145,7 @@ export class World {
     spawn(EntityType.STONE,     STONE_COUNT,                   [BiomeType.PLAINS, BiomeType.FOREST, BiomeType.SNOW, BiomeType.DESERT]);
     spawn(EntityType.GOLD,      GOLD_COUNT,                    [BiomeType.PLAINS, BiomeType.SNOW, BiomeType.DESERT]);
     spawn(EntityType.BERRY,     BERRY_COUNT,                   [BiomeType.PLAINS, BiomeType.FOREST]);
+    spawn(EntityType.MUSHROOM,  Math.floor(BERRY_COUNT * 0.25), [BiomeType.FOREST]);
     spawn(EntityType.CACTUS,    Math.floor(BERRY_COUNT * 0.6), [BiomeType.DESERT]);
   }
 
@@ -160,6 +161,7 @@ export class World {
     spawn(EntityType.RABBIT,  Math.floor(ANIMAL_COUNT * 0.5), [BiomeType.PLAINS, BiomeType.FOREST]);
     spawn(EntityType.WOLF,    Math.floor(ANIMAL_COUNT * 0.35), [BiomeType.PLAINS, BiomeType.FOREST, BiomeType.SNOW]);
     spawn(EntityType.MAMMOTH, 10, [BiomeType.SNOW]);
+    this.spawnBear();
   }
 
   // ─── Player management ────────────────────────────────────────────────────
@@ -320,9 +322,19 @@ export class World {
     return removedIds;
   }
 
+  spawnBear(): Animal | null {
+    for (const a of this.animals.values()) if (!a.dead && a.type === EntityType.BEAR) return null;
+    const pos = this.randPos([BiomeType.FOREST]);
+    if (!pos) return null;
+    const bear = new Animal(EntityType.BEAR, pos.x, pos.y);
+    this.addAnimal(bear);
+    return bear;
+  }
+
   // ─── Update ───────────────────────────────────────────────────────────────
 
   removedEntityIds: number[] = [];
+  burningStructures: Set<number> = new Set();
 
   update(dt: number): void {
     this.removedEntityIds = [];
@@ -360,6 +372,7 @@ export class World {
     // BUG-18: decrement spike damageTimer each tick so it can fire again
     for (const s of this.structures.values()) {
       if (s.damageTimer > 0) s.damageTimer -= dt * 1000;
+      if (s.dead) { this.burningStructures.delete(s.id); continue; }
     }
 
     // Update players + grid
@@ -367,6 +380,15 @@ export class World {
       if (p.dead) continue;
       const ox = p.x, oy = p.y;
       p.update(dt);
+      const actual = Math.hypot(p.x - ox, p.y - oy);
+      const maxDelta = p.getEffectiveSpeed() * dt * 1.15;
+      if (actual > maxDelta) {
+        const r = maxDelta / (actual || 1);
+        p.x = ox + (p.x - ox) * r;
+        p.y = oy + (p.y - oy) * r;
+        p.violationCount++;
+        console.warn(`[ANTICHEAT] player ${p.id} clamped move from ${actual.toFixed(2)} to ${maxDelta.toFixed(2)}`);
+      }
       this.playerGrid.move(p.id, ox, oy, p.x, p.y);
       this.resolvePlayerCollisions(p);
     }

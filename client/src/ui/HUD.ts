@@ -11,6 +11,7 @@ export interface PlayerStats {
   selectedSlot: number;
   hatId: number;
   killStreak: number;
+  durability?: number[];
 }
 
 interface Bar {
@@ -402,6 +403,15 @@ export default class HUD {
           ctx.textBaseline = "middle";
           ctx.fillText(String(count), badgeX - 7, badgeY - 7);
         }
+      }
+
+      const d = stats.durability ?? [];
+      let rem = -1;
+      for (let di = 0; di + 1 < d.length; di += 2) if (d[di] === i) rem = d[di+1];
+      if (rem >= 0 && rem < 100) {
+        const ratio = Math.max(0, Math.min(1, rem / 200));
+        ctx.fillStyle = "rgba(255,140,0,0.9)";
+        ctx.fillRect(sx + 6, sy + SLOT_SIZE - 6, (SLOT_SIZE - 12) * ratio, 3);
       }
 
       // Hover tooltip: item name below slots
