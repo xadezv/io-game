@@ -9,6 +9,7 @@ export interface RecipeEntry {
   result: number;
   name: string;
   ingredients: RecipeIngredient[];
+  requiresWorkbench?: boolean;
 }
 
 // Layout constants
@@ -307,11 +308,15 @@ export default class CraftMenu {
     ctx.textBaseline = "top";
     ctx.fillText(recipe.name, x + swatchSize + 14, y + 8);
 
-    // Craftable badge
+    // Craftable badge / workshop hint
     if (craftable) {
       ctx.fillStyle = "#4ade80";
       ctx.font = "9px 'Fredoka One', sans-serif";
       ctx.fillText("✓ Craftable", x + swatchSize + 14, y + 22);
+    } else if (recipe.requiresWorkbench) {
+      ctx.fillStyle = "#f59e0b";
+      ctx.font = "9px 'Fredoka One', sans-serif";
+      ctx.fillText("(workshop)", x + swatchSize + 14, y + 22);
     }
 
     // Ingredients

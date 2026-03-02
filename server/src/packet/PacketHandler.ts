@@ -74,7 +74,7 @@ export function handlePacket(
 
     case PacketType.CRAFT: {
       const itemId = (data[1] as number) | 0;
-      const result = processCraft(player, itemId);
+      const result = processCraft(player, itemId, world);
       const sock   = (player as any).socket as Socket | undefined;
       sock?.emit('msg', [PacketType.CRAFT_RESULT, result.success ? 1 : 0, result.itemId ?? -1, result.count ?? 0]);
       break;

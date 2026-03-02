@@ -33,6 +33,7 @@ export const ItemId = {
   SPIKE_STONE:  44,
   WINDMILL:     45,
   CHEST:        46,
+  WORKSHOP:     48,
 
   // Hats / Clothing
   HAT_WINTER:   50,
@@ -57,11 +58,12 @@ export const RECIPES: Recipe[] = [
   { result: ItemId.SWORD,      count: 1, ingredients: [{ item: ItemId.WOOD, count: 5 },  { item: ItemId.STONE, count: 10 }] },
   { result: ItemId.BIG_AXE,    count: 1, ingredients: [{ item: ItemId.WOOD, count: 30 }, { item: ItemId.STONE, count: 20 }] },
   { result: ItemId.BIG_PICK,   count: 1, ingredients: [{ item: ItemId.WOOD, count: 30 }, { item: ItemId.STONE, count: 20 }] },
-  { result: ItemId.GOLD_AXE,   count: 1, ingredients: [{ item: ItemId.WOOD, count: 10 }, { item: ItemId.GOLD, count: 20 }] },
-  { result: ItemId.GOLD_SWORD, count: 1, ingredients: [{ item: ItemId.STONE, count: 5 }, { item: ItemId.GOLD, count: 25 }] },
-  { result: ItemId.GOLD_PICK,  count: 1, ingredients: [{ item: ItemId.STONE, count: 10 }, { item: ItemId.GOLD, count: 20 }] },
+  { result: ItemId.GOLD_AXE,   count: 1, ingredients: [{ item: ItemId.WOOD, count: 10 }, { item: ItemId.GOLD, count: 20 }], requiresWorkbench: true },
+  { result: ItemId.GOLD_SWORD, count: 1, ingredients: [{ item: ItemId.STONE, count: 5 }, { item: ItemId.GOLD, count: 25 }], requiresWorkbench: true },
+  { result: ItemId.GOLD_PICK,  count: 1, ingredients: [{ item: ItemId.STONE, count: 10 }, { item: ItemId.GOLD, count: 20 }], requiresWorkbench: true },
 
   // Structures
+  { result: ItemId.WORKSHOP,   count: 1, ingredients: [{ item: ItemId.WOOD, count: 40 }, { item: ItemId.STONE, count: 20 }] },
   { result: ItemId.CAMPFIRE,   count: 1, ingredients: [{ item: ItemId.WOOD, count: 5 }, { item: ItemId.STONE, count: 2 }] },
   { result: ItemId.WALL_WOOD,  count: 2, ingredients: [{ item: ItemId.WOOD, count: 10 }] },
   { result: ItemId.WALL_STONE, count: 2, ingredients: [{ item: ItemId.STONE, count: 10 }] },
@@ -119,6 +121,7 @@ export const ITEMS: Record<number, ItemDef> = {
   [ItemId.COAL]:        { id: ItemId.COAL,         name: 'Coal',         stackable: true,  maxStack: 999, isWeapon: false, isStructure: false, isFood: false, isHat: false, sprite: 'coal' },
   [ItemId.CACTUS_FLESH]:{ id: ItemId.CACTUS_FLESH, name: 'Cactus Flesh', stackable: true,  maxStack: 50,  isWeapon: false, isStructure: false, isFood: true,  isHat: false, foodHp: 3, foodHunger: 8, foodThirst: 12, sprite: 'cactus_flesh' },
 
+  [ItemId.WORKSHOP]:   { id: ItemId.WORKSHOP,      name: 'Workshop',     stackable: true,  maxStack: 3,   isWeapon: false, isStructure: true,  isFood: false, isHat: false, structureHp: 300, sprite: 'workbench' },
   [ItemId.CAMPFIRE]:   { id: ItemId.CAMPFIRE,      name: 'Campfire',     stackable: true,  maxStack: 10,  isWeapon: false, isStructure: true,  isFood: false, isHat: false, structureHp: 100, sprite: 'campfire' },
   [ItemId.WALL_WOOD]:  { id: ItemId.WALL_WOOD,     name: 'Wood Wall',    stackable: true,  maxStack: 20,  isWeapon: false, isStructure: true,  isFood: false, isHat: false, structureHp: 200, sprite: 'wall_wood' },
   [ItemId.WALL_STONE]: { id: ItemId.WALL_STONE,    name: 'Stone Wall',   stackable: true,  maxStack: 20,  isWeapon: false, isStructure: true,  isFood: false, isHat: false, structureHp: 400, sprite: 'wall_stone' },

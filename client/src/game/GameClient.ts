@@ -769,13 +769,14 @@ export class GameClient {
       20: 'Berries', 21: 'Cooked Meat', 22: 'Raw Meat', 23: 'Cookie',
       30: 'Wood', 31: 'Stone', 32: 'Gold', 33: 'Thread', 34: 'Coal', 35: 'Cactus', 36: 'Wheat',
       40: 'Campfire', 41: 'Wall', 42: 'Stone Wall', 43: 'Spike', 44: 'Stone Spike',
-      45: 'Windmill', 46: 'Chest',
+      45: 'Windmill', 46: 'Chest', 48: 'Workshop',
       50: 'Winter Hat', 51: 'Cowboy Hat', 52: 'Hood', 53: 'Coat',
     };
 
     this.craftRecipes = RECIPES.map((recipe) => ({
       result: recipe.result,
       name:   ITEM_NAMES[recipe.result] ?? `Item ${recipe.result}`,
+      requiresWorkbench: recipe.requiresWorkbench,
       ingredients: recipe.ingredients.map((ing) => ({
         item:  ing.item,
         name:  ITEM_NAMES[ing.item] ?? `Item ${ing.item}`,
