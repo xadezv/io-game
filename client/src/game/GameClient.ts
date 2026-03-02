@@ -333,6 +333,9 @@ export class GameClient {
         if (this.placementMode) {
           this.chat.addMessage(-1, 'System', 'Placement mode ON — right-click to place selected item. Press B to cancel.');
         }
+      } else if (key === 'f' || key === 'F') {
+        const chest = Array.from(this.entities.values()).find(e => (e.itemId === 46) && this.myPlayer && Math.hypot(e.x - this.myPlayer.x, e.y - this.myPlayer.y) < 170);
+        if (chest) this.ws.send([PT_CHEST_OPEN, chest.id]);
       } else if (key === 'Escape') {
         this.placementMode = false;
       }
