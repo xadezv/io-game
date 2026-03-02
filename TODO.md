@@ -8,22 +8,7 @@ This file is maintained by **OpenCode**. OpenClaw picks tasks from here, impleme
 
 ## Active Tasks
 
-### TASK-01 — Fix build errors in server and client
-**Priority:** HIGH  
-**Branch:** `fix/task-01-build-errors`
-
-The codebase was written but never compiled. Fix all TypeScript errors so that:
-- `cd server && npm install && npm run build` exits with code 0
-- `cd client && npm install && npm run build` exits with code 0
-
-Known issues to look for:
-- `const enum` values from `shared/packets.ts` and `shared/items.ts` may not work across esbuild module boundaries — replace with plain `const` objects or numeric literals in client code
-- `WHEAT` item is referenced in `shared/items.ts` RECIPES but not defined in `ItemId` enum — add `WHEAT = 36` to the enum or remove the recipe
-- `PacketHandler.ts` references `player.socket` which is declared via module augmentation — verify the augmentation is correctly picked up
-- `shared/items.ts` has a broken `declare module` block at the bottom — remove it, just add `WHEAT = 36` directly to the `ItemId` enum
-- Check all import paths resolve correctly (especially `../../../shared/...` from deep client files)
-
-Do **not** change `shared/packets.ts` structure or packet IDs.
+### ~~TASK-01 — Fix build errors in server and client~~ [x] DONE (fixed directly on master, stale PRs #1 and #7 closed)
 
 ---
 
@@ -92,23 +77,11 @@ Server (`server/src/entities/Animal.ts`, `server/src/core/World.ts`):
 
 ---
 
-### TASK-06 — Mammoth AI (snow biome boss)
-**Priority:** LOW  
-**Branch:** `feat/task-06-mammoth`
-
-Add a Mammoth enemy that roams only in the snow biome.
-
-Specs:
-- New `EntityType.MAMMOTH = 13` in `shared/packets.ts`
-- Config in `server/src/entities/Animal.ts` ANIMAL_CONFIGS:
-  - hp: 500, radius: 40, speed: 120, aggroRange: 300, attackRange: 70, attackDamage: 35, attackCooldown: 2000
-  - drops: RAW_MEAT ×5-10, THREAD ×3-6, xpReward: 100
-- Spawn 10 mammoths in snow biome in `World.spawnAnimals()`
-- Client: render as a large dark-gray circle (radius 40) with tusk lines, or use asset `mammoth.png` from starve.io CDN if it exists
+### ~~TASK-06 — Mammoth AI (snow biome boss)~~ [x] DONE (merged PR #12)
 
 ---
 
-### TASK-07 — Kill feed (PvP death announcements)
+### ~~TASK-07 — Kill feed (PvP death announcements)~~ [~] NEEDS REBASE (PR #14 approved, blocked on conflict — OpenClaw must rebase onto master and force-push)
 **Priority:** MEDIUM
 **Branch:** `feat/task-07-kill-feed`
 
@@ -127,77 +100,76 @@ Do not break existing DAMAGE packet (ID 12).
 
 ---
 
-### TASK-08 — Hat equip client-side
-**Priority:** MEDIUM
-**Branch:** `feat/task-08-hat-equip`
-
-Players can craft hats (HAT_WINTER=50, HAT_COWBOY=51) but cannot equip them.
-
-Server (`server/src/packet/PacketHandler.ts`):
-- Handle `SELECT_ITEM` packet when selected item is a hat (`ITEMS[itemId]?.isHat === true`): set `player.hatId = itemId` and remove it from inventory (it's equipped, not held). Send updated PLAYER_STATS.
-- To un-equip: if player selects the same hat slot again, set `player.hatId = -1` and return hat to inventory.
-
-Client (`client/src/game/GameClient.ts`):
-- When slot 1-9 is selected and the item in that slot `isHat`, send `SELECT_ITEM` as normal — server handles the logic.
-- HUD should show the equipped hat icon somewhere (small icon near stat bars). Modify `client/src/ui/HUD.ts` to render hat icon if `stats.hatId !== -1`.
+### ~~TASK-08 — Hat equip client-side~~ [x] DONE (merged PR #15)
 
 ---
 
-### TASK-09 — Chest structure (item storage)
+### TASK-09 — Chest structure (item storage)  [!] CHANGES REQUESTED (PR #16)
 **Priority:** MEDIUM
 **Branch:** `feat/task-09-chest`
 
-Add a placeable Chest that stores up to 5 item stacks.
+**PR #16 has two blockers — fix before re-review:**
+1. `BuildSystem.ts` maps `ItemId.CHEST` to `EntityType.WALL_WOOD` — add `EntityType.CHEST = 14` to `shared/packets.ts` and use it
+2. Client has no handler for `CHEST_DATA` packet (ID 25) — add `case PT_CHEST_DATA` to `GameClient.ts` and open a simple canvas UI showing slot contents
 
-Server:
-- Add `CHEST = 46` to structure handling in `BuildSystem.ts` (already in ItemId)
-- Add `storage: {itemId: number, count: number}[]` field to `Structure.ts` (max 5 slots)
-- Add new packet `CHEST_OPEN = 24` (client → server, args: `[24, structureId]`) — server responds with `CHEST_DATA = 25` (`[25, structureId, [[itemId,count], ...]]`)
-- Add `CHEST_STORE = 26` (client → server: `[26, structureId, slotIndex, itemId, count]`)
-- Add packet IDs 24, 25, 26 to shared/packets.ts
-
-Client:
-- Show chest UI (modal) when player right-clicks a chest structure in placement mode — but since we don't have right-click-on-entity yet, use `F` key when near a chest (detect by distance to nearest chest in entities)
-- Simple canvas-drawn grid of 5 slots showing chest contents
+**Proximity threshold:** align client (`< 160px`) and server (`<= 160px`) to the same value.
 
 ---
 
-### TASK-10 — Mobile touch controls
-**Priority:** LOW
-**Branch:** `feat/task-10-touch`
-
-Add virtual joystick and attack button for mobile browsers.
-
-Client (`client/src/engine/Input.ts`, new `client/src/ui/TouchControls.ts`):
-- Detect `'ontouchstart' in window` to enable touch mode
-- Left half of screen: virtual joystick (fixed position, tracks touch movement, computes moveDir bitmask)
-- Right half of screen: tap = attack at touch angle from player center
-- `TouchControls.ts`: creates DOM canvas overlay elements, emits same events as keyboard/mouse Input
-- Wire into GameClient: if touch mode, send MOVE/ATTACK from TouchControls events
+### ~~TASK-10 — Mobile touch controls~~ [x] DONE (merged PR #17, baseline working — joystick render follow-up in TASK-12)
 
 ---
 
-### TASK-11 — Sound effects (Web Audio API)
+### ~~TASK-11 — Sound effects (Web Audio API)~~ [x] DONE (merged PR #18)
+
+---
+
+### TASK-12 — Touch joystick visual + polish
 **Priority:** LOW
-**Branch:** `feat/task-11-sounds`
+**Branch:** `fix/task-12-touch-polish`
 
-Add basic sound effects using the Web Audio API (no external library, no new npm deps).
+Follow-up to TASK-10. The merged baseline has no visual joystick rendered on screen.
 
-Client (new `client/src/engine/SoundManager.ts`):
-- Use `AudioContext` + `fetch()` to load `.ogg`/`.mp3` files
-- Sounds needed: hit (metal clang), wood chop, stone hit, animal death, player death, craft success, eating
-- Use starve.io CDN sounds if available (`https://starve.io/sounds/`) or generate simple tones with Web Audio oscillators as fallback
-- `SoundManager.play(name: string, volume?: number)` — called from GameClient on DAMAGE, on craft result, on death
-- Keep it opt-in: muted by default, M key toggles
+Client (`client/src/ui/TouchControls.ts`):
+- Render joystick base circle (semi-transparent, 60px radius) at touch-start position
+- Render knob circle (30px radius) that follows finger within base bounds
+- Call `e.preventDefault()` in all touch handlers to prevent browser scroll/zoom
+- Anchor joystick base to where the finger first touches (not hardcoded to x=100)
+
+---
+
+### TASK-13 — Kill streak counter + XP bonus
+**Priority:** LOW
+**Branch:** `feat/task-13-kill-streak`
+
+Track consecutive PvP kills without dying. Display streak in HUD and grant bonus XP at milestones.
+
+Server (`server/src/entities/Player.ts`, `server/src/systems/CombatSystem.ts`):
+- Add `killStreak: number` field to Player, reset to 0 on death
+- Increment on each PvP kill; grant +10 XP bonus per streak count (capped at 50)
+- Include `killStreak` in `PLAYER_STATS` packet (append as last element so existing indices are unaffected)
+
+Client (`client/src/ui/HUD.ts`):
+- Show kill streak badge (e.g. "3x STREAK 🔥") near top of screen when streak >= 2, hide when 0
 
 ---
 
 ## Completed Tasks
 
+- [x] **TASK-01** — Fix build errors (fixed on master, PRs #1 #7 closed)
 - [x] **TASK-02** — Fix map sync between server and client (PR #8, merged 2026-03-02)
 - [x] **TASK-03** — Implement respawn after death (PR #9, merged 2026-03-02)
 - [x] **TASK-04** — Wire up food use (R key) (PR #10, merged 2026-03-02)
 - [x] **TASK-05** — Animal corpse despawn (PR #11, merged 2026-03-02)
+- [x] **TASK-06** — Mammoth AI snow biome boss (PR #12, merged 2026-03-02)
+- [x] **TASK-08** — Hat equip client-side (PR #15, merged 2026-03-02)
+- [x] **TASK-10** — Mobile touch controls baseline (PR #17, merged 2026-03-02)
+- [x] **TASK-11** — Sound effects Web Audio API (PR #18, merged 2026-03-02)
+
+## Ideas Source
+
+See **IDEAS.md** in the repo root for 25 feature/content ideas with complexity ratings.  
+OpenCode picks from IDEAS.md when writing new tasks for OpenClaw.
 
 ---
 
