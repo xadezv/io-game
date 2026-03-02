@@ -255,15 +255,69 @@ export class World {
     return result;
   }
 
-  getLeaderboard(): [number, string, number][] {
+  getLeaderboard(): [number, string, number, number][] {
     return Array.from(this.players.values())
       .sort((a, b) => b.points - a.points)
       .slice(0, 10)
-      .map(p => [p.id, p.nickname, p.points]);
+      .map(p => [p.id, p.nickname, p.points, p.kills]);
   }
 
   findSpawnPos(): { x: number; y: number } {
     return this.randPos([BiomeType.PLAINS]) ?? { x: MAP_SIZE / 2, y: MAP_SIZE / 2 };
+  }
+
+  /** Spawn 2–3 night wolves near map edges at non-ocean biomes. */
+  spawnNightWolves(): Animal[] {
+    const count  = 2 + Math.floor(this.rng.nextFloat(0, 1) * 2); // 2 or 3
+    const margin = 1200;
+    const spawned: Animal[] = [];
+
+    for (let i = 0; i < count; i++) {
+      // Pick a random edge side
+      const side = Math.floor(this.rng.nextFloat(0, 4));
+      let x = 0, y = 0;
+      switch (side) {
+        case 0: x = this.rng.nextFloat(margin, MAP_SIZE - margin); y = margin; break;
+        case 1: x = this.rng.nextFloat(margin, MAP_SIZE - margin); y = MAP_SIZE - margin; break;
+        case 2: x = margin;            y = this.rng.nextFloat(margin, MAP_SIZE - margin); break;
+        default: x = MAP_SIZE - margin; y = this.rng.nextFloat(margin, MAP_SIZE - margin); break;
+      }
+      const biome = getBiomeAt(this.mapData, x, y);
+      if (biome === BiomeType.OCEAN) continue;
+
+      const wolf = new Animal(EntityType.WOLF, x, y);
+      wolf.isNightWolf = true;
+      wolf.aggroRange  = Math.round(wolf.config.aggroRange * 1.5); // 50% boost
+      this.addAnimal(wolf);
+      spawned.push(wolf);
+    }
+
+    // Also boost all existing wolves' aggroRange at night
+    for (const a of this.animals.values()) {
+      if (a.dead || a.type !== EntityType.WOLF || a.isNightWolf) continue;
+      a.aggroRange = Math.round(a.config.aggroRange * 1.5);
+    }
+
+    return spawned;
+  }
+
+  /** Remove night wolves and restore all wolf aggroRange to daytime value. */
+  removeNightWolves(): number[] {
+    const removedIds: number[] = [];
+
+    for (const a of this.animals.values()) {
+      if (a.isNightWolf) {
+        this.animals.delete(a.id);
+        this.allById.delete(a.id);
+        this.animalGrid.remove(a.id, a.x, a.y);
+        removedIds.push(a.id);
+      } else if (a.type === EntityType.WOLF) {
+        // Restore day aggroRange
+        a.aggroRange = a.config.aggroRange;
+      }
+    }
+
+    return removedIds;
   }
 
   // ─── Update ───────────────────────────────────────────────────────────────

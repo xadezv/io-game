@@ -2,6 +2,7 @@ export interface LeaderboardEntry {
   id: number;
   nickname: string;
   points: number;
+  kills?: number;
 }
 
 const MAX_ENTRIES = 10;
@@ -136,9 +137,23 @@ export default class Leaderboard {
       ].join(";");
       ptsEl.textContent = this._formatPoints(entry.points);
 
+      // Kills
+      const killsEl = document.createElement("span");
+      killsEl.style.cssText = [
+        "font-family: 'Fredoka One', sans-serif",
+        "font-size: 10px",
+        "color: rgba(239,68,68,0.85)",
+        "white-space: nowrap",
+        "min-width: 28px",
+        "text-align: right",
+      ].join(";");
+      killsEl.textContent = `⚔${entry.kills ?? 0}`;
+      killsEl.title = `${entry.kills ?? 0} kills`;
+
       row.appendChild(rankEl);
       row.appendChild(nameEl);
       row.appendChild(ptsEl);
+      row.appendChild(killsEl);
       this.listEl!.appendChild(row);
 
       // Divider (not after last)

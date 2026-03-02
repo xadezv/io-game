@@ -7,7 +7,7 @@ import {
   HUNGER_DRAIN, THIRST_DRAIN, TEMP_COLD_DRAIN, TEMP_HOT_DRAIN, TEMP_NORMAL,
 } from '../../../shared/constants';
 
-export function updateSurvival(player: Player, world: World, dt: number, isNight: boolean): void {
+export function updateSurvival(player: Player, world: World, dt: number, isNight: boolean, stormActive: boolean = false): void {
   // Stat decay
   player.hunger = Math.max(0, player.hunger - HUNGER_DRAIN * dt);
   player.thirst = Math.max(0, player.thirst - THIRST_DRAIN * dt);
@@ -42,8 +42,9 @@ export function updateSurvival(player: Player, world: World, dt: number, isNight
     }
   }
 
-  // Lerp temp toward target
-  const rate = biome === BiomeType.SNOW ? TEMP_COLD_DRAIN : TEMP_HOT_DRAIN;
+  // Lerp temp toward target (storm doubles drain rate in snow biome)
+  const stormMult = (stormActive && biome === BiomeType.SNOW) ? 2 : 1;
+  const rate = (biome === BiomeType.SNOW ? TEMP_COLD_DRAIN : TEMP_HOT_DRAIN) * stormMult;
   const diff = tempTarget - player.temp;
   player.temp = Math.max(0, Math.min(100, player.temp + diff * rate * dt * 0.12));
 

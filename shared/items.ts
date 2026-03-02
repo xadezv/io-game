@@ -33,6 +33,8 @@ export const ItemId = {
   SPIKE_STONE:  44,
   WINDMILL:     45,
   CHEST:        46,
+  FURNACE:      47,
+  WORKSHOP:     48,
 
   // Hats / Clothing
   HAT_WINTER:   50,
@@ -57,15 +59,18 @@ export const RECIPES: Recipe[] = [
   { result: ItemId.SWORD,      count: 1, ingredients: [{ item: ItemId.WOOD, count: 5 },  { item: ItemId.STONE, count: 10 }] },
   { result: ItemId.BIG_AXE,    count: 1, ingredients: [{ item: ItemId.WOOD, count: 30 }, { item: ItemId.STONE, count: 20 }] },
   { result: ItemId.BIG_PICK,   count: 1, ingredients: [{ item: ItemId.WOOD, count: 30 }, { item: ItemId.STONE, count: 20 }] },
-  { result: ItemId.GOLD_AXE,   count: 1, ingredients: [{ item: ItemId.WOOD, count: 10 }, { item: ItemId.GOLD, count: 20 }] },
-  { result: ItemId.GOLD_SWORD, count: 1, ingredients: [{ item: ItemId.STONE, count: 5 }, { item: ItemId.GOLD, count: 25 }] },
-  { result: ItemId.GOLD_PICK,  count: 1, ingredients: [{ item: ItemId.STONE, count: 10 }, { item: ItemId.GOLD, count: 20 }] },
+  { result: ItemId.GOLD_AXE,   count: 1, ingredients: [{ item: ItemId.WOOD, count: 10 }, { item: ItemId.GOLD, count: 20 }], requiresWorkbench: true },
+  { result: ItemId.GOLD_SWORD, count: 1, ingredients: [{ item: ItemId.STONE, count: 5 }, { item: ItemId.GOLD, count: 25 }], requiresWorkbench: true },
+  { result: ItemId.GOLD_PICK,  count: 1, ingredients: [{ item: ItemId.STONE, count: 10 }, { item: ItemId.GOLD, count: 20 }], requiresWorkbench: true },
 
   // Structures
   { result: ItemId.CAMPFIRE,   count: 1, ingredients: [{ item: ItemId.WOOD, count: 5 }, { item: ItemId.STONE, count: 2 }] },
   { result: ItemId.WALL_WOOD,  count: 2, ingredients: [{ item: ItemId.WOOD, count: 10 }] },
   { result: ItemId.WALL_STONE, count: 2, ingredients: [{ item: ItemId.STONE, count: 10 }] },
   { result: ItemId.SPIKE_WOOD, count: 1, ingredients: [{ item: ItemId.WOOD, count: 20 }, { item: ItemId.STONE, count: 5 }] },
+  { result: ItemId.FURNACE,    count: 1, ingredients: [{ item: ItemId.STONE, count: 20 }, { item: ItemId.COAL, count: 5 }] },
+  { result: ItemId.WORKSHOP,   count: 1, ingredients: [{ item: ItemId.WOOD, count: 40 }, { item: ItemId.STONE, count: 20 }] },
+  { result: ItemId.CHEST,      count: 1, ingredients: [{ item: ItemId.WOOD, count: 30 }] },
 
   // Food
   { result: ItemId.COOKIE,     count: 1, ingredients: [{ item: ItemId.BERRIES, count: 7 }, { item: ItemId.WHEAT, count: 3 }] },

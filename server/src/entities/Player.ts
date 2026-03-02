@@ -45,7 +45,8 @@ export class Player extends Entity {
   level  = 1;
   xp     = 0;
 
-  // Kill streak (consecutive PvP kills without dying)
+  // PvP stats
+  kills      = 0;
   killStreak = 0;
 
   // State

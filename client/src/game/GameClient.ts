@@ -467,7 +467,7 @@ export class GameClient {
     if (Array.isArray(lbRaw)) {
       this.leaderboardEntries = (lbRaw as unknown[]).map((entry) => {
         const e = entry as unknown[];
-        return { id: e[0] as number, nickname: e[1] as string, points: e[2] as number };
+        return { id: e[0] as number, nickname: e[1] as string, points: e[2] as number, kills: (e[3] as number | undefined) ?? 0 };
       });
       this.leaderboard.update(this.leaderboardEntries);
     }
@@ -573,6 +573,7 @@ export class GameClient {
 
     this.stats.selectedSlot = (s[8] as number | undefined) ?? this.stats.selectedSlot;
     this.stats.hatId        = (s[9] as number | undefined) ?? this.stats.hatId;
+    this.stats.killStreak   = (s[10] as number | undefined) ?? this.stats.killStreak;
 
     // Keep myPlayer in sync
     if (this.myPlayer) {
@@ -639,7 +640,7 @@ export class GameClient {
 
     this.leaderboardEntries = (raw as unknown[]).map((entry) => {
       const e = entry as unknown[];
-      return { id: e[0] as number, nickname: e[1] as string, points: e[2] as number };
+      return { id: e[0] as number, nickname: e[1] as string, points: e[2] as number, kills: (e[3] as number | undefined) ?? 0 };
     });
     this.leaderboard.update(this.leaderboardEntries);
   }

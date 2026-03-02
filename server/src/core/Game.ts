@@ -19,6 +19,14 @@ export class Game {
   private cycleMax  = DAY_DURATION;
   private lbTimer   = 0;
 
+  // Snowstorm (TASK-20)
+  stormActive = false;
+  private stormTimer  = 7 * 60 * 1000; // ms until next storm onset
+  private stormWarned = false;
+  private readonly STORM_MIN_INTERVAL = 5  * 60 * 1000;
+  private readonly STORM_MAX_INTERVAL = 10 * 60 * 1000;
+  private readonly STORM_DURATION     = 60 * 1000;
+
   constructor(io: any) {
     this.io    = io;
     this.world = new World();
@@ -64,6 +72,7 @@ export class Game {
     p.dead       = false;
     p.moveDir    = 0;
     p.killStreak = 0;
+    p.kills      = 0;
     // Clear inventory on death (fresh start)
     p.inventory = Array(10).fill(null).map(() => ({ itemId: -1, count: 0 }));
 
@@ -114,8 +123,22 @@ export class Game {
     this.gameTime += dt * 1000;
     if (this.gameTime >= this.cycleMax) {
       this.gameTime = 0;
-      this.isNight  = !this.isNight;
-      this.cycleMax = this.isNight ? NIGHT_DURATION : DAY_DURATION;
+      const wasNight = this.isNight;
+      this.isNight   = !this.isNight;
+      this.cycleMax  = this.isNight ? NIGHT_DURATION : DAY_DURATION;
+
+      if (this.isNight && !wasNight) {
+        // Day → Night: spawn wolf pack
+        const nightWolves = this.world.spawnNightWolves();
+        console.log(`[Night] Spawned ${nightWolves.length} night wolves`);
+      } else if (!this.isNight && wasNight) {
+        // Night → Day: remove night wolves, restore aggro
+        const removedIds = this.world.removeNightWolves();
+        for (const id of removedIds) {
+          this.io.emit('msg', [PacketType.ENTITY_REMOVE, id]);
+        }
+        console.log(`[Day] Removed ${removedIds.length} night wolves`);
+      }
     }
 
     // World physics + animal AI
@@ -133,7 +156,7 @@ export class Game {
     // Survival drain
     for (const p of this.world.players.values()) {
       if (p.dead) continue;
-      updateSurvival(p, this.world, dt, this.isNight);
+      updateSurvival(p, this.world, dt, this.isNight, this.stormActive);
       if (p.hp <= 0) this.killPlayer(p);
     }
 
@@ -167,6 +190,30 @@ export class Game {
     if (this.lbTimer >= 3000) {
       this.lbTimer = 0;
       this.io.emit('msg', [PacketType.LEADERBOARD, this.world.getLeaderboard()]);
+    }
+
+    // Snowstorm (TASK-20)
+    this.stormTimer -= dt * 1000;
+    if (!this.stormActive) {
+      // Count down to next storm
+      if (!this.stormWarned && this.stormTimer <= 30_000) {
+        this.stormWarned = true;
+        this.io.emit('msg', [PacketType.CHAT_BROADCAST, -1, 'System', 'A snowstorm is approaching the snow biome!']);
+      }
+      if (this.stormTimer <= 0) {
+        this.stormActive  = true;
+        this.stormTimer   = this.STORM_DURATION;
+        this.stormWarned  = false;
+        this.io.emit('msg', [PacketType.WEATHER, 1, this.STORM_DURATION]);
+      }
+    } else {
+      // Storm is active — count down duration
+      if (this.stormTimer <= 0) {
+        this.stormActive = false;
+        const interval   = this.STORM_MIN_INTERVAL + Math.random() * (this.STORM_MAX_INTERVAL - this.STORM_MIN_INTERVAL);
+        this.stormTimer  = interval;
+        this.io.emit('msg', [PacketType.WEATHER, 0, 0]);
+      }
     }
   }
 
