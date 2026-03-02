@@ -230,6 +230,7 @@ export class GameClient {
     inventory:    Array.from({ length: 10 }, () => [0, 0] as [number, number]),
     selectedSlot: 0,
     hatId:        -1,
+    killStreak:   0,
   };
 
   // Leaderboard data
@@ -564,6 +565,7 @@ export class GameClient {
 
     this.stats.selectedSlot = (s[8] as number | undefined) ?? this.stats.selectedSlot;
     this.stats.hatId        = (s[9] as number | undefined) ?? this.stats.hatId;
+    this.stats.killStreak    = (s[10] as number | undefined) ?? this.stats.killStreak;
 
     // Keep myPlayer in sync
     if (this.myPlayer) {
