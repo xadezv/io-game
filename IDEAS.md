@@ -379,3 +379,16 @@ Rare longer night event with stronger mobs and boosted drops/XP. Server announce
 - Echo caves: hidden underground pocket zones with high-risk mobs and rare drops.
 - Fishing system near ocean tiles with biome-specific fish and cooking recipes.
 - Seasonal world seeds: weekly modifiers (double animals, scarce berries, longer nights).
+
+## Fresh Gameplay Ideas (2026-03-02)
+
+- **Heatwave Event (Desert-only):** Short daytime events that increase thirst drain and reduce visibility with shimmer. Encourages temporary migration and campfire/water prep.
+- **Hunter Contract Board:** A craftable board that periodically gives mini-objectives (e.g., kill 3 wolves, gather 30 wood) for XP/points rewards.
+- **Caravan Drops:** Neutral AI caravans cross the map edge-to-edge carrying loot crates; players can protect or raid them for rewards.
+- **Biome Relics:** Rare relic nodes in each biome that grant a passive buff while carried (e.g., +temp resist, +gather speed) but reveal holder on minimap.
+- **Fog-of-War Totems:** Placeable totems that clear minimap fog in a radius for your team/clan, creating map-control gameplay.
+- **Blood Moon Night:** Rare night modifier where aggressive mobs spawn more often and yield bonus XP/drops.
+- **Traps 2.0:** Craftable snare/net traps that immobilize animals/players briefly; visible if close enough.
+- **Portable Water Skin:** Craftable consumable container that restores thirst over time and helps survive long desert runs.
+- **Seasonal Biome Shift:** Every in-game hour, biome borders subtly shift, forcing adaptation and repositioning.
+- **World Event Boss Beacon:** Random beacon appears; first players to activate it spawn a boss encounter with shared loot table.
