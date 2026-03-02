@@ -6,7 +6,7 @@ import { processAttack } from '../systems/CombatSystem';
 import { processCraft }  from '../systems/CraftSystem';
 import { processPlace }  from '../systems/BuildSystem';
 import { useFood }       from '../systems/SurvivalSystem';
-import { ItemId }        from '../../../shared/items';
+import { ItemId, ITEMS } from '../../../shared/items';
 
 export function handlePacket(
   player: Player,
@@ -33,7 +33,31 @@ export function handlePacket(
 
     case PacketType.SELECT_ITEM: {
       const slot = (data[1] as number) | 0;
-      if (slot >= 0 && slot < 10) player.selectedSlot = slot;
+      if (slot < 0 || slot >= 10) break;
+
+      const invSlot = player.inventory[slot];
+      const itemId = invSlot?.count > 0 ? invSlot.itemId : -1;
+      const itemDef = itemId >= 0 ? ITEMS[itemId] : undefined;
+
+      if (itemDef?.isHat) {
+        if (player.hatId === itemId) {
+          // unequip same hat back to inventory
+          if (player.addItem(itemId as ItemId, 1)) {
+            player.hatId = -1;
+          }
+        } else {
+          // equip hat from selected slot
+          if (player.removeItem(itemId as ItemId, 1)) {
+            if (player.hatId !== -1) player.addItem(player.hatId as ItemId, 1);
+            player.hatId = itemId;
+          }
+        }
+      } else {
+        player.selectedSlot = slot;
+      }
+
+      const sock = (player as any).socket as Socket | undefined;
+      sock?.emit('msg', [PacketType.PLAYER_STATS, player.serializeStats()]);
       break;
     }
 

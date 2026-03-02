@@ -114,6 +114,25 @@ export default class HUD {
     const xpBarY = firstBarY - 28;
     this._drawLevelXP(stats, BAR_X, xpBarY);
 
+    // Equipped hat indicator
+    if (stats.hatId !== -1) {
+      ctx.fillStyle = 'rgba(0,0,0,0.55)';
+      ctx.beginPath();
+      this._roundRect(BAR_X + BAR_WIDTH + 10, xpBarY - 2, 42, 24, 6);
+      ctx.fill();
+      ctx.strokeStyle = 'rgba(255,255,255,0.25)';
+      ctx.stroke();
+      ctx.fillStyle = '#fff';
+      ctx.font = "10px 'Fredoka One', sans-serif";
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      const label = stats.hatId === 50 ? 'WINTER' : (stats.hatId === 51 ? 'COWBOY' : `HAT ${stats.hatId}`);
+      ctx.fillText('🎩', BAR_X + BAR_WIDTH + 22, xpBarY + 10);
+      ctx.fillText(label.slice(0,6), BAR_X + BAR_WIDTH + 31, xpBarY + 10);
+      ctx.textAlign = 'left';
+      ctx.textBaseline = 'alphabetic';
+    }
+
     // --- Draw status bars ---
     bars.forEach((bar, i) => {
       const by = firstBarY + i * BAR_GAP;
