@@ -515,6 +515,7 @@ export class GameClient {
       const level     = (raw[9]  as number | undefined) ?? 1;
       const attacking = (raw[10] as number | undefined) ?? 0;
       const atkAngle  = (raw[11] as number | undefined) ?? 0;
+      const isBurning = ((raw[12] as number | undefined) ?? 0) !== 0;
 
       const existing = this.entities.get(id);
       const maxHp    = existing?.maxHp ?? this._defaultMaxHp(type);
@@ -533,6 +534,7 @@ export class GameClient {
         level,
         isAttacking: attacking !== 0,
         attackAngle: atkAngle,
+        isBurning,
         renderX:     existing?.renderX ?? x,
         renderY:     existing?.renderY ?? y,
       };

@@ -23,6 +23,8 @@ export class Structure extends Entity {
     this.spikeDamage = spikeDamage;
   }
 
+  isBurning = false;
+
   serialize(): unknown[] {
     return [
       this.id, this.type,
@@ -30,6 +32,7 @@ export class Structure extends Entity {
       Math.round(this.angle * 100) / 100,
       this.hp,
       this.itemId, -1, '', 1, 0, 0,
+      this.isBurning ? 1 : 0,
     ];
   }
 }

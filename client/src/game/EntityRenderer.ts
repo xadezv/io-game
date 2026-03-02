@@ -25,6 +25,7 @@ export interface ClientEntity {
   attackAngle:  number;
   renderX:      number;   // smoothed render position
   renderY:      number;
+  isBurning?:   boolean;
 }
 
 export interface AssetLoaderIface {
@@ -528,6 +529,7 @@ export class EntityRenderer {
       ctx.restore();
     }
 
+    if (e.isBurning) this._drawBurningGlow(screen.x, screen.y, size * 0.55);
     this._drawHpBar(e, screen.x, screen.y, size * 0.5 + 8 * z, camera);
   }
 
@@ -570,6 +572,7 @@ export class EntityRenderer {
       ctx.restore();
     }
 
+    if (e.isBurning) this._drawBurningGlow(screen.x, screen.y, 26 * z);
     this._drawHpBar(e, screen.x, screen.y, 30 * z + 8 * z, camera);
   }
 
@@ -641,6 +644,22 @@ export class EntityRenderer {
       e.hp, maxHp,
       '#e74c3c', '#333333',
     );
+  }
+
+  private _drawBurningGlow(sx: number, sy: number, radius: number): void {
+    const { ctx } = this.renderer;
+    ctx.save();
+    ctx.globalAlpha = 0.3;
+    ctx.fillStyle = '#ff8c00';
+    ctx.beginPath();
+    ctx.arc(sx, sy, radius, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.globalAlpha = 0.2;
+    ctx.fillStyle = '#ffd54f';
+    ctx.beginPath();
+    ctx.arc(sx, sy, radius * 0.65, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.restore();
   }
 
   /** Draw a weapon-swing arc centred at (sx, sy). */

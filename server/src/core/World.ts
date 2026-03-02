@@ -73,6 +73,8 @@ export class World {
   resources:  Map<number, Resource>  = new Map();
   animals:    Map<number, Animal>    = new Map();
   structures: Map<number, Structure> = new Map();
+  burningStructures: Set<number> = new Set();
+  lastDt = 0;
 
   // BUG-17: spike damage events collected each tick for Game.ts to broadcast
   spikeHits: Array<{ socketId: string; damage: number; playerId: number }> = [];
@@ -129,6 +131,15 @@ export class World {
     this.structures.set(s.id, s);
     this.allById.set(s.id, s);
     this.structureGrid.add(s.id, s.x, s.y);
+  }
+
+  removeStructure(id: number): void {
+    const s = this.structures.get(id);
+    if (!s) return;
+    this.structures.delete(id);
+    this.allById.delete(id);
+    this.structureGrid.remove(id, s.x, s.y);
+    this.burningStructures.delete(id);
   }
 
   private spawnResources(): void {
@@ -325,6 +336,7 @@ export class World {
   removedEntityIds: number[] = [];
 
   update(dt: number): void {
+    this.lastDt = dt;
     this.removedEntityIds = [];
     // BUG-17: clear spike hits at start of each tick
     this.spikeHits = [];
@@ -360,6 +372,7 @@ export class World {
     // BUG-18: decrement spike damageTimer each tick so it can fire again
     for (const s of this.structures.values()) {
       if (s.damageTimer > 0) s.damageTimer -= dt * 1000;
+      if (s.dead) this.burningStructures.delete(s.id);
     }
 
     // Update players + grid
