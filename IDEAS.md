@@ -354,3 +354,10 @@ Rare longer night event with stronger mobs and boosted drops/XP. Server announce
 - **Beast Tracker Lens:** craftable utility item that highlights nearby elite creatures for a few seconds on use.
 - **Clan Banner Buffs:** placeable banner gives minor aura buffs to nearby allies but reveals base position on minimap.
 - **Meteor Ore Showers:** rare falling-star events spawn contested high-tier ore nodes with timed despawn.
+
+## New ideas (2026-03-02 cron)
+- Dynamic biome events: desert heatwave and forest fog with temporary stat modifiers
+- Tamed pet companion from rescued rabbit that gathers berries passively
+- World relic shrines that grant team-wide buffs when activated
+- Fishing spots in lake/ocean edges with rare food + crafting materials
+- Traveling trader NPC that appears at dusk with rotating item deals
