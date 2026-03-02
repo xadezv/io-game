@@ -239,3 +239,25 @@ Ideas are ordered by category and tagged with complexity and implementation scop
 ## [IDEA-31] Echo Compass
 **Complexity:** low
 **Description:** Craftable utility item that pings nearest high-value target (gold node, mammoth, or enemy player) with a cooldown. Helps solo players navigate objectives without opening full-map intel.
+
+## New Ideas (2026-03-02)
+
+### 1) Sandstorm Event
+- **Description:** Periodic desert-wide sandstorms reduce visibility, increase thirst drain, and reveal rare buried loot nodes after storm ends.
+- **Complexity:** medium
+
+### 2) Totem Buff Structures
+- **Description:** Craftable tribal totems that grant a small aura bonus (movement speed, gathering speed, or temperature resistance) to nearby allies.
+- **Complexity:** medium
+
+### 3) River Fishing + Cooking Loop
+- **Description:** Add fish resources in water edges, simple fishing rod crafting, and campfire recipes for fish-based hunger/thirst restoration.
+- **Complexity:** low
+
+### 4) Dynamic Boss Migration
+- **Description:** World bosses (like mammoth variants) migrate between biomes over time, creating PvP hotspots and temporary objective markers.
+- **Complexity:** high
+
+### 5) Caravan NPC Trader
+- **Description:** Neutral caravan appears at random intervals and exchanges surplus materials for rare crafting components and cosmetic hats.
+- **Complexity:** medium
