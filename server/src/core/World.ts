@@ -160,6 +160,7 @@ export class World {
     spawn(EntityType.RABBIT,  Math.floor(ANIMAL_COUNT * 0.5), [BiomeType.PLAINS, BiomeType.FOREST]);
     spawn(EntityType.WOLF,    Math.floor(ANIMAL_COUNT * 0.35), [BiomeType.PLAINS, BiomeType.FOREST, BiomeType.SNOW]);
     spawn(EntityType.MAMMOTH, 10, [BiomeType.SNOW]);
+    this.spawnBear();
   }
 
   // ─── Player management ────────────────────────────────────────────────────
@@ -264,6 +265,25 @@ export class World {
 
   findSpawnPos(): { x: number; y: number } {
     return this.randPos([BiomeType.PLAINS]) ?? { x: MAP_SIZE / 2, y: MAP_SIZE / 2 };
+  }
+
+
+  spawnBear(): Animal | null {
+    for (const a of this.animals.values()) {
+      if (!a.dead && a.type === EntityType.BEAR) return null;
+    }
+    const pos = this.randPos([BiomeType.FOREST]);
+    if (!pos) return null;
+    const bear = new Animal(EntityType.BEAR, pos.x, pos.y);
+    this.addAnimal(bear);
+    return bear;
+  }
+
+  hasLivingBear(): boolean {
+    for (const a of this.animals.values()) {
+      if (!a.dead && a.type === EntityType.BEAR) return true;
+    }
+    return false;
   }
 
   /** Spawn 2–3 night wolves near map edges at non-ocean biomes. */

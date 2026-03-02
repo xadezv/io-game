@@ -5,6 +5,7 @@ import { World } from '../core/World';
 import { ItemId, ITEMS } from '../../../shared/items';
 import { ATTACK_COOLDOWN } from '../../../shared/constants';
 import { RNG } from '../map/MapGen';
+import { EntityType } from '../../../shared/packets';
 
 const rng = new RNG(Date.now());
 
@@ -131,6 +132,30 @@ export function processAnimalAttacks(world: World): { playerId: string; damage: 
     if (a.dead || a.config.aggroRange === 0) continue;
     // Use spatial grid to find nearby players
     const nearby = world.getNearbyPlayers(a.x, a.y, a.config.attackRange + 40);
+
+    if (a.type === EntityType.BEAR) {
+      const inRange = nearby.filter((p) => !p.dead && a.canAttack(p));
+      if (inRange.length === 0) continue;
+      a.doAttack(inRange[0]);
+      let hits = 0;
+      for (const p of inRange) {
+        const dx = p.x - a.x;
+        const dy = p.y - a.y;
+        const dist = Math.hypot(dx, dy) || 1;
+        const dir = Math.atan2(dy, dx);
+        let diff = Math.abs(dir - a.angle);
+        if (diff > Math.PI) diff = (Math.PI * 2) - diff;
+        const withinArc = diff <= (Math.PI / 3); // 120° arc
+        if (!withinArc || dist > a.config.attackRange + p.radius) continue;
+
+        p.hp = Math.max(0, p.hp - a.config.attackDamage);
+        results.push({ playerId: p.socketId, damage: a.config.attackDamage });
+        hits++;
+        if (hits >= 3) break;
+      }
+      continue;
+    }
+
     for (const p of nearby) {
       if (p.dead) continue;
       if (a.canAttack(p)) {

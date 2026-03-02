@@ -24,6 +24,7 @@ export const ItemId = {
   COAL:         34,
   CACTUS_FLESH: 35,
   WHEAT:        36,
+  PELT:         39,
 
   // Structures (placeable)
   CAMPFIRE:     40,
@@ -41,6 +42,7 @@ export const ItemId = {
   HAT_COWBOY:   51,
   HAT_HOOD:     52,
   COAT:         53,
+  HAT_FUR:      54,
 } as const;
 
 export type ItemId = typeof ItemId[keyof typeof ItemId];
@@ -78,6 +80,7 @@ export const RECIPES: Recipe[] = [
   // Clothing
   { result: ItemId.HAT_WINTER, count: 1, ingredients: [{ item: ItemId.THREAD, count: 15 }] },
   { result: ItemId.HAT_COWBOY, count: 1, ingredients: [{ item: ItemId.THREAD, count: 10 }, { item: ItemId.WOOD, count: 5 }] },
+  { result: ItemId.HAT_FUR,    count: 1, ingredients: [{ item: ItemId.PELT, count: 5 }, { item: ItemId.THREAD, count: 10 }] },
 ];
 
 export interface ItemDef {
@@ -123,6 +126,7 @@ export const ITEMS: Record<number, ItemDef> = {
   [ItemId.WHEAT]:      { id: ItemId.WHEAT,         name: 'Wheat',        stackable: true,  maxStack: 999, isWeapon: false, isStructure: false, isFood: false, isHat: false, sprite: 'wheat' },
   [ItemId.COAL]:        { id: ItemId.COAL,         name: 'Coal',         stackable: true,  maxStack: 999, isWeapon: false, isStructure: false, isFood: false, isHat: false, sprite: 'coal' },
   [ItemId.CACTUS_FLESH]:{ id: ItemId.CACTUS_FLESH, name: 'Cactus Flesh', stackable: true,  maxStack: 50,  isWeapon: false, isStructure: false, isFood: true,  isHat: false, foodHp: 3, foodHunger: 8, foodThirst: 12, sprite: 'cactus_flesh' },
+  [ItemId.PELT]:       { id: ItemId.PELT,          name: 'Pelt',         stackable: true,  maxStack: 10,  isWeapon: false, isStructure: false, isFood: false, isHat: false, sprite: 'pelt' },
 
   [ItemId.CAMPFIRE]:   { id: ItemId.CAMPFIRE,      name: 'Campfire',     stackable: true,  maxStack: 10,  isWeapon: false, isStructure: true,  isFood: false, isHat: false, structureHp: 100, sprite: 'campfire' },
   [ItemId.WALL_WOOD]:  { id: ItemId.WALL_WOOD,     name: 'Wood Wall',    stackable: true,  maxStack: 20,  isWeapon: false, isStructure: true,  isFood: false, isHat: false, structureHp: 200, sprite: 'wall_wood' },
@@ -132,4 +136,5 @@ export const ITEMS: Record<number, ItemDef> = {
 
   [ItemId.HAT_WINTER]: { id: ItemId.HAT_WINTER,   name: 'Winter Hat',   stackable: false, maxStack: 1,   isWeapon: false, isStructure: false, isFood: false, isHat: true, tempBonus: 30, sprite: 'hat_winter' },
   [ItemId.HAT_COWBOY]: { id: ItemId.HAT_COWBOY,   name: 'Cowboy Hat',   stackable: false, maxStack: 1,   isWeapon: false, isStructure: false, isFood: false, isHat: true, tempBonus: 10, sprite: 'hat_cowboy' },
+  [ItemId.HAT_FUR]:    { id: ItemId.HAT_FUR,      name: 'Fur Hat',      stackable: false, maxStack: 1,   isWeapon: false, isStructure: false, isFood: false, isHat: true, tempBonus: 50, sprite: 'hat_fur' },
 };

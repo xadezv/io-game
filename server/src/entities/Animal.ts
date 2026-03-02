@@ -52,6 +52,18 @@ export const ANIMAL_CONFIGS: Record<number, AnimalConfig> = {
     ],
     xpReward: 100,
   },
+
+  [EntityType.BEAR]: {
+    type: EntityType.BEAR,
+    hp: 500, radius: 40, speed: 90,
+    aggroRange: 300, attackRange: 60, attackDamage: 35, attackCooldown: 1200,
+    fleeRange: 0,
+    drops: [
+      { itemId: ItemId.RAW_MEAT, minCount: 5, maxCount: 5 },
+      { itemId: ItemId.PELT,     minCount: 2, maxCount: 2 },
+    ],
+    xpReward: 200,
+  },
 };
 
 export class Animal extends Entity {

@@ -18,6 +18,7 @@ export class Game {
   private isNight   = false;
   private cycleMax  = DAY_DURATION;
   private lbTimer   = 0;
+  private bearRespawnTimer = 10 * 60 * 1000;
 
   // Snowstorm (TASK-20)
   stormActive = false;
@@ -183,6 +184,19 @@ export class Game {
       s.emit('msg', [PacketType.ENTITY_UPDATE,  entities.map(e => e.serialize())]);
       s.emit('msg', [PacketType.PLAYER_STATS,   p.serializeStats()]);
       s.emit('msg', [PacketType.TIME_UPDATE,    this.isNight ? 1 : 0, this.gameTime, this.cycleMax]);
+    }
+
+
+    // Bear boss respawn check (TASK-25)
+    if (this.world.hasLivingBear()) {
+      this.bearRespawnTimer = 10 * 60 * 1000;
+    } else {
+      this.bearRespawnTimer -= dt * 1000;
+      if (this.bearRespawnTimer <= 0) {
+        const bear = this.world.spawnBear();
+        this.bearRespawnTimer = 10 * 60 * 1000;
+        if (bear) console.log(`[Bear] Spawned bear #${bear.id}`);
+      }
     }
 
     // Leaderboard every 3s
