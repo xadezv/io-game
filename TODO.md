@@ -310,7 +310,7 @@ Client (`client/src/ui/CraftMenu.ts`):
 
 ---
 
-### TASK-23 — Poison status effect + mushroom resource  [ ]
+### TASK-23 — Poison status effect + mushroom resource  [~] PRs #30/#34 open
 **Priority:** MEDIUM
 **Branch:** `feat/task-23-poison`
 **Source:** IDEA-21
@@ -346,7 +346,7 @@ No new packets needed (PLAYER_STATS already sent on stat changes).
 
 ---
 
-### TASK-24 — Gold tool durability  [ ]
+### TASK-24 — Gold tool durability  [~] PRs #28/#35 open
 **Priority:** MEDIUM
 **Branch:** `feat/task-24-gold-durability`
 **Source:** IDEA-05
