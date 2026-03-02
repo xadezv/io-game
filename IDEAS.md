@@ -320,3 +320,14 @@ Ideas are ordered by category and tagged with complexity and implementation scop
 **Complexity:** medium
 **Category:** progression
 **Description:** Placeable totem that stores one respawn location with limited charges and cooldown. Encourages exploration while preserving meaningful death penalties.
+
+## Fresh gameplay ideas (2026-03-02)
+
+- **Fog of War Totems:** buildable totems reveal minimap vision in a radius; enemy players can destroy them.
+- **Seasonal Migration Events:** herds move between biomes every in-game day and create temporary resource hotspots.
+- **Ritual Circle PvP Zones:** short timed zones with boosted XP/loot that attract player conflicts.
+- **River Fishing System:** craft rods/nets, fish schools spawn at dawn/dusk, fish can be cooked or traded.
+- **Camp Upgrades Tree:** campfire can be upgraded into kitchen/smithy/medical tent branches with different bonuses.
+- **Biome Relics:** rare relics grant passive effects but broadcast holder position periodically.
+- **Treasure Map Fragments:** combine map pieces from events/mobs to reveal buried loot coordinates.
+- **Companion Raven:** craftable scout pet that marks nearby threats/resources on minimap on cooldown.
