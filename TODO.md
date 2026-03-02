@@ -108,6 +108,90 @@ Specs:
 
 ---
 
+### TASK-07 — Kill feed (PvP death announcements)
+**Priority:** MEDIUM
+**Branch:** `feat/task-07-kill-feed`
+
+When a player kills another player in PvP combat, broadcast a kill feed message to all clients.
+
+Server (`server/src/systems/CombatSystem.ts`, `server/src/core/Game.ts`):
+- When a player dies to another player's attack (detected in `processAttack` where target is a Player and hp reaches 0), emit a new packet `KILL_FEED = 23` to all clients: `[23, killerId, killerNickname, victimId, victimNickname]`
+- Add `KILL_FEED = 23` to `shared/packets.ts` PacketType object
+
+Client (`client/src/game/GameClient.ts`, new `client/src/ui/KillFeed.ts`):
+- Create `KillFeed.ts`: DOM overlay (top-center), shows last 5 kills, each fades out after 5 seconds. Format: "PlayerA killed PlayerB"
+- Handle PT_KILL_FEED = 23 in GameClient, call `killFeed.addKill(killerNick, victimNick)`
+- Init KillFeed in `start()` with `this.killFeed.init()`
+
+Do not break existing DAMAGE packet (ID 12).
+
+---
+
+### TASK-08 — Hat equip client-side
+**Priority:** MEDIUM
+**Branch:** `feat/task-08-hat-equip`
+
+Players can craft hats (HAT_WINTER=50, HAT_COWBOY=51) but cannot equip them.
+
+Server (`server/src/packet/PacketHandler.ts`):
+- Handle `SELECT_ITEM` packet when selected item is a hat (`ITEMS[itemId]?.isHat === true`): set `player.hatId = itemId` and remove it from inventory (it's equipped, not held). Send updated PLAYER_STATS.
+- To un-equip: if player selects the same hat slot again, set `player.hatId = -1` and return hat to inventory.
+
+Client (`client/src/game/GameClient.ts`):
+- When slot 1-9 is selected and the item in that slot `isHat`, send `SELECT_ITEM` as normal — server handles the logic.
+- HUD should show the equipped hat icon somewhere (small icon near stat bars). Modify `client/src/ui/HUD.ts` to render hat icon if `stats.hatId !== -1`.
+
+---
+
+### TASK-09 — Chest structure (item storage)
+**Priority:** MEDIUM
+**Branch:** `feat/task-09-chest`
+
+Add a placeable Chest that stores up to 5 item stacks.
+
+Server:
+- Add `CHEST = 46` to structure handling in `BuildSystem.ts` (already in ItemId)
+- Add `storage: {itemId: number, count: number}[]` field to `Structure.ts` (max 5 slots)
+- Add new packet `CHEST_OPEN = 24` (client → server, args: `[24, structureId]`) — server responds with `CHEST_DATA = 25` (`[25, structureId, [[itemId,count], ...]]`)
+- Add `CHEST_STORE = 26` (client → server: `[26, structureId, slotIndex, itemId, count]`)
+- Add packet IDs 24, 25, 26 to shared/packets.ts
+
+Client:
+- Show chest UI (modal) when player right-clicks a chest structure in placement mode — but since we don't have right-click-on-entity yet, use `F` key when near a chest (detect by distance to nearest chest in entities)
+- Simple canvas-drawn grid of 5 slots showing chest contents
+
+---
+
+### TASK-10 — Mobile touch controls
+**Priority:** LOW
+**Branch:** `feat/task-10-touch`
+
+Add virtual joystick and attack button for mobile browsers.
+
+Client (`client/src/engine/Input.ts`, new `client/src/ui/TouchControls.ts`):
+- Detect `'ontouchstart' in window` to enable touch mode
+- Left half of screen: virtual joystick (fixed position, tracks touch movement, computes moveDir bitmask)
+- Right half of screen: tap = attack at touch angle from player center
+- `TouchControls.ts`: creates DOM canvas overlay elements, emits same events as keyboard/mouse Input
+- Wire into GameClient: if touch mode, send MOVE/ATTACK from TouchControls events
+
+---
+
+### TASK-11 — Sound effects (Web Audio API)
+**Priority:** LOW
+**Branch:** `feat/task-11-sounds`
+
+Add basic sound effects using the Web Audio API (no external library, no new npm deps).
+
+Client (new `client/src/engine/SoundManager.ts`):
+- Use `AudioContext` + `fetch()` to load `.ogg`/`.mp3` files
+- Sounds needed: hit (metal clang), wood chop, stone hit, animal death, player death, craft success, eating
+- Use starve.io CDN sounds if available (`https://starve.io/sounds/`) or generate simple tones with Web Audio oscillators as fallback
+- `SoundManager.play(name: string, volume?: number)` — called from GameClient on DAMAGE, on craft result, on death
+- Keep it opt-in: muted by default, M key toggles
+
+---
+
 ## Completed Tasks
 
 - [x] **TASK-02** — Fix map sync between server and client (PR #8, merged 2026-03-02)
