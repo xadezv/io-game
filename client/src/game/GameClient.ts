@@ -30,6 +30,8 @@ const PT_ATTACK             = 5;
 const PT_PLAYER_STATS       = 6;
 const PT_SELECT_ITEM        = 7;
 const PT_USE_ITEM           = 23;
+const PT_CHEST_OPEN         = 24;
+const PT_CHEST_DATA         = 25;
 const PT_CRAFT              = 11;
 const PT_ENTITY_REMOVE      = 8;
 const PT_CRAFT_RESULT       = 16;
@@ -210,6 +212,7 @@ export class GameClient {
   private cycleMax:  number  = 60000;
   private mapData:   WorldData | null = null;
   private nickname:  string  = 'Anonymous';
+  private chestData: { id: number; slots: [number, number][] } | null = null;
 
   // Player stats (updated from PLAYER_STATS packets)
   private stats: PlayerStats = {
@@ -334,7 +337,7 @@ export class GameClient {
           this.chat.addMessage(-1, 'System', 'Placement mode ON — right-click to place selected item. Press B to cancel.');
         }
       } else if (key === 'f' || key === 'F') {
-        const chest = Array.from(this.entities.values()).find(e => (e.itemId === 46) && this.myPlayer && Math.hypot(e.x - this.myPlayer.x, e.y - this.myPlayer.y) < 170);
+        const chest = Array.from(this.entities.values()).find(e => (e.itemId === 46) && this.myPlayer && Math.hypot(e.x - this.myPlayer.x, e.y - this.myPlayer.y) <= 160);
         if (chest) this.ws.send([PT_CHEST_OPEN, chest.id]);
       } else if (key === 'Escape') {
         this.placementMode = false;
@@ -398,6 +401,7 @@ export class GameClient {
       case PT_DEATH:              this._onDeath(data);             break;
       case PT_LEADERBOARD:        this._onLeaderboard(data);       break;
       case PT_CHAT_BROADCAST:     this._onChatBroadcast(data);     break;
+      case PT_CHEST_DATA:         this._onChestData(data);         break;
       case PT_PONG:               this._onPong(data);              break;
     }
   }
@@ -624,6 +628,17 @@ export class GameClient {
     this.chat.addMessage(playerId, nickname, message);
   }
 
+  private _onChestData(data: unknown[]): void {
+    const id = (data[1] as number | undefined) ?? -1;
+    const raw = data[2];
+    if (!Array.isArray(raw)) return;
+    const slots = (raw as unknown[]).map((s) => {
+      const a = s as unknown[];
+      return [Number(a[0] ?? -1), Number(a[1] ?? 0)] as [number, number];
+    });
+    this.chestData = { id, slots };
+  }
+
   private _onPong(data: unknown[]): void {
     const sent = data[1] as number;
     this._latencyMs = Date.now() - sent;
@@ -685,6 +700,20 @@ export class GameClient {
 
     // --- Craft menu (overlaid on canvas) ---
     this.craftMenu.render(this.craftRecipes);
+
+    if (this.chestData) {
+      const x = this.canvas.width - 250;
+      const y = 70;
+      this.renderer.ctx.fillStyle = 'rgba(0,0,0,0.55)';
+      this.renderer.ctx.fillRect(x, y, 220, 240);
+      this.renderer.ctx.strokeStyle = 'rgba(255,255,255,0.35)';
+      this.renderer.ctx.strokeRect(x, y, 220, 240);
+      this.renderer.drawText(`Chest #${this.chestData.id}`, x + 12, y + 20, 14, '#fff');
+      for (let i = 0; i < Math.min(10, this.chestData.slots.length); i++) {
+        const [itemId, count] = this.chestData.slots[i];
+        this.renderer.drawText(`${i + 1}. item ${itemId} x${count}`, x + 12, y + 42 + i * 18, 12, '#eee');
+      }
+    }
 
     // --- Minimap ---
     if (this.myPlayer) {

@@ -58,6 +58,7 @@ export const EntityType = {
   CACTUS:     11,
   SNOW_TREE:  12,
   MAMMOTH:    13,
+  CHEST:      14,
 } as const;
 
 export type EntityType = typeof EntityType[keyof typeof EntityType];

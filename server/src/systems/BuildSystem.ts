@@ -10,7 +10,7 @@ const STRUCTURE_MAP: Partial<Record<number, { type: EntityType; radius: number; 
   [ItemId.WALL_STONE]:  { type: EntityType.WALL_STONE,  radius: 36 },
   [ItemId.SPIKE_WOOD]:  { type: EntityType.SPIKE,       radius: 28, spikeDmg: 20 },
   [ItemId.SPIKE_STONE]: { type: EntityType.SPIKE,       radius: 28, spikeDmg: 30 },
-  [ItemId.CHEST]:       { type: EntityType.WALL_WOOD,   radius: 34 },
+  [ItemId.CHEST]:       { type: EntityType.CHEST,       radius: 34 },
 };
 
 export function processPlace(
