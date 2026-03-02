@@ -44,6 +44,7 @@ export function processAttack(
   const hitX   = attacker.x + Math.cos(angle) * range * 0.6;
   const hitY   = attacker.y + Math.sin(angle) * range * 0.6;
   const hitR   = range * 0.55;
+  let landedHit = false;
 
   // Resources (use spatial grid)
   const resources = world.getNearbyResources(hitX, hitY, hitR + 30);
@@ -56,6 +57,7 @@ export function processAttack(
     if (r.config.preferredTool?.includes(itemId as import('../../../shared/items').ItemId)) dmg *= 2;
 
     r.hp -= dmg;
+    landedHit = true;
     damages.push({ targetId: r.id, damage: dmg, targetType: 'resource' });
 
     if (r.hp <= 0) {
@@ -77,6 +79,7 @@ export function processAttack(
     if (d > hitR + a.radius) continue;
 
     a.hp -= damage;
+    landedHit = true;
     damages.push({ targetId: a.id, damage, targetType: 'animal' });
 
     if (a.hp <= 0) {
@@ -98,6 +101,7 @@ export function processAttack(
     if (d > hitR + p.radius) continue;
 
     p.hp -= damage;
+    landedHit = true;
     damages.push({ targetId: p.id, damage, targetType: 'player' });
 
     if (p.hp <= 0) {
@@ -116,9 +120,14 @@ export function processAttack(
     if (d > hitR + s.radius) continue;
 
     s.hp -= damage;
+    landedHit = true;
     damages.push({ targetId: s.id, damage, targetType: 'structure' });
     if (s.hp <= 0) s.dead = true;
     break;
+  }
+
+  if (landedHit && (itemId === ItemId.GOLD_AXE || itemId === ItemId.GOLD_SWORD || itemId === ItemId.GOLD_PICK)) {
+    attacker.useTool(attacker.selectedSlot);
   }
 
   return { damages, kills };
