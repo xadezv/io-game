@@ -399,3 +399,10 @@ Rare longer night event with stronger mobs and boosted drops/XP. Server announce
 - **Storm Shelter Bonus:** Staying near walls + fire during storms grants minor regen/temperature resistance, rewarding base prep before night events.
 - **Resource Hotspots:** Short-lived map pings mark rich gathering zones, creating PvP skirmishes over contested nodes.
 - **Crafting Mastery:** Repeated crafting of the same recipe grants tiny efficiency perks (faster craft or small material refund cap).
+
+## Cron Gameplay Ideas (2026-03-02 23:21 UTC)
+- **Signal Fires:** Build ridge beacons that allies can light for temporary map-wide pings and warmth trails at night.
+- **Foraging Satchel:** Craftable utility bag that auto-collects nearby berries/mushrooms while moving, with limited charges.
+- **Pack Alpha Hunts:** Rare elite wolf alpha spawns that buffs nearby wolves until defeated, dropping unique crafting tokens.
+- **Broken Ruins POIs:** Small ruined camps with randomized loot + environmental hazards to create roaming objectives.
+- **Duel Totem:** Optional 1v1 challenge structure that grants bonus XP to winner and temporary safe duel arena rules.
