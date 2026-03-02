@@ -7,6 +7,7 @@ export class Structure extends Entity {
   itemId:     ItemId;
   damageTimer: number = 0;
   spikeDamage: number = 20;
+  chestSlots: Array<[number, number]> = [];
 
   constructor(
     type: EntityType,
@@ -20,6 +21,9 @@ export class Structure extends Entity {
     this.ownerId    = ownerId;
     this.itemId     = itemId;
     this.spikeDamage = spikeDamage;
+    if (type === EntityType.CHEST) {
+      this.chestSlots = Array.from({ length: 10 }, () => [-1, 0] as [number, number]);
+    }
   }
 
   serialize(): unknown[] {
