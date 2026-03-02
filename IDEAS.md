@@ -331,3 +331,18 @@ Ideas are ordered by category and tagged with complexity and implementation scop
 - **Biome Relics:** rare relics grant passive effects but broadcast holder position periodically.
 - **Treasure Map Fragments:** combine map pieces from events/mobs to reveal buried loot coordinates.
 - **Companion Raven:** craftable scout pet that marks nearby threats/resources on minimap on cooldown.
+
+### IDEA-26 — Seasonal migration events
+Every 15–20 minutes, temporary migration waves cross the map (deer-like passive mobs, scavenger packs, trader caravan NPC). Players can hunt, escort, or raid for different rewards.
+
+### IDEA-27 — Biome relic shrines
+Add rare shrines per biome that can be activated with offerings (wood/stone/gold/thread) for timed buffs (warmth aura, gather speed, crit chance).
+
+### IDEA-28 — Dynamic footprint tracking
+Players and large animals leave temporary footprints that fade over 30–60 seconds. Useful for tracking enemies and prey, especially at night or during snowstorms.
+
+### IDEA-29 — Camp upgrade tiers
+Allow CAMPFIRE and WORKSHOP upgrades (tier I/II/III) that improve radius, crafting speed, and efficiency. Encourages base progression without adding many new structures.
+
+### IDEA-30 — World event: eclipse night
+Rare longer night event with stronger mobs and boosted drops/XP. Server announces countdown, and players can prepare defenses for high-risk/high-reward sessions.
