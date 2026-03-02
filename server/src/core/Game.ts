@@ -4,6 +4,7 @@ import { PacketType } from '../../../shared/packets';
 import { handlePacket } from '../packet/PacketHandler';
 import { updateSurvival } from '../systems/SurvivalSystem';
 import { processAnimalAttacks } from '../systems/CombatSystem';
+import { ItemId } from '../../../shared/items';
 import {
   TICK_MS, DAY_DURATION, NIGHT_DURATION, PLAYER_MAX_HP,
   PLAYER_MAX_HUNGER, PLAYER_MAX_THIRST, PLAYER_MAX_TEMP,
@@ -13,11 +14,12 @@ export class Game {
   world:    World;
   private io: any;
   private tickInterval: NodeJS.Timeout | null = null;
-  private lastTime  = Date.now();
-  private gameTime  = 0;
-  private isNight   = false;
-  private cycleMax  = DAY_DURATION;
-  private lbTimer   = 0;
+  private lastTime      = Date.now();
+  private gameTime      = 0;
+  private isNight       = false;
+  private prevIsNight   = false;
+  private cycleMax      = DAY_DURATION;
+  private lbTimer       = 0;
 
   constructor(io: any) {
     this.io    = io;
@@ -111,11 +113,45 @@ export class Game {
     this.lastTime = now;
 
     // Day/night cycle
-    this.gameTime += dt * 1000;
+    this.prevIsNight  = this.isNight;
+    this.gameTime    += dt * 1000;
     if (this.gameTime >= this.cycleMax) {
       this.gameTime = 0;
       this.isNight  = !this.isNight;
       this.cycleMax = this.isNight ? NIGHT_DURATION : DAY_DURATION;
+    }
+
+    // Handle day→night transition: spawn pack + boost existing wolves
+    if (!this.prevIsNight && this.isNight) {
+      const nightIds = this.world.spawnNightWolves();
+      // Broadcast the newly spawned night wolves to all clients
+      const nightEntities = nightIds
+        .map(id => this.world.animals.get(id))
+        .filter((a): a is NonNullable<typeof a> => a !== undefined)
+        .map(a => a.serialize());
+      if (nightEntities.length > 0) {
+        this.io.emit('msg', [PacketType.ENTITY_UPDATE, nightEntities]);
+      }
+      // Boost aggroRange on all existing (non-night) wolves
+      for (const animal of this.world.animals.values()) {
+        if (!animal.isNightWolf && animal.type === 6 /* EntityType.WOLF */) {
+          animal.aggroRange = animal.baseAggroRange * 1.5;
+        }
+      }
+    }
+
+    // Handle night→day transition: remove pack + restore existing wolves
+    if (this.prevIsNight && !this.isNight) {
+      const removedIds = this.world.removeNightWolves();
+      for (const id of removedIds) {
+        this.io.emit('msg', [PacketType.ENTITY_REMOVE, id]);
+      }
+      // Restore aggroRange on all remaining (non-night) wolves
+      for (const animal of this.world.animals.values()) {
+        if (!animal.isNightWolf && animal.type === 6 /* EntityType.WOLF */) {
+          animal.aggroRange = animal.baseAggroRange;
+        }
+      }
     }
 
     // World physics + animal AI
@@ -144,6 +180,30 @@ export class Game {
       const s = this.io.sockets.sockets.get(playerId);
       if (s) s.emit('msg', [PacketType.DAMAGE, p.id, damage]);
       if (p.hp <= 0) this.killPlayer(p);
+    }
+
+    // Furnace cooking timers
+    const deltaMs = dt * 1000;
+    for (const s of this.world.structures.values()) {
+      if (!s.isCooking) continue;
+      s.cookTimer -= deltaMs;
+      if (s.cookTimer <= 0) {
+        s.isCooking = false;
+        // Find the cooking player by their entity id
+        let cookingPlayer: Player | undefined;
+        for (const p of this.world.players.values()) {
+          if (p.id === s.cookingPlayerId) { cookingPlayer = p; break; }
+        }
+        if (cookingPlayer && !cookingPlayer.dead) {
+          cookingPlayer.addItem(ItemId.COOKED_MEAT, 1);
+          const sock = this.io.sockets.sockets.get(cookingPlayer.socketId);
+          if (sock) {
+            sock.emit('msg', [PacketType.PLAYER_STATS, cookingPlayer.serializeStats()]);
+            sock.emit('msg', [PacketType.INTERACT_RESULT, s.id, 1, ItemId.COOKED_MEAT, 1]);
+          }
+        }
+        s.cookingPlayerId = -1;
+      }
     }
 
     // Broadcast removed entities
