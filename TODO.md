@@ -105,7 +105,7 @@ Server (`server/src/entities/Animal.ts`, `server/src/core/World.ts`):
 
 ---
 
-### TASK-13 — Kill streak counter + XP bonus
+### TASK-13 — Kill streak counter + XP bonus  [~] PR #20 open
 **Priority:** LOW
 **Branch:** `feat/task-13-kill-streak`
 
@@ -121,7 +121,7 @@ Client (`client/src/ui/HUD.ts`):
 
 ---
 
-### TASK-14 — Floating damage numbers  [ ]
+### TASK-14 — Floating damage numbers  [~] PR #21 open
 **Priority:** MEDIUM
 **Branch:** `feat/task-14-floating-dmg`
 **Source:** IDEA-01
@@ -138,7 +138,7 @@ No server changes. No new packets. No new dependencies.
 
 ---
 
-### TASK-15 — Minimap entity icons  [ ]
+### TASK-15 — Minimap entity icons  [~] PR #22 open
 **Priority:** LOW
 **Branch:** `feat/task-15-minimap-icons`
 **Source:** IDEA-03
@@ -160,7 +160,7 @@ No server changes. No new packets.
 
 ---
 
-### TASK-16 — Hunger slows movement  [ ]
+### TASK-16 — Hunger slows movement  [~] branch pushed (feat/task-16-hunger-speed), needs PR
 **Priority:** MEDIUM
 **Branch:** `feat/task-16-hunger-speed`
 **Source:** IDEA-04
@@ -176,7 +176,7 @@ No client changes. No new packets.
 
 ---
 
-### TASK-17 — Leaderboard kills column  [ ]
+### TASK-17 — Leaderboard kills column  [~] branch pushed (feat/task-17-leaderboard-kills), needs PR
 **Priority:** LOW
 **Branch:** `feat/task-17-leaderboard-kills`
 **Source:** IDEA-24
@@ -196,7 +196,7 @@ Client (`client/src/ui/Leaderboard.ts`):
 
 ---
 
-### TASK-18 — Wolf pack spawns at night  [ ]
+### TASK-18 — Wolf pack spawns at night  [~] branch pushed (feat/task-18-wolf-night-pack), needs PR
 **Priority:** MEDIUM
 **Branch:** `feat/task-18-wolf-night-pack`
 **Source:** IDEA-08
@@ -213,7 +213,7 @@ No new packets. No client changes.
 
 ---
 
-### TASK-19 — Furnace structure (cook raw meat)  [ ]
+### TASK-19 — Furnace structure (cook raw meat)  [~] PR #24 open
 **Priority:** MEDIUM
 **Branch:** `feat/task-19-furnace`
 **Source:** IDEA-09
@@ -244,7 +244,7 @@ Client (`client/src/game/GameClient.ts`):
 
 ---
 
-### TASK-20 — Snowstorm dynamic weather  [ ]
+### TASK-20 — Snowstorm dynamic weather  [~] PR #25 open
 **Priority:** MEDIUM
 **Branch:** `feat/task-20-snowstorm`
 **Source:** IDEA-22
@@ -269,7 +269,7 @@ Client (`client/src/game/WorldRenderer.ts` or `GameClient.ts`):
 
 ---
 
-### TASK-21 — Respawn with score penalty  [ ]
+### TASK-21 — Respawn with score penalty  [~] branch pushed (feat/task-21-respawn-penalty), needs PR
 **Priority:** LOW
 **Branch:** `feat/task-21-respawn-penalty`
 **Source:** IDEA-07
@@ -285,7 +285,7 @@ No new packets (reuses existing `HANDSHAKE_RESPONSE` flow from TASK-03). No clie
 
 ---
 
-### TASK-22 — Workshop structure (tier-gated crafting)  [ ]
+### TASK-22 — Workshop structure (tier-gated crafting)  [~] PR #26 open
 **Priority:** MEDIUM
 **Branch:** `feat/task-22-workshop`
 **Source:** IDEA-16
