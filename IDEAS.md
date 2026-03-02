@@ -295,3 +295,11 @@ Ideas are ordered by category and tagged with complexity and implementation scop
 ### 5) Biome Relic Hunts
 - **Description:** Hidden relic spawns once per cycle in each biome; delivering relics to campfire grants teamwide buffs.
 - **Complexity:** high
+
+## Fresh ideas from 2026-03-02 run
+
+- Dynamic biome events: desert mirage that temporarily hides minimap entity dots outside 300px.
+- Ritual totem structure: team-claimable buff zone that grants +10% gather speed nearby.
+- Fishing at ocean edge: simple timing minigame yielding food and rare crafting mats.
+- Broken cart world prop: repair with wood/stone to unlock periodic shared resource drops.
+- Night owl perk hat: improves vision radius at night but slightly increases daytime thirst drain.
