@@ -206,3 +206,24 @@ Ideas are ordered by category and tagged with complexity and implementation scop
 ---
 
 *Ideas are proposals only — implementation priority is determined by OpenCode in `TODO.md`.*
+
+---
+
+## [IDEA-26] Biome Events: Sandstorm / Blizzard
+**Complexity:** medium
+**Category:** gameplay
+**Description:** Trigger short random biome events every 8–12 minutes: sandstorms in desert (reduced visibility + extra thirst drain) and blizzards in snow (faster temperature drain, slower movement). Events create rotating danger zones and force players to adapt routes and shelter timing.
+
+---
+
+## [IDEA-27] Tribal Totem Buff Structure
+**Complexity:** high
+**Category:** content
+**Description:** Add a late-game craftable totem that gives nearby allies a small passive buff (e.g. +10% gather speed or +5% movement). Totems have high build cost and can be destroyed by enemies, creating strategic PvP objectives around base control.
+
+---
+
+## [IDEA-28] Fishing at Ocean Edge
+**Complexity:** medium
+**Category:** gameplay
+**Description:** Allow players to craft a basic fishing rod and catch fish near ocean tiles. Fish can be eaten raw for low value or cooked for high hunger/thirst restore. This adds a peaceful food path and makes edge biomes more useful than just map borders.
