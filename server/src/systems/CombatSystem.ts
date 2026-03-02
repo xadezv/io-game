@@ -102,7 +102,10 @@ export function processAttack(
 
     if (p.hp <= 0) {
       p.hp = 0;
+      p.killStreak = 0;
+      attacker.killStreak += 1;
       gainXP(attacker, 50);
+      gainXP(attacker, Math.min(50, attacker.killStreak * 10));
       kills.push({ killerId: attacker.id, killerNickname: attacker.nickname, victimId: p.id, victimNickname: p.nickname });
     }
     break;

@@ -10,6 +10,7 @@ export interface PlayerStats {
   inventory: [number, number][];
   selectedSlot: number;
   hatId: number;
+  killStreak: number;
 }
 
 interface Bar {
@@ -141,6 +142,18 @@ export default class HUD {
 
     // --- Day/Night indicator top-right ---
     this._drawDayNight(isNight);
+
+    if (stats.killStreak >= 2) {
+      ctx.fillStyle = 'rgba(255,80,40,0.2)';
+      ctx.fillRect(this.canvas.width / 2 - 70, 18, 140, 28);
+      ctx.fillStyle = '#ffb347';
+      ctx.font = "bold 14px 'Fredoka One', sans-serif";
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(`${stats.killStreak}x STREAK 🔥`, this.canvas.width / 2, 32);
+      ctx.textAlign = 'left';
+      ctx.textBaseline = 'alphabetic';
+    }
   }
 
   private _drawBar(bar: Bar, x: number, y: number): void {
