@@ -73,7 +73,7 @@ export function processAttack(
 
     if (a.hp <= 0) {
       a.dead = true;
-      world.deadAnimals.set(a.id, 0);
+      a.despawnTimer = 3000;
       for (const drop of a.config.drops) {
         attacker.addItem(drop.itemId, rng.nextInt(drop.minCount, drop.maxCount));
       }
