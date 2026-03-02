@@ -26,8 +26,9 @@ export function handlePacket(
 
     case PacketType.ATTACK: {
       const angle = data[1] as number;
-      const { damages } = processAttack(player, angle, world);
+      const { damages, kills } = processAttack(player, angle, world);
       for (const d of damages) onDamage(d.targetId, d.damage, d.targetType);
+      for (const k of kills) io.emit('msg', [PacketType.KILL_FEED, k.killerId, k.killerNickname, k.victimId, k.victimNickname]);
       break;
     }
 
