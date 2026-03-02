@@ -392,3 +392,10 @@ Rare longer night event with stronger mobs and boosted drops/XP. Server announce
 - **Portable Water Skin:** Craftable consumable container that restores thirst over time and helps survive long desert runs.
 - **Seasonal Biome Shift:** Every in-game hour, biome borders subtly shift, forcing adaptation and repositioning.
 - **World Event Boss Beacon:** Random beacon appears; first players to activate it spawn a boss encounter with shared loot table.
+
+## Cron Gameplay Ideas (2026-03-02 23:11 UTC)
+- **Campfire Cooking Queue:** Let campfires cook multiple raw meats over time with a visible progress queue to reduce repetitive interaction spam.
+- **Predator Scent Trails:** Injured animals leave temporary tracks that players can follow, improving hunting gameplay and map awareness.
+- **Storm Shelter Bonus:** Staying near walls + fire during storms grants minor regen/temperature resistance, rewarding base prep before night events.
+- **Resource Hotspots:** Short-lived map pings mark rich gathering zones, creating PvP skirmishes over contested nodes.
+- **Crafting Mastery:** Repeated crafting of the same recipe grants tiny efficiency perks (faster craft or small material refund cap).
