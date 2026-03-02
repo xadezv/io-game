@@ -4,6 +4,52 @@ This file is the source of truth for any AI agent (OpenClaw, OpenCode, etc.) con
 
 ---
 
+## Agent Roles
+
+### OpenCode (this agent)
+- **Owns the codebase** — maintains architecture, reviews PRs, merges or integrates changes
+- **Writes tasks** for OpenClaw in `TODO.md`
+- **Reviews every PR** from OpenClaw before merging
+- **Makes final decisions** on architecture and breaking changes
+
+### OpenClaw (external agent)
+- **Reads `TODO.md`** to pick up assigned tasks
+- **Works on feature branches** — never pushes directly to `master`
+- **Opens PRs** for every completed task, referencing the task ID from `TODO.md`
+- **Does not modify** `AGENTS.md`, `TODO.md`, `shared/packets.ts`, or `shared/constants.ts` without explicit instruction from OpenCode
+
+---
+
+## Workflow
+
+```
+OpenCode writes task → TODO.md
+         ↓
+OpenClaw picks task → creates branch feat/task-name or fix/task-name
+         ↓
+OpenClaw implements → commits with message "type(scope): description"
+         ↓
+OpenClaw opens PR → title references task ID, e.g. "[TASK-04] fix wolf aggro"
+         ↓
+OpenCode reviews PR → requests changes or merges into master
+         ↓
+OpenCode updates TODO.md → marks task done
+```
+
+### Branch naming
+- `feat/task-id-short-description` — new features
+- `fix/task-id-short-description` — bug fixes
+- `refactor/task-id-short-description` — refactoring
+
+### PR requirements (OpenClaw must follow)
+- Title: `[TASK-XX] short description`
+- Body: what was changed, why, any known issues
+- Must not break `npm run build` in both `server/` and `client/`
+- Must not introduce new npm dependencies without prior approval in the task description
+- Must not change shared protocol (`shared/packets.ts`) unless the task explicitly says so
+
+---
+
 ## Project: IO Game (starve.io inspired)
 
 Multiplayer survival browser game. Real-time, top-down, Canvas 2D renderer, TypeScript everywhere.
@@ -267,9 +313,11 @@ cd client && npm install && npm run dev
 If you are an AI agent working on this repo:
 
 1. **Read this file first** before making any changes
-2. **Check `shared/`** before adding new packet types or items — avoid duplication
-3. **Server changes** that affect the protocol must be reflected in both `shared/packets.ts` AND client handlers in `GameClient.ts`
-4. **Do not add npm dependencies** without good reason — keep the stack minimal
-5. **Test with `npm run build`** in both `server/` and `client/` before committing
-6. **Commit message format**: `type(scope): description` — e.g. `fix(server): resolve wolf aggro range bug`
-7. **Branch per feature**: create a branch like `feat/mammoth-ai` or `fix/map-sync`
+2. **Read `TODO.md`** — that is your task list; pick the first unassigned task
+3. **Check `shared/`** before adding new packet types or items — avoid duplication
+4. **Server changes** that affect the protocol must be reflected in both `shared/packets.ts` AND client handlers in `GameClient.ts`
+5. **Do not add npm dependencies** without prior approval in the task description
+6. **Test with `npm run build`** in both `server/` and `client/` before committing
+7. **Commit message format**: `type(scope): description` — e.g. `fix(server): resolve wolf aggro range bug`
+8. **Branch per task**: create a branch like `feat/task-03-mammoth-ai` or `fix/task-01-map-sync`
+9. **Open a PR** when done — title must be `[TASK-XX] short description`; never push directly to `master`
