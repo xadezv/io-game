@@ -126,18 +126,21 @@ export class Game {
       const wasNight = this.isNight;
       this.isNight   = !this.isNight;
       this.cycleMax  = this.isNight ? NIGHT_DURATION : DAY_DURATION;
+      this.world.isNight = this.isNight;
 
       if (this.isNight && !wasNight) {
         // Day → Night: spawn wolf pack
         const nightWolves = this.world.spawnNightWolves();
-        console.log(`[Night] Spawned ${nightWolves.length} night wolves`);
+        const spiders = this.world.spawnNightSpiders();
+        console.log(`[Night] Spawned ${nightWolves.length} night wolves and ${spiders.length} spiders`);
       } else if (!this.isNight && wasNight) {
         // Night → Day: remove night wolves, restore aggro
         const removedIds = this.world.removeNightWolves();
-        for (const id of removedIds) {
+        const removedSpiders = this.world.removeNightSpiders();
+        for (const id of [...removedIds, ...removedSpiders]) {
           this.io.emit('msg', [PacketType.ENTITY_REMOVE, id]);
         }
-        console.log(`[Day] Removed ${removedIds.length} night wolves`);
+        console.log(`[Day] Removed ${removedIds.length} night wolves and ${removedSpiders.length} spiders`);
       }
     }
 

@@ -52,6 +52,15 @@ export const ANIMAL_CONFIGS: Record<number, AnimalConfig> = {
     ],
     xpReward: 100,
   },
+
+  [EntityType.SPIDER]: {
+    type: EntityType.SPIDER,
+    hp: 60, radius: 18, speed: 160,
+    aggroRange: 200, attackRange: 30, attackDamage: 8, attackCooldown: 800,
+    fleeRange: 0,
+    drops: [],
+    xpReward: 25,
+  },
 };
 
 export class Animal extends Entity {
@@ -68,6 +77,7 @@ export class Animal extends Entity {
 
   // Night wolf tracking
   isNightWolf  = false;
+  isNightSpider = false;
   /** Instance-level aggroRange — can be boosted at night */
   aggroRange: number;
 
@@ -81,7 +91,7 @@ export class Animal extends Entity {
     this.wanderTimer = Math.random() * 3000;
   }
 
-  update(dt: number, players: Map<string, Player>): void {
+  update(dt: number, players: Map<string, Player>, isNight = false): void {
     if (this.dead) return;
 
     const cfg = this.config;
@@ -98,7 +108,9 @@ export class Animal extends Entity {
       if (d < nearestDist) { nearestDist = d; nearest = p; }
     }
 
-    if (this.aggroRange > 0 && nearest && nearestDist < this.aggroRange) {
+    const activeAggro = (this.type === EntityType.SPIDER && !isNight) ? 0 : this.aggroRange;
+
+    if (activeAggro > 0 && nearest && nearestDist < activeAggro) {
       // Chase
       const dx = nearest.x - this.x, dy = nearest.y - this.y;
       const len = Math.sqrt(dx * dx + dy * dy) || 1;

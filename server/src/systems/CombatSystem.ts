@@ -5,6 +5,7 @@ import { World } from '../core/World';
 import { ItemId, ITEMS } from '../../../shared/items';
 import { ATTACK_COOLDOWN } from '../../../shared/constants';
 import { RNG } from '../map/MapGen';
+import { EntityType } from '../../../shared/packets';
 
 const rng = new RNG(Date.now());
 
@@ -85,6 +86,9 @@ export function processAttack(
       for (const drop of a.config.drops) {
         attacker.addItem(drop.itemId, rng.nextInt(drop.minCount, drop.maxCount));
       }
+      if (a.type === EntityType.SPIDER && Math.random() < 0.5) {
+        attacker.addItem(ItemId.THREAD, 1);
+      }
       gainXP(attacker, a.config.xpReward);
     }
     break;
@@ -136,6 +140,7 @@ export function processAnimalAttacks(world: World): { playerId: string; damage: 
       if (a.canAttack(p)) {
         a.doAttack(p);
         p.hp = Math.max(0, p.hp - a.config.attackDamage);
+        if (a.type === EntityType.SPIDER) p.webTimer = 3000;
         results.push({ playerId: p.socketId, damage: a.config.attackDamage });
       }
     }

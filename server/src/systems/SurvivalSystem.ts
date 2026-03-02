@@ -8,6 +8,8 @@ import {
 } from '../../../shared/constants';
 
 export function updateSurvival(player: Player, world: World, dt: number, isNight: boolean, stormActive: boolean = false): void {
+  if (player.webTimer > 0) player.webTimer = Math.max(0, player.webTimer - dt * 1000);
+
   // Stat decay
   player.hunger = Math.max(0, player.hunger - HUNGER_DRAIN * dt);
   player.thirst = Math.max(0, player.thirst - THIRST_DRAIN * dt);

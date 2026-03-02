@@ -73,6 +73,7 @@ export class World {
   resources:  Map<number, Resource>  = new Map();
   animals:    Map<number, Animal>    = new Map();
   structures: Map<number, Structure> = new Map();
+  isNight = false;
 
   // BUG-17: spike damage events collected each tick for Game.ts to broadcast
   spikeHits: Array<{ socketId: string; damage: number; playerId: number }> = [];
@@ -266,6 +267,33 @@ export class World {
     return this.randPos([BiomeType.PLAINS]) ?? { x: MAP_SIZE / 2, y: MAP_SIZE / 2 };
   }
 
+
+  spawnNightSpiders(): Animal[] {
+    const count = 5 + Math.floor(this.rng.nextFloat(0, 1) * 4); // 5..8
+    const spawned: Animal[] = [];
+    for (let i = 0; i < count; i++) {
+      const pos = this.randPos([BiomeType.FOREST]);
+      if (!pos) continue;
+      const spider = new Animal(EntityType.SPIDER, pos.x, pos.y);
+      spider.isNightSpider = true;
+      this.addAnimal(spider);
+      spawned.push(spider);
+    }
+    return spawned;
+  }
+
+  removeNightSpiders(): number[] {
+    const removedIds: number[] = [];
+    for (const a of this.animals.values()) {
+      if (!a.isNightSpider) continue;
+      this.animals.delete(a.id);
+      this.allById.delete(a.id);
+      this.animalGrid.remove(a.id, a.x, a.y);
+      removedIds.push(a.id);
+    }
+    return removedIds;
+  }
+
   /** Spawn 2–3 night wolves near map edges at non-ocean biomes. */
   spawnNightWolves(): Animal[] {
     const count  = 2 + Math.floor(this.rng.nextFloat(0, 1) * 2); // 2 or 3
@@ -352,7 +380,7 @@ export class World {
         continue;
       }
       const ox = a.x, oy = a.y;
-      a.update(dt, this.players);
+      a.update(dt, this.players, this.isNight);
       this.animalGrid.move(a.id, ox, oy, a.x, a.y);
       this.resolveAnimalCollisions(a);
     }
