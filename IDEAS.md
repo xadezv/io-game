@@ -227,3 +227,15 @@ Ideas are ordered by category and tagged with complexity and implementation scop
 **Complexity:** medium
 **Category:** gameplay
 **Description:** Allow players to craft a basic fishing rod and catch fish near ocean tiles. Fish can be eaten raw for low value or cooked for high hunger/thirst restore. This adds a peaceful food path and makes edge biomes more useful than just map borders.
+
+## [IDEA-29] Caravan Events
+**Complexity:** medium
+**Description:** Neutral NPC caravans periodically cross the map carrying random resources. Players can protect the caravan for shared rewards or ambush it for loot. This creates moving PvP/PvE hotspots.
+
+## [IDEA-30] Reinforced Gate Structure
+**Complexity:** medium
+**Description:** Add a placeable gate that can be opened by owner/allies and damaged by enemies. Gives base builders controlled entry points and more tactical defense than simple wall spam.
+
+## [IDEA-31] Echo Compass
+**Complexity:** low
+**Description:** Craftable utility item that pings nearest high-value target (gold node, mammoth, or enemy player) with a cooldown. Helps solo players navigate objectives without opening full-map intel.
