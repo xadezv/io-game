@@ -63,3 +63,25 @@
 ## 16) Rare Meteor Drops
 - **Description:** Random meteor events create temporary hotspots with high-tier resources but hostile mobs guarding the crash site.
 - **Complexity:** medium
+
+## New gameplay ideas (2026-03-02)
+
+### 1) Blizzard Fronts
+- **Description:** Moving snowstorms periodically sweep across map sectors, reducing visibility and draining temperature faster unless players stay near fire/insulated gear.
+- **Complexity:** medium
+
+### 2) Nomad Trader Caravan
+- **Description:** Neutral caravan appears at random intervals with rotating barter offers (resources → rare hats/tools), creating temporary PvE hotspots.
+- **Complexity:** medium
+
+### 3) Territorial Totems
+- **Description:** Buildable totems claim a small area and grant buffs (faster crafting, warmth aura) while active; can be raided/destroyed in PvP.
+- **Complexity:** high
+
+### 4) Predator Migration
+- **Description:** Wolf/mammoth packs migrate between biomes on day-night boundaries, creating dynamic risk zones and hunt opportunities.
+- **Complexity:** low
+
+### 5) Cooking Pot Structure
+- **Description:** Placeable pot that lets players combine ingredients into stronger food buffs (regen, temp resistance, thirst efficiency).
+- **Complexity:** medium
