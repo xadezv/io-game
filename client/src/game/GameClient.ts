@@ -41,6 +41,114 @@ const PT_DEATH              = 17;
 const PT_RESPAWN            = 22;
 
 // ---------------------------------------------------------------------------
+// Client map generation (must mirror server MapGen.ts exactly)
+// ---------------------------------------------------------------------------
+
+const TILES_COUNT = Math.floor(MAP_SIZE / 32);
+
+function buildPermTable(seed: number): Uint8Array {
+  const p = new Uint8Array(512);
+  const base = new Uint8Array(256);
+  for (let i = 0; i < 256; i++) base[i] = i;
+
+  let state = (seed >>> 0) % 0x80000000;
+  const next = (): number => {
+    state = (1103515245 * state + 12345) % 0x80000000;
+    return state / 0x80000000;
+  };
+
+  for (let i = 255; i > 0; i--) {
+    const j = Math.floor(next() * (i + 1));
+    const tmp = base[i]; base[i] = base[j]; base[j] = tmp;
+  }
+  for (let i = 0; i < 512; i++) p[i] = base[i & 255];
+  return p;
+}
+
+function fade(t: number): number { return t * t * t * (t * (t * 6 - 15) + 10); }
+function lerp(t: number, a: number, b: number): number { return a + t * (b - a); }
+function grad(hash: number, x: number, y: number): number {
+  const h = hash & 3;
+  const u = h < 2 ? x : y;
+  const v = h < 2 ? y : x;
+  return ((h & 1) ? -u : u) + ((h & 2) ? -v : v);
+}
+
+function perlin2(px: Uint8Array, x: number, y: number): number {
+  const X = Math.floor(x) & 255;
+  const Y = Math.floor(y) & 255;
+  x -= Math.floor(x);
+  y -= Math.floor(y);
+  const u = fade(x), v = fade(y);
+  const a = px[X] + Y, b = px[X + 1] + Y;
+  return (
+    lerp(v,
+      lerp(u, grad(px[a], x, y), grad(px[b], x - 1, y)),
+      lerp(u, grad(px[a + 1], x, y - 1), grad(px[b + 1], x - 1, y - 1)),
+    ) * 0.5 + 0.5
+  );
+}
+
+function fbm(px: Uint8Array, x: number, y: number, octaves: number): number {
+  let val = 0, amp = 0.5, freq = 1, max = 0;
+  for (let i = 0; i < octaves; i++) {
+    val += perlin2(px, x * freq, y * freq) * amp;
+    max += amp;
+    amp *= 0.5;
+    freq *= 2.0;
+  }
+  return val / max;
+}
+
+function generateClientMap(seed: number): WorldData {
+  const elevPx = buildPermTable(seed);
+  const moistPx = buildPermTable(seed ^ 0xdeadbeef);
+  const tempPx = buildPermTable(seed ^ 0xcafebabe);
+
+  const SCALE = 0.004;
+  const total = TILES_COUNT * TILES_COUNT;
+  const tiles = new Uint8Array(total);
+  const biomes = new Uint8Array(total);
+
+  for (let ty = 0; ty < TILES_COUNT; ty++) {
+    for (let tx = 0; tx < TILES_COUNT; tx++) {
+      const cx = tx / TILES_COUNT;
+      const cy = ty / TILES_COUNT;
+      const dx = cx - 0.5, dy = cy - 0.5;
+      const distFromCenter = Math.sqrt(dx * dx + dy * dy) * 2;
+
+      const elev = fbm(elevPx, tx * SCALE * TILES_COUNT, ty * SCALE * TILES_COUNT, 6);
+      const moist = fbm(moistPx, tx * SCALE * TILES_COUNT * 0.7, ty * SCALE * TILES_COUNT * 0.7, 4);
+      const temp = fbm(tempPx, tx * SCALE * TILES_COUNT * 0.5, ty * SCALE * TILES_COUNT * 0.5, 3);
+      const oceanEdge = 0.82;
+      const effectiveElev = elev * (1 - Math.pow(distFromCenter / oceanEdge, 3));
+
+      let tile = 0;
+      let biome = 0;
+
+      if (effectiveElev < 0.25 || distFromCenter > 0.88) {
+        tile = 3; biome = 4;
+      } else if (effectiveElev < 0.32) {
+        tile = 1; biome = 2;
+      } else if (temp < 0.3) {
+        tile = 2; biome = 3;
+      } else if (temp > 0.65 && moist < 0.45) {
+        tile = 1; biome = 2;
+      } else if (moist > 0.6) {
+        tile = 4; biome = 1;
+      }
+
+      const idx = ty * TILES_COUNT + tx;
+      tiles[idx] = tile;
+      biomes[idx] = biome;
+    }
+  }
+
+  // Determinism check (must match server): seed=12345, tx=100, ty=100 => tile=0, biome=0
+  return { seed, tiles, biomes };
+}
+
+// ---------------------------------------------------------------------------
 // Damage particle colours per entity type
 // ---------------------------------------------------------------------------
 
@@ -280,13 +388,8 @@ export class GameClient {
     this.isNight  = (data[5] as number) !== 0;
     this.gameTime = (data[6] as number | undefined) ?? 0;
 
-    // Build blank tile/biome arrays — client will render background colour only
-    // until map sync is implemented. WorldRenderer handles missing data gracefully.
-    const TILES_SIDE  = Math.floor(MAP_SIZE / 32); // 450
-    const TOTAL       = TILES_SIDE * TILES_SIDE;
-    const tilesRaw    = new Uint8Array(TOTAL);
-    const biomesRaw   = new Uint8Array(TOTAL);
-    this.mapData = { seed, tiles: tilesRaw, biomes: biomesRaw };
+    // Build deterministic map from server seed (must match server exactly).
+    this.mapData = generateClientMap(seed);
 
     // Initialise rendering subsystems
     this.worldRenderer  = new WorldRenderer(this.renderer, this.mapData, this.assets);
