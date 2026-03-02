@@ -24,6 +24,8 @@ export const ItemId = {
   COAL:         34,
   CACTUS_FLESH: 35,
   WHEAT:        36,
+  MUSHROOM:     37,
+  POISON_COATING: 38,
 
   // Structures (placeable)
   CAMPFIRE:     40,
@@ -74,6 +76,7 @@ export const RECIPES: Recipe[] = [
 
   // Food
   { result: ItemId.COOKIE,     count: 1, ingredients: [{ item: ItemId.BERRIES, count: 7 }, { item: ItemId.WHEAT, count: 3 }] },
+  { result: ItemId.POISON_COATING, count: 1, ingredients: [{ item: ItemId.MUSHROOM, count: 3 }, { item: ItemId.GOLD, count: 5 }], requiresWorkbench: true },
 
   // Clothing
   { result: ItemId.HAT_WINTER, count: 1, ingredients: [{ item: ItemId.THREAD, count: 15 }] },
@@ -121,6 +124,8 @@ export const ITEMS: Record<number, ItemDef> = {
   [ItemId.GOLD]:       { id: ItemId.GOLD,          name: 'Gold',         stackable: true,  maxStack: 999, isWeapon: false, isStructure: false, isFood: false, isHat: false, sprite: 'gold_item' },
   [ItemId.THREAD]:     { id: ItemId.THREAD,        name: 'Thread',       stackable: true,  maxStack: 999, isWeapon: false, isStructure: false, isFood: false, isHat: false, sprite: 'thread' },
   [ItemId.WHEAT]:      { id: ItemId.WHEAT,         name: 'Wheat',        stackable: true,  maxStack: 999, isWeapon: false, isStructure: false, isFood: false, isHat: false, sprite: 'wheat' },
+  [ItemId.MUSHROOM]:   { id: ItemId.MUSHROOM,      name: 'Mushroom',     stackable: true,  maxStack: 50,  isWeapon: false, isStructure: false, isFood: true,  isHat: false, foodHp: -5, foodHunger: 10, foodThirst: 0, sprite: 'mushroom' },
+  [ItemId.POISON_COATING]: { id: ItemId.POISON_COATING, name: 'Poison Coating', stackable: true, maxStack: 5, isWeapon: false, isStructure: false, isFood: false, isHat: false, sprite: 'poison_coating' },
   [ItemId.COAL]:        { id: ItemId.COAL,         name: 'Coal',         stackable: true,  maxStack: 999, isWeapon: false, isStructure: false, isFood: false, isHat: false, sprite: 'coal' },
   [ItemId.CACTUS_FLESH]:{ id: ItemId.CACTUS_FLESH, name: 'Cactus Flesh', stackable: true,  maxStack: 50,  isWeapon: false, isStructure: false, isFood: true,  isHat: false, foodHp: 3, foodHunger: 8, foodThirst: 12, sprite: 'cactus_flesh' },
 

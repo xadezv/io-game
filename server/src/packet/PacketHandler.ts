@@ -64,7 +64,15 @@ export function handlePacket(
 
     case PacketType.USE_ITEM: {
       const item = player.getSelectedItem() as import('../../../shared/items').ItemId;
-      const used = useFood(player, item);
+      let used = useFood(player, item);
+
+      if (!used && item === ItemId.POISON_COATING && player.countItem(ItemId.POISON_COATING) > 0) {
+        player.removeItem(ItemId.POISON_COATING, 1);
+        player.poisonCoated = true;
+        player.poisonCoatTimer = 60000;
+        used = true;
+      }
+
       if (used) {
         const sock = (player as any).socket as Socket | undefined;
         sock?.emit('msg', [PacketType.PLAYER_STATS, player.serializeStats()]);

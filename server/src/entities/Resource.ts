@@ -57,6 +57,13 @@ export const RESOURCE_CONFIGS: Record<number, ResourceConfig> = {
     drops: [{ itemId: ItemId.CACTUS_FLESH, minCount: 2, maxCount: 5 }],
     xpReward: 8,
   },
+  [EntityType.MUSHROOM]: {
+    type: EntityType.MUSHROOM,
+    hp: 30,
+    radius: 16,
+    drops: [{ itemId: ItemId.MUSHROOM, minCount: 1, maxCount: 2 }],
+    xpReward: 6,
+  },
   [EntityType.SNOW_TREE]: {
     type: EntityType.SNOW_TREE,
     hp: 120,
