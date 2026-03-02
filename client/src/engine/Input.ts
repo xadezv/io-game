@@ -1,116 +1,98 @@
-import Camera from './Camera';
+import { Camera } from './Camera';
 
-/**
- * Bitmask values for movement directions.
- * Matches the server-side protocol.
- */
-export const MoveDir = {
-  LEFT:  1,
-  RIGHT: 2,
-  DOWN:  4,
-  UP:    8,
-} as const;
+export const MoveDir = { LEFT: 1, RIGHT: 2, DOWN: 4, UP: 8 } as const;
 
-export type MoveDirBitmask = number;
-
-/**
- * Input — centralises keyboard and mouse state for a canvas-based game.
- */
 export class Input {
-  /** Live keyboard state: key name -> pressed. */
-  readonly keys: Map<string, boolean> = new Map();
+  readonly keys = new Map<string, boolean>();
+  mouse = { x: 0, y: 0, worldX: 0, worldY: 0, down: false, angle: 0 };
 
-  /** Live mouse state in both screen and world space. */
-  readonly mouse: {
-    x: number;
-    y: number;
-    worldX: number;
-    worldY: number;
-    down: boolean;
-    angle: number;
-  } = {
-    x: 0,
-    y: 0,
-    worldX: 0,
-    worldY: 0,
-    down: false,
-    angle: 0,
-  };
+  /** Current move bitmask — updated each frame */
+  moveDir = 0;
 
-  private canvas: HTMLCanvasElement | null = null;
+  onMouseClick?: (x: number, y: number, angle: number, button: number) => void;
+  onKeyPress?:   (key: string) => void;
 
-  /**
-   * Attach keyboard and mouse event listeners to the given canvas.
-   * Safe to call multiple times — previous listeners are removed first.
-   */
-  init(canvas: HTMLCanvasElement, camera: Camera): void {
-    this.canvas = canvas;
+  private _canvas: HTMLCanvasElement | null = null;
+  private _kd!: (e: KeyboardEvent) => void;
+  private _ku!: (e: KeyboardEvent) => void;
+  private _mm!: (e: MouseEvent) => void;
+  private _md!: (e: MouseEvent) => void;
+  private _mu!: (e: MouseEvent) => void;
+  private _cm!: (e: Event) => void;
+  private _camera: Camera | null = null;
 
-    // ── Keyboard ────────────────────────────────────────────────────────────
-    window.addEventListener('keydown', (e: KeyboardEvent) => {
+  /** Attach all event listeners */
+  attach(canvas: HTMLCanvasElement, camera: Camera): void {
+    this.detach();
+    this._canvas = canvas;
+    this._camera = camera;
+
+    this._kd = (e) => {
+      if (!this.keys.get(e.key)) this.onKeyPress?.(e.key);
       this.keys.set(e.key, true);
-    });
-
-    window.addEventListener('keyup', (e: KeyboardEvent) => {
-      this.keys.set(e.key, false);
-    });
-
-    // ── Mouse ────────────────────────────────────────────────────────────────
-    canvas.addEventListener('mousemove', (e: MouseEvent) => {
+    };
+    this._ku = (e) => this.keys.set(e.key, false);
+    this._mm = (e) => {
       const rect = canvas.getBoundingClientRect();
       this.mouse.x = e.clientX - rect.left;
       this.mouse.y = e.clientY - rect.top;
       this.updateMouseWorld(camera);
-    });
-
-    canvas.addEventListener('mousedown', () => {
+    };
+    this._md = (e) => {
       this.mouse.down = true;
-    });
+      const rect = canvas.getBoundingClientRect();
+      const sx   = e.clientX - rect.left;
+      const sy   = e.clientY - rect.top;
+      const angle = Math.atan2(sy - camera.height * 0.5, sx - camera.width * 0.5);
+      this.onMouseClick?.(sx, sy, angle, e.button);
+    };
+    this._mu = () => { this.mouse.down = false; };
+    this._cm = (e) => e.preventDefault();
 
-    canvas.addEventListener('mouseup', () => {
-      this.mouse.down = false;
-    });
-
-    // Prevent the context menu from stealing mouseup events
-    canvas.addEventListener('contextmenu', (e: Event) => {
-      e.preventDefault();
-    });
+    window.addEventListener('keydown', this._kd);
+    window.addEventListener('keyup',   this._ku);
+    canvas.addEventListener('mousemove',   this._mm);
+    canvas.addEventListener('mousedown',   this._md);
+    canvas.addEventListener('mouseup',     this._mu);
+    canvas.addEventListener('contextmenu', this._cm);
   }
 
-  /**
-   * Recalculate the world-space mouse position and cursor angle relative to
-   * the canvas centre.  Call this after the camera has been updated.
-   */
+  /** Remove all event listeners */
+  detach(): void {
+    if (!this._canvas) return;
+    window.removeEventListener('keydown', this._kd);
+    window.removeEventListener('keyup',   this._ku);
+    this._canvas.removeEventListener('mousemove',   this._mm);
+    this._canvas.removeEventListener('mousedown',   this._md);
+    this._canvas.removeEventListener('mouseup',     this._mu);
+    this._canvas.removeEventListener('contextmenu', this._cm);
+    this._canvas = null;
+  }
+
+  /** Compute bitmask from current keys and store in moveDir */
+  updateMoveDir(): number {
+    let m = 0;
+    if (this.keys.get('a') || this.keys.get('ArrowLeft'))  m |= MoveDir.LEFT;
+    if (this.keys.get('d') || this.keys.get('ArrowRight')) m |= MoveDir.RIGHT;
+    if (this.keys.get('s') || this.keys.get('ArrowDown'))  m |= MoveDir.DOWN;
+    if (this.keys.get('w') || this.keys.get('ArrowUp'))    m |= MoveDir.UP;
+    this.moveDir = m;
+    return m;
+  }
+
+  getMoveDirBitmask(): number { return this.updateMoveDir(); }
+
   updateMouseWorld(camera: Camera): void {
-    const world = camera.screenToWorld(this.mouse.x, this.mouse.y);
-    this.mouse.worldX = world.x;
-    this.mouse.worldY = world.y;
-    this.mouse.angle = Math.atan2(
-      this.mouse.y - camera.height / 2,
-      this.mouse.x - camera.width  / 2,
+    const w = camera.screenToWorld(this.mouse.x, this.mouse.y);
+    this.mouse.worldX = w.x;
+    this.mouse.worldY = w.y;
+    this.mouse.angle  = Math.atan2(
+      this.mouse.y - camera.height * 0.5,
+      this.mouse.x - camera.width  * 0.5,
     );
   }
 
-  /**
-   * Build a movement bitmask from the current WASD / arrow-key state.
-   *
-   * LEFT=1  RIGHT=2  DOWN=4  UP=8
-   */
-  getMoveDirBitmask(): MoveDirBitmask {
-    let mask = 0;
-
-    const left  = this.keys.get('a') || this.keys.get('A') || this.keys.get('ArrowLeft')  || false;
-    const right = this.keys.get('d') || this.keys.get('D') || this.keys.get('ArrowRight') || false;
-    const down  = this.keys.get('s') || this.keys.get('S') || this.keys.get('ArrowDown')  || false;
-    const up    = this.keys.get('w') || this.keys.get('W') || this.keys.get('ArrowUp')    || false;
-
-    if (left)  mask |= MoveDir.LEFT;
-    if (right) mask |= MoveDir.RIGHT;
-    if (down)  mask |= MoveDir.DOWN;
-    if (up)    mask |= MoveDir.UP;
-
-    return mask;
-  }
+  isDown(key: string): boolean { return this.keys.get(key) === true; }
 }
 
 export default Input;

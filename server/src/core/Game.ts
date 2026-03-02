@@ -5,138 +5,87 @@ import { handlePacket } from '../packet/PacketHandler';
 import { updateSurvival } from '../systems/SurvivalSystem';
 import { processAnimalAttacks } from '../systems/CombatSystem';
 import {
-  TICK_RATE, TICK_MS, DAY_DURATION, NIGHT_DURATION, MAP_SIZE, LEADERBOARD_SIZE
+  TICK_MS, DAY_DURATION, NIGHT_DURATION, PLAYER_MAX_HP,
+  PLAYER_MAX_HUNGER, PLAYER_MAX_THIRST, PLAYER_MAX_TEMP,
 } from '../../../shared/constants';
 
 export class Game {
-  world: World;
+  world:    World;
   private io: any;
   private tickInterval: NodeJS.Timeout | null = null;
-  private lastTime: number = Date.now();
-  private gameTime: number = 0; // ms into current day/night cycle
-  private isNight: boolean = false;
-  private cycleMax: number = DAY_DURATION;
+  private lastTime  = Date.now();
+  private gameTime  = 0;
+  private isNight   = false;
+  private cycleMax  = DAY_DURATION;
+  private lbTimer   = 0;
 
   constructor(io: any) {
-    this.io = io;
+    this.io    = io;
     this.world = new World();
-    console.log(`[Game] World generated, seed: ${this.world.mapData.seed}`);
+    console.log(`[Game] Seed: ${this.world.mapData.seed}`);
   }
 
   start(): void {
     this.lastTime = Date.now();
     this.tickInterval = setInterval(() => this.tick(), TICK_MS);
-    console.log(`[Game] Started at ${TICK_RATE} TPS`);
+    console.log(`[Game] Running`);
   }
 
   stop(): void {
-    if (this.tickInterval) {
-      clearInterval(this.tickInterval);
-      this.tickInterval = null;
-    }
+    if (this.tickInterval) { clearInterval(this.tickInterval); this.tickInterval = null; }
   }
 
   addPlayer(socketId: string, nickname: string): Player {
-    const pos = this.world.findSpawnPos();
+    const pos    = this.world.findSpawnPos();
     const player = new Player(socketId, nickname, pos.x, pos.y);
-    this.world.players.set(socketId, player);
-    console.log(`[Game] Player joined: ${nickname} (${socketId}) at (${Math.round(pos.x)},${Math.round(pos.y)})`);
+    this.world.addPlayer(player);
+    console.log(`[+] ${nickname} @ (${Math.round(pos.x)},${Math.round(pos.y)})`);
     return player;
   }
 
   removePlayer(socketId: string): void {
-    this.world.players.delete(socketId);
+    const p = this.world.players.get(socketId);
+    if (p) {
+      this.io.emit('msg', [PacketType.ENTITY_REMOVE, p.id]);
+    }
+    this.world.removePlayer(socketId);
+  }
+
+  respawnPlayer(socketId: string): void {
+    const p = this.world.players.get(socketId);
+    if (!p) return;
+    const pos = this.world.findSpawnPos();
+    p.x       = pos.x;
+    p.y       = pos.y;
+    p.hp      = PLAYER_MAX_HP;
+    p.hunger  = PLAYER_MAX_HUNGER;
+    p.thirst  = PLAYER_MAX_THIRST;
+    p.temp    = PLAYER_MAX_TEMP;
+    p.dead    = false;
+    p.moveDir = 0;
+    // Clear inventory on death (fresh start)
+    p.inventory = Array(10).fill(null).map(() => ({ itemId: -1, count: 0 }));
+
+    const socket = this.io.sockets.sockets.get(socketId);
+    if (socket) {
+      socket.emit('msg', this.getHandshakeData(p));
+    }
   }
 
   handleInput(socketId: string, data: unknown[]): void {
     const player = this.world.players.get(socketId);
-    if (!player || player.dead) return;
+    if (!player) return;
 
-    handlePacket(player, data, this.world, this.io, (targetId, damage, targetType) => {
-      this.broadcastDamage(targetId, damage, targetType);
+    // Respawn packet — allow even if dead
+    if (Array.isArray(data) && data[0] === PacketType.RESPAWN) {
+      if (player.dead) this.respawnPlayer(socketId);
+      return;
+    }
+
+    if (player.dead) return;
+    handlePacket(player, data, this.world, this.io, (targetId, damage) => {
+      this.io.emit('msg', [PacketType.DAMAGE, targetId, damage]);
     });
-  }
-
-  private tick(): void {
-    const now = Date.now();
-    const dt = Math.min((now - this.lastTime) / 1000, 0.1); // cap at 100ms
-    this.lastTime = now;
-
-    // Day/night cycle
-    this.gameTime += now - (now - dt * 1000);
-    this.gameTime += dt * 1000;
-    if (this.gameTime > this.cycleMax) {
-      this.gameTime = 0;
-      this.isNight = !this.isNight;
-      this.cycleMax = this.isNight ? NIGHT_DURATION : DAY_DURATION;
-    }
-
-    // Update world physics
-    this.world.update(dt);
-
-    // Update survival for each player
-    for (const player of this.world.players.values()) {
-      if (player.dead) continue;
-      updateSurvival(player, this.world, dt, this.isNight);
-
-      // Check death
-      if (player.hp <= 0) {
-        this.killPlayer(player);
-      }
-    }
-
-    // Animal attacks
-    const animalDamages = processAnimalAttacks(this.world);
-    for (const { playerId, damage } of animalDamages) {
-      const p = this.world.players.get(playerId);
-      if (p) {
-        const socket = this.io.sockets.sockets.get(playerId);
-        if (socket) socket.emit('msg', [PacketType.DAMAGE, p.id, damage]);
-        if (p.hp <= 0) this.killPlayer(p);
-      }
-    }
-
-    // Broadcast entity updates to each player based on view
-    this.broadcastUpdates();
-
-    // Leaderboard update every 3 seconds
-    if (Math.floor(now / 3000) !== Math.floor((now - dt * 1000) / 3000)) {
-      this.broadcastLeaderboard();
-    }
-  }
-
-  private killPlayer(player: Player): void {
-    player.dead = true;
-    player.hp = 0;
-    const socket = this.io.sockets.sockets.get(player.socketId);
-    if (socket) {
-      socket.emit('msg', [PacketType.DEATH]);
-    }
-  }
-
-  private broadcastDamage(targetId: number, damage: number, targetType: string): void {
-    // Send to all players in view — simplified: broadcast to all
-    this.io.emit('msg', [PacketType.DAMAGE, targetId, damage]);
-  }
-
-  private broadcastUpdates(): void {
-    for (const player of this.world.players.values()) {
-      if (player.dead) continue;
-      const socket = this.io.sockets.sockets.get(player.socketId);
-      if (!socket) continue;
-
-      const entities = this.world.getEntitiesInView(player.x, player.y);
-      const serialized = entities.map(e => e.serialize());
-
-      socket.emit('msg', [PacketType.ENTITY_UPDATE, serialized]);
-      socket.emit('msg', [PacketType.PLAYER_STATS, player.serializeStats()]);
-      socket.emit('msg', [PacketType.TIME_UPDATE, this.isNight ? 1 : 0, this.gameTime, this.cycleMax]);
-    }
-  }
-
-  private broadcastLeaderboard(): void {
-    const lb = this.world.getLeaderboard();
-    this.io.emit('msg', [PacketType.LEADERBOARD, lb]);
   }
 
   getHandshakeData(player: Player): unknown[] {
@@ -151,5 +100,70 @@ export class Game {
       this.world.getLeaderboard(),
       this.world.getEntitiesInView(player.x, player.y).map(e => e.serialize()),
     ];
+  }
+
+  // ─── Main tick ────────────────────────────────────────────────────────────
+
+  private tick(): void {
+    const now = Date.now();
+    const dt  = Math.min((now - this.lastTime) / 1000, 0.1);
+    this.lastTime = now;
+
+    // Day/night cycle
+    this.gameTime += dt * 1000;
+    if (this.gameTime >= this.cycleMax) {
+      this.gameTime = 0;
+      this.isNight  = !this.isNight;
+      this.cycleMax = this.isNight ? NIGHT_DURATION : DAY_DURATION;
+    }
+
+    // World physics + animal AI
+    this.world.update(dt);
+
+    // Survival drain
+    for (const p of this.world.players.values()) {
+      if (p.dead) continue;
+      updateSurvival(p, this.world, dt, this.isNight);
+      if (p.hp <= 0) this.killPlayer(p);
+    }
+
+    // Animal attacks
+    for (const { playerId, damage } of processAnimalAttacks(this.world)) {
+      const p = this.world.players.get(playerId);
+      if (!p) continue;
+      const s = this.io.sockets.sockets.get(playerId);
+      if (s) s.emit('msg', [PacketType.DAMAGE, p.id, damage]);
+      if (p.hp <= 0) this.killPlayer(p);
+    }
+
+    // Broadcast removed entities
+    for (const id of this.world.removedEntityIds) {
+      this.io.emit('msg', [PacketType.ENTITY_REMOVE, id]);
+    }
+
+    // Per-player updates
+    for (const p of this.world.players.values()) {
+      if (p.dead) continue;
+      const s = this.io.sockets.sockets.get(p.socketId);
+      if (!s) continue;
+      const entities = this.world.getEntitiesInView(p.x, p.y);
+      s.emit('msg', [PacketType.ENTITY_UPDATE,  entities.map(e => e.serialize())]);
+      s.emit('msg', [PacketType.PLAYER_STATS,   p.serializeStats()]);
+      s.emit('msg', [PacketType.TIME_UPDATE,    this.isNight ? 1 : 0, this.gameTime, this.cycleMax]);
+    }
+
+    // Leaderboard every 3s
+    this.lbTimer += dt * 1000;
+    if (this.lbTimer >= 3000) {
+      this.lbTimer = 0;
+      this.io.emit('msg', [PacketType.LEADERBOARD, this.world.getLeaderboard()]);
+    }
+  }
+
+  private killPlayer(player: Player): void {
+    player.dead = true;
+    player.hp   = 0;
+    const s = this.io.sockets.sockets.get(player.socketId);
+    if (s) s.emit('msg', [PacketType.DEATH]);
   }
 }

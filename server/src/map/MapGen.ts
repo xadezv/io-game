@@ -1,20 +1,22 @@
-import { MAP_SIZE, TILE_SIZE, CHUNK_SIZE } from '../../../shared/constants';
+import { MAP_SIZE, TILE_SIZE } from '../../../shared/constants';
 import { BiomeType } from '../../../shared/packets';
 
-// LCG — same as original client for reproducibility
+export const TILES_COUNT = MAP_SIZE / TILE_SIZE; // 450
+
+// ─── LCG (same constants as client for reproducibility) ───────────────────
 export class RNG {
   private state: number;
-  private readonly m = 0x80000000;
-  private readonly a = 1103515245;
-  private readonly c = 12345;
+  static readonly M = 0x80000000;
+  static readonly A = 1103515245;
+  static readonly C = 12345;
 
   constructor(seed: number) {
-    this.state = seed;
+    this.state = (seed >>> 0) % RNG.M;
   }
 
   next(): number {
-    this.state = (this.a * this.state + this.c) % this.m;
-    return this.state / this.m;
+    this.state = (RNG.A * this.state + RNG.C) % RNG.M;
+    return this.state / RNG.M;
   }
 
   nextInt(min: number, max: number): number {
@@ -26,70 +28,129 @@ export class RNG {
   }
 }
 
-const TILES_COUNT = MAP_SIZE / TILE_SIZE;
+// ─── Permutation-table Perlin noise (portable, no deps) ───────────────────
+function buildPermTable(seed: number): Uint8Array {
+  const p = new Uint8Array(512);
+  const base = new Uint8Array(256);
+  for (let i = 0; i < 256; i++) base[i] = i;
 
-export type TileType = 0 | 1 | 2 | 3 | 4; // grass, sand, snow, water, dark-grass
+  // Seeded Fisher-Yates shuffle
+  const rng = new RNG(seed);
+  for (let i = 255; i > 0; i--) {
+    const j = Math.floor(rng.next() * (i + 1));
+    const tmp = base[i]; base[i] = base[j]; base[j] = tmp;
+  }
+  for (let i = 0; i < 512; i++) p[i] = base[i & 255];
+  return p;
+}
+
+function fade(t: number): number { return t * t * t * (t * (t * 6 - 15) + 10); }
+function grad(hash: number, x: number, y: number): number {
+  const h = hash & 3;
+  const u = h < 2 ? x : y;
+  const v = h < 2 ? y : x;
+  return ((h & 1) ? -u : u) + ((h & 2) ? -v : v);
+}
+
+function perlin2(px: Uint8Array, x: number, y: number): number {
+  const X = Math.floor(x) & 255;
+  const Y = Math.floor(y) & 255;
+  x -= Math.floor(x);
+  y -= Math.floor(y);
+  const u = fade(x), v = fade(y);
+  const a = px[X] + Y, b = px[X + 1] + Y;
+  return (
+    lerp(v,
+      lerp(u, grad(px[a],   x,   y),   grad(px[b],   x - 1, y)),
+      lerp(u, grad(px[a+1], x,   y-1), grad(px[b+1], x - 1, y - 1))
+    ) * 0.5 + 0.5
+  );
+}
+
+function lerp(t: number, a: number, b: number): number { return a + t * (b - a); }
+
+// Fractal Brownian Motion — stacked octaves for natural-looking terrain
+function fbm(px: Uint8Array, x: number, y: number, octaves: number): number {
+  let val = 0, amp = 0.5, freq = 1, max = 0;
+  for (let i = 0; i < octaves; i++) {
+    val += perlin2(px, x * freq, y * freq) * amp;
+    max += amp;
+    amp  *= 0.5;
+    freq *= 2.0;
+  }
+  return val / max;
+}
+
+// ─── Tile types ────────────────────────────────────────────────────────────
+export type TileType = 0 | 1 | 2 | 3 | 4; // grass | sand | snow | water | dark-grass
 
 export interface MapData {
-  seed: number;
-  tiles: Uint8Array; // flat array [TILES_COUNT x TILES_COUNT]
+  seed:   number;
+  tiles:  Uint8Array; // [TILES_COUNT * TILES_COUNT]
   biomes: Uint8Array;
 }
 
+// ─── Core biome/tile function (used by both server and client) ─────────────
+export function getTileAndBiome(
+  tx: number, ty: number,
+  elevPx: Uint8Array, moistPx: Uint8Array, tempPx: Uint8Array,
+  SCALE = 0.004
+): { tile: TileType; biome: BiomeType } {
+  const cx = tx / TILES_COUNT;
+  const cy = ty / TILES_COUNT;
+
+  // Distance from center — fade to ocean at edges
+  const dx = cx - 0.5, dy = cy - 0.5;
+  const distFromCenter = Math.sqrt(dx * dx + dy * dy) * 2; // 0..√2
+
+  const elev  = fbm(elevPx,  tx * SCALE * TILES_COUNT, ty * SCALE * TILES_COUNT, 6);
+  const moist = fbm(moistPx, tx * SCALE * TILES_COUNT * 0.7, ty * SCALE * TILES_COUNT * 0.7, 4);
+  const temp  = fbm(tempPx,  tx * SCALE * TILES_COUNT * 0.5, ty * SCALE * TILES_COUNT * 0.5, 3);
+
+  // Ocean ring
+  const oceanEdge = 0.82;
+  const effectiveElev = elev * (1 - Math.pow(distFromCenter / oceanEdge, 3));
+
+  if (effectiveElev < 0.25 || distFromCenter > 0.88) {
+    return { tile: 3 as TileType, biome: BiomeType.OCEAN };
+  }
+
+  // Beach
+  if (effectiveElev < 0.32) {
+    return { tile: 1 as TileType, biome: BiomeType.DESERT };
+  }
+
+  // Biome by temperature + moisture
+  if (temp < 0.3) {
+    // Cold
+    return { tile: 2 as TileType, biome: BiomeType.SNOW };
+  }
+  if (temp > 0.65 && moist < 0.45) {
+    // Hot + dry
+    return { tile: 1 as TileType, biome: BiomeType.DESERT };
+  }
+  if (moist > 0.6) {
+    // Wet → forest
+    return { tile: 4 as TileType, biome: BiomeType.FOREST };
+  }
+
+  return { tile: 0 as TileType, biome: BiomeType.PLAINS };
+}
+
 export function generateMap(seed: number): MapData {
-  const rng = new RNG(seed);
-  const total = TILES_COUNT * TILES_COUNT;
-  const tiles = new Uint8Array(total);
+  const elevPx  = buildPermTable(seed);
+  const moistPx = buildPermTable(seed ^ 0xdeadbeef);
+  const tempPx  = buildPermTable(seed ^ 0xcafebabe);
+
+  const total  = TILES_COUNT * TILES_COUNT;
+  const tiles  = new Uint8Array(total);
   const biomes = new Uint8Array(total);
 
-  // Simple Perlin-like noise using LCG — simplified for MVP
-  // In real starve.io Perlin noise is used — we approximate with multi-octave LCG
-  const NOISE_SCALE = 0.003;
-
-  // Pre-generate noise
   for (let ty = 0; ty < TILES_COUNT; ty++) {
     for (let tx = 0; tx < TILES_COUNT; tx++) {
+      const { tile, biome } = getTileAndBiome(tx, ty, elevPx, moistPx, tempPx);
       const idx = ty * TILES_COUNT + tx;
-      const cx = tx / TILES_COUNT;
-      const cy = ty / TILES_COUNT;
-
-      // Biome determination — radial zones like starve.io
-      const distFromCenter = Math.sqrt((cx - 0.5) ** 2 + (cy - 0.5) ** 2);
-
-      // Noise for variation
-      const n = simplexApprox(tx * NOISE_SCALE, ty * NOISE_SCALE, seed);
-
-      let biome: BiomeType;
-      let tile: TileType;
-
-      if (distFromCenter > 0.47) {
-        // Ocean border
-        biome = BiomeType.OCEAN;
-        tile = 3; // water
-      } else if (distFromCenter > 0.40) {
-        // Beach / sand transition
-        biome = BiomeType.DESERT;
-        tile = 1; // sand
-      } else {
-        // Inner zones by angle + noise
-        const angle = Math.atan2(cy - 0.5, cx - 0.5);
-        // Divide map into zones: NE = snow, SE = desert, SW/NW = plains
-        if (angle > -0.5 && angle < 1.2) {
-          // East: desert
-          biome = BiomeType.DESERT;
-          tile = 1;
-        } else if (angle > 1.2 || angle < -2.0) {
-          // North: snow
-          biome = BiomeType.SNOW;
-          tile = 2;
-        } else {
-          // West/South: plains
-          biome = n > 0.55 ? BiomeType.FOREST : BiomeType.PLAINS;
-          tile = n > 0.55 ? 4 : 0; // dark-grass vs grass
-        }
-      }
-
-      tiles[idx] = tile;
+      tiles[idx]  = tile;
       biomes[idx] = biome;
     }
   }
@@ -102,14 +163,6 @@ export function getBiomeAt(mapData: MapData, worldX: number, worldY: number): Bi
   const ty = Math.floor(worldY / TILE_SIZE);
   if (tx < 0 || ty < 0 || tx >= TILES_COUNT || ty >= TILES_COUNT) return BiomeType.OCEAN;
   return mapData.biomes[ty * TILES_COUNT + tx] as BiomeType;
-}
-
-// Approximated smooth noise without importing heavy libs
-function simplexApprox(x: number, y: number, seed: number): number {
-  const n = Math.sin(x * 127.1 + y * 311.7 + seed * 0.001) * 43758.5453123;
-  const n2 = Math.sin(x * 269.5 + y * 183.3 + seed * 0.002) * 43758.5453123;
-  const n3 = Math.sin(x * 55.7 + y * 426.1 + seed * 0.003) * 43758.5453123;
-  return ((n - Math.floor(n)) * 0.5 + (n2 - Math.floor(n2)) * 0.3 + (n3 - Math.floor(n3)) * 0.2);
 }
 
 export function getTileAt(mapData: MapData, worldX: number, worldY: number): TileType {

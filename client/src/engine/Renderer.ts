@@ -1,179 +1,142 @@
-import Camera from './Camera';
+import { Camera } from './Camera';
 
-/**
- * Renderer — thin wrapper around a 2-D canvas context that owns the Camera
- * and provides draw helpers used throughout the game.
- */
 export class Renderer {
-  readonly ctx: CanvasRenderingContext2D;
-  width:  number;
-  height: number;
+  readonly ctx:    CanvasRenderingContext2D;
   readonly camera: Camera;
+  width  = 0;
+  height = 0;
 
   private readonly canvas: HTMLCanvasElement;
 
   constructor(canvas: HTMLCanvasElement) {
-    const ctx = canvas.getContext('2d');
-    if (!ctx) throw new Error('Failed to obtain 2D canvas context.');
-
+    const ctx = canvas.getContext('2d', { alpha: false });
+    if (!ctx) throw new Error('No 2D context');
     this.canvas = canvas;
     this.ctx    = ctx;
-    this.width  = canvas.width;
-    this.height = canvas.height;
-    this.camera = new Camera(this.width, this.height);
-
-    // Keep canvas size in sync with the browser window
+    this.camera = new Camera();
     window.addEventListener('resize', () => this.resize());
     this.resize();
   }
 
-  // ── Lifecycle ──────────────────────────────────────────────────────────────
-
-  /**
-   * Resize the canvas to fill the window and update camera dimensions.
-   */
   resize(): void {
     this.width  = window.innerWidth;
     this.height = window.innerHeight;
     this.canvas.width  = this.width;
     this.canvas.height = this.height;
-    this.camera.width  = this.width;
-    this.camera.height = this.height;
+    this.camera.resize(this.width, this.height);
   }
 
-  /**
-   * Clear the canvas and paint a sky/ground background that reacts to the
-   * day/night cycle.
-   *
-   * Day:   light-blue sky, soft green ground
-   * Night: deep navy sky, dark green ground
-   */
+  // ─── Camera helpers ────────────────────────────────────────────────────────
+  applyCamera():  void { this.camera.apply(this.ctx);   }
+  resetCamera():  void { this.camera.restore(this.ctx); }
+
+  // ─── Background ────────────────────────────────────────────────────────────
   clear(isNight: boolean): void {
-    const ctx = this.ctx;
-    const { width, height } = this;
-
-    if (isNight) {
-      // Sky
-      ctx.fillStyle = '#0d1b2a';
-      ctx.fillRect(0, 0, width, height);
-      // Ground tint (lower half)
-      ctx.fillStyle = '#1a2e1a';
-      ctx.fillRect(0, height / 2, width, height / 2);
-    } else {
-      // Sky
-      ctx.fillStyle = '#87ceeb';
-      ctx.fillRect(0, 0, width, height);
-      // Ground tint
-      ctx.fillStyle = '#90ee90';
-      ctx.fillRect(0, height / 2, width, height / 2);
-    }
+    const { ctx, width, height } = this;
+    ctx.fillStyle = isNight ? '#0a1520' : '#7ec850';
+    ctx.fillRect(0, 0, width, height);
   }
 
-  // ── Primitive draw helpers ─────────────────────────────────────────────────
-
-  /**
-   * Draw a filled circle at screen position (x, y).
-   */
-  drawCircle(x: number, y: number, r: number, color: string): void {
-    const ctx = this.ctx;
+  // ─── Primitives ────────────────────────────────────────────────────────────
+  drawCircle(x: number, y: number, r: number, color: string, alpha = 1): void {
+    const { ctx } = this;
+    ctx.save();
+    ctx.globalAlpha = alpha;
     ctx.beginPath();
     ctx.arc(x, y, r, 0, Math.PI * 2);
     ctx.fillStyle = color;
     ctx.fill();
+    ctx.restore();
   }
 
-  /**
-   * Draw a filled, optionally-rotated rectangle centred on (x, y).
-   * @param angle - rotation in radians (optional)
-   */
-  drawRect(
-    x: number,
-    y: number,
-    w: number,
-    h: number,
-    color: string,
-    angle: number = 0,
-  ): void {
-    const ctx = this.ctx;
+  drawCircleStroke(x: number, y: number, r: number, color: string, lw = 2, alpha = 1): void {
+    const { ctx } = this;
     ctx.save();
+    ctx.globalAlpha  = alpha;
+    ctx.beginPath();
+    ctx.arc(x, y, r, 0, Math.PI * 2);
+    ctx.strokeStyle  = color;
+    ctx.lineWidth    = lw;
+    ctx.stroke();
+    ctx.restore();
+  }
+
+  drawRect(x: number, y: number, w: number, h: number, color: string, angle = 0, alpha = 1): void {
+    const { ctx } = this;
+    ctx.save();
+    ctx.globalAlpha = alpha;
     ctx.translate(x, y);
-    if (angle !== 0) ctx.rotate(angle);
+    if (angle) ctx.rotate(angle);
     ctx.fillStyle = color;
-    ctx.fillRect(-w / 2, -h / 2, w, h);
+    ctx.fillRect(-w * 0.5, -h * 0.5, w, h);
     ctx.restore();
   }
 
-  /**
-   * Draw an image centred on (x, y), scaled to w×h, with optional rotation.
-   * @param angle - rotation in radians (optional)
-   */
-  drawImage(
-    img: HTMLImageElement,
-    x: number,
-    y: number,
-    w: number,
-    h: number,
-    angle: number = 0,
-  ): void {
-    const ctx = this.ctx;
+  drawImage(img: HTMLImageElement, x: number, y: number, w: number, h: number, angle = 0, alpha = 1): void {
+    const { ctx } = this;
     ctx.save();
+    ctx.globalAlpha = alpha;
     ctx.translate(x, y);
-    if (angle !== 0) ctx.rotate(angle);
-    ctx.drawImage(img, -w / 2, -h / 2, w, h);
+    if (angle) ctx.rotate(angle);
+    ctx.drawImage(img, -w * 0.5, -h * 0.5, w, h);
     ctx.restore();
   }
 
-  /**
-   * Draw a text string at (x, y).
-   * @param align - canvas textAlign value (default 'center')
-   */
+  // Alias expected by EntityRenderer
+  drawImageCentered(img: HTMLImageElement, x: number, y: number, w: number, h: number, angle = 0, alpha = 1): void {
+    this.drawImage(img, x, y, w, h, angle, alpha);
+  }
+
   drawText(
-    text: string,
-    x: number,
-    y: number,
-    size: number,
-    color: string,
-    align: CanvasTextAlign = 'center',
+    text: string, x: number, y: number, size: number, color: string,
+    align: CanvasTextAlign = 'center', font = 'bold {s}px "Segoe UI", sans-serif',
   ): void {
-    const ctx = this.ctx;
-    ctx.font      = `${size}px sans-serif`;
-    ctx.fillStyle = color;
-    ctx.textAlign = align;
+    const { ctx } = this;
+    ctx.font         = font.replace('{s}', String(size));
+    ctx.fillStyle    = color;
+    ctx.textAlign    = align;
     ctx.textBaseline = 'middle';
     ctx.fillText(text, x, y);
   }
 
-  /**
-   * Draw a health bar centred above (x, y).
-   * The bar has a red background and a green foreground proportional to hp/maxHp.
-   *
-   * @param width  - total width of the bar in pixels
-   */
-  drawHealthBar(
-    x: number,
-    y: number,
-    hp: number,
-    maxHp: number,
-    width: number,
+  drawTextShadow(text: string, x: number, y: number, size: number, color: string, align: CanvasTextAlign = 'center'): void {
+    const { ctx } = this;
+    ctx.font         = `bold ${size}px "Segoe UI", sans-serif`;
+    ctx.textAlign    = align;
+    ctx.textBaseline = 'middle';
+    ctx.fillStyle    = 'rgba(0,0,0,0.55)';
+    ctx.fillText(text, x + 1, y + 1);
+    ctx.fillStyle    = color;
+    ctx.fillText(text, x, y);
+  }
+
+  /** Horizontal stat/HP bar */
+  drawBar(
+    x: number, y: number, w: number, h: number,
+    value: number, max: number,
+    fg: string, bg: string,
+    alpha = 1,
   ): void {
-    const ctx    = this.ctx;
-    const height = 6;
-    const left   = x - width / 2;
-    const ratio  = Math.max(0, Math.min(1, hp / maxHp));
-
-    // Background (lost health)
-    ctx.fillStyle = '#c0392b';
-    ctx.fillRect(left, y, width, height);
-
-    // Foreground (remaining health)
-    ctx.fillStyle = '#27ae60';
-    ctx.fillRect(left, y, width * ratio, height);
-
-    // Thin border
+    const { ctx } = this;
+    const ratio = Math.max(0, Math.min(1, value / max));
+    ctx.save();
+    ctx.globalAlpha = alpha;
+    ctx.fillStyle   = bg;
+    ctx.fillRect(x, y, w, h);
+    ctx.fillStyle   = fg;
+    ctx.fillRect(x, y, w * ratio, h);
     ctx.strokeStyle = 'rgba(0,0,0,0.4)';
     ctx.lineWidth   = 1;
-    ctx.strokeRect(left, y, width, height);
+    ctx.strokeRect(x, y, w, h);
+    ctx.restore();
   }
+
+  drawHealthBar(x: number, y: number, hp: number, maxHp: number, w: number): void {
+    this.drawBar(x - w * 0.5, y, w, 5, hp, maxHp, '#2ecc71', '#c0392b');
+  }
+
+  save():    void { this.ctx.save();    }
+  restore(): void { this.ctx.restore(); }
 }
 
 export default Renderer;
