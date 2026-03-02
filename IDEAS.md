@@ -43,3 +43,23 @@
 ## 11) Ruined Outposts POIs
 - **Description:** Procedurally place small ruined structures with guarded loot and environmental hazards to create mid-game hotspots.
 - **Complexity:** high
+
+## 12) Frostbite Wounds
+- **Description:** Staying too long below a temperature threshold applies a temporary max-HP debuff that can only be cleared by warming up at a campfire.
+- **Complexity:** medium
+
+## 13) Boomerang Spear
+- **Description:** Craftable ranged spear that can be thrown and returns after a short delay, enabling hit-and-run playstyles.
+- **Complexity:** high
+
+## 14) Totem Capture Rings
+- **Description:** Neutral capture rings spawn on the map; holding them grants periodic score and small global buffs for your clan/team.
+- **Complexity:** high
+
+## 15) Rain Harvesters
+- **Description:** Buildable collectors that slowly generate water during rain/night humidity, reducing early-game thirst pressure.
+- **Complexity:** low
+
+## 16) Rare Meteor Drops
+- **Description:** Random meteor events create temporary hotspots with high-tier resources but hostile mobs guarding the crash site.
+- **Complexity:** medium
