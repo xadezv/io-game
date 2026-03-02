@@ -14,17 +14,25 @@ export interface DamageEvent {
   targetType: string;
 }
 
+export interface KillFeedEvent {
+  killerId: number;
+  killerNickname: string;
+  victimId: number;
+  victimNickname: string;
+}
+
 export function processAttack(
   attacker: Player,
   angle: number,
   world: World,
-): { damages: DamageEvent[] } {
+): { damages: DamageEvent[]; kills: KillFeedEvent[] } {
   const damages: DamageEvent[] = [];
+  const kills: KillFeedEvent[] = [];
 
   const itemId = attacker.getSelectedItem();
   const item   = ITEMS[itemId] ?? ITEMS[ItemId.HAND];
-  if (!item?.isWeapon) return { damages };
-  if (attacker.attackTimer > 0) return { damages };
+  if (!item?.isWeapon) return { damages, kills };
+  if (attacker.attackTimer > 0) return { damages, kills };
 
   attacker.attackTimer     = item.attackCooldown ?? ATTACK_COOLDOWN;
   attacker.isAttacking     = true;
@@ -95,6 +103,7 @@ export function processAttack(
     if (p.hp <= 0) {
       p.hp = 0;
       gainXP(attacker, 50);
+      kills.push({ killerId: attacker.id, killerNickname: attacker.nickname, victimId: p.id, victimNickname: p.nickname });
     }
     break;
   }
@@ -112,7 +121,7 @@ export function processAttack(
     break;
   }
 
-  return { damages };
+  return { damages, kills };
 }
 
 export function processAnimalAttacks(world: World): { playerId: string; damage: number }[] {

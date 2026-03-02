@@ -15,6 +15,7 @@ import Chat from '../ui/Chat';
 import CraftMenu, { RecipeEntry } from '../ui/CraftMenu';
 import Minimap, { MinimapEntity } from '../ui/Minimap';
 import TouchControls from '../ui/TouchControls';
+import KillFeed from '../ui/KillFeed';
 import { MAP_SIZE, PLAYER_MAX_HP, PLAYER_MAX_HUNGER, PLAYER_MAX_THIRST, PLAYER_MAX_TEMP } from '../../../shared/constants';
 import { RECIPES } from '../../../shared/items';
 
@@ -41,6 +42,7 @@ const PT_LEADERBOARD        = 14;
 const PT_TIME_UPDATE        = 15;
 const PT_DEATH              = 17;
 const PT_RESPAWN            = 22;
+const PT_KILL_FEED          = 23;
 const PT_PLACE              = 10;
 const PT_PING               = 20;
 const PT_PONG               = 21;
@@ -197,6 +199,7 @@ export class GameClient {
   private readonly craftMenu:   CraftMenu;
   private readonly minimap:     Minimap;
   private readonly sound:       SoundManager;
+  private readonly killFeed:    KillFeed;
 
   // Crafting recipes (derived from shared RECIPES + live inventory)
   private craftRecipes: RecipeEntry[] = [];
@@ -262,6 +265,7 @@ export class GameClient {
     this.craftMenu   = new CraftMenu(this.renderer.ctx, canvas);
     this.minimap     = new Minimap();
     this.sound       = new SoundManager();
+    this.killFeed    = new KillFeed();
     // Renderer already handles resize; no additional listener needed.
   }
 
@@ -275,6 +279,7 @@ export class GameClient {
     this.deathScreen.init();
     this.leaderboard.init();
     this.chat.init();
+    this.killFeed.init();
 
     // Attach input
     this.input.attach(this.canvas, this.camera);
@@ -410,6 +415,7 @@ export class GameClient {
       case PT_LEADERBOARD:        this._onLeaderboard(data);       break;
       case PT_CHAT_BROADCAST:     this._onChatBroadcast(data);     break;
       case PT_PONG:               this._onPong(data);              break;
+      case PT_KILL_FEED:          this._onKillFeed(data);          break;
     }
   }
 
@@ -635,6 +641,12 @@ export class GameClient {
     const nickname = data[2] as string;
     const message  = data[3] as string;
     this.chat.addMessage(playerId, nickname, message);
+  }
+
+  private _onKillFeed(data: unknown[]): void {
+    const killer = String(data[2] ?? 'Unknown');
+    const victim = String(data[4] ?? 'Unknown');
+    this.killFeed.addKill(killer, victim);
   }
 
   private _onPong(data: unknown[]): void {
