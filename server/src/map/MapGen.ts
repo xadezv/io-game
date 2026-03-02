@@ -137,6 +137,13 @@ export function getTileAndBiome(
   return { tile: 0 as TileType, biome: BiomeType.PLAINS };
 }
 
+export function getTileAndBiomeBySeed(tx: number, ty: number, seed: number): { tile: TileType; biome: BiomeType } {
+  const elevPx  = buildPermTable(seed);
+  const moistPx = buildPermTable(seed ^ 0xdeadbeef);
+  const tempPx  = buildPermTable(seed ^ 0xcafebabe);
+  return getTileAndBiome(tx, ty, elevPx, moistPx, tempPx);
+}
+
 export function generateMap(seed: number): MapData {
   const elevPx  = buildPermTable(seed);
   const moistPx = buildPermTable(seed ^ 0xdeadbeef);

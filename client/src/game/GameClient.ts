@@ -13,7 +13,7 @@ import Leaderboard, { LeaderboardEntry } from '../ui/Leaderboard';
 import Chat from '../ui/Chat';
 import CraftMenu, { RecipeEntry } from '../ui/CraftMenu';
 import Minimap, { MinimapEntity } from '../ui/Minimap';
-import { MAP_SIZE, PLAYER_MAX_HP, PLAYER_MAX_HUNGER, PLAYER_MAX_THIRST, PLAYER_MAX_TEMP } from '../../../shared/constants';
+import { MAP_SIZE, TILE_SIZE, PLAYER_MAX_HP, PLAYER_MAX_HUNGER, PLAYER_MAX_THIRST, PLAYER_MAX_TEMP } from '../../../shared/constants';
 import { RECIPES } from '../../../shared/items';
 
 // ---------------------------------------------------------------------------
@@ -39,6 +39,90 @@ const PT_LEADERBOARD        = 14;
 const PT_TIME_UPDATE        = 15;
 const PT_DEATH              = 17;
 const PT_RESPAWN            = 22;
+
+// Map sync helpers (mirrors server/src/map/MapGen.ts)
+function buildPermTable(seed: number): Uint8Array {
+  const p = new Uint8Array(512);
+  const base = new Uint8Array(256);
+  for (let i = 0; i < 256; i++) base[i] = i;
+  let state = (seed >>> 0) % 0x80000000;
+  for (let i = 255; i > 0; i--) {
+    state = (1103515245 * state + 12345) % 0x80000000;
+    const j = Math.floor((state / 0x80000000) * (i + 1));
+    const t = base[i]; base[i] = base[j]; base[j] = t;
+  }
+  for (let i = 0; i < 512; i++) p[i] = base[i & 255];
+  return p;
+}
+function fade(t: number): number { return t * t * t * (t * (t * 6 - 15) + 10); }
+function lerp(t: number, a: number, b: number): number { return a + t * (b - a); }
+function grad(hash: number, x: number, y: number): number {
+  const h = hash & 3;
+  const u = h < 2 ? x : y;
+  const v = h < 2 ? y : x;
+  return ((h & 1) ? -u : u) + ((h & 2) ? -v : v);
+}
+function perlin2(px: Uint8Array, x: number, y: number): number {
+  const X = Math.floor(x) & 255;
+  const Y = Math.floor(y) & 255;
+  x -= Math.floor(x); y -= Math.floor(y);
+  const u = fade(x), v = fade(y);
+  const a = px[X] + Y, b = px[X + 1] + Y;
+  return (
+    lerp(v,
+      lerp(u, grad(px[a], x, y), grad(px[b], x - 1, y)),
+      lerp(u, grad(px[a + 1], x, y - 1), grad(px[b + 1], x - 1, y - 1))
+    ) * 0.5 + 0.5
+  );
+}
+function fbm(px: Uint8Array, x: number, y: number, octaves: number): number {
+  let val = 0, amp = 0.5, freq = 1, max = 0;
+  for (let i = 0; i < octaves; i++) {
+    val += perlin2(px, x * freq, y * freq) * amp;
+    max += amp;
+    amp *= 0.5;
+    freq *= 2;
+  }
+  return val / max;
+}
+function getTileAndBiomeFromSeed(tx: number, ty: number, elevPx: Uint8Array, moistPx: Uint8Array, tempPx: Uint8Array): { tile: number; biome: number } {
+  const tilesCount = Math.floor(MAP_SIZE / TILE_SIZE);
+  const cx = tx / tilesCount;
+  const cy = ty / tilesCount;
+  const dx = cx - 0.5, dy = cy - 0.5;
+  const distFromCenter = Math.sqrt(dx * dx + dy * dy) * 2;
+  const SCALE = 0.004;
+  const elev = fbm(elevPx, tx * SCALE * tilesCount, ty * SCALE * tilesCount, 6);
+  const moist = fbm(moistPx, tx * SCALE * tilesCount * 0.7, ty * SCALE * tilesCount * 0.7, 4);
+  const temp = fbm(tempPx, tx * SCALE * tilesCount * 0.5, ty * SCALE * tilesCount * 0.5, 3);
+  const oceanEdge = 0.82;
+  const effectiveElev = elev * (1 - Math.pow(distFromCenter / oceanEdge, 3));
+  if (effectiveElev < 0.25 || distFromCenter > 0.88) return { tile: 3, biome: 4 };
+  if (effectiveElev < 0.32) return { tile: 1, biome: 2 };
+  if (temp < 0.3) return { tile: 2, biome: 3 };
+  if (temp > 0.65 && moist < 0.45) return { tile: 1, biome: 2 };
+  if (moist > 0.6) return { tile: 4, biome: 1 };
+  return { tile: 0, biome: 0 };
+}
+function generateClientMap(seed: number): WorldData {
+  const tilesCount = Math.floor(MAP_SIZE / TILE_SIZE);
+  const total = tilesCount * tilesCount;
+  const tiles = new Uint8Array(total);
+  const biomes = new Uint8Array(total);
+  const elevPx = buildPermTable(seed);
+  const moistPx = buildPermTable(seed ^ 0xdeadbeef);
+  const tempPx = buildPermTable(seed ^ 0xcafebabe);
+  for (let ty = 0; ty < tilesCount; ty++) {
+    for (let tx = 0; tx < tilesCount; tx++) {
+      const idx = ty * tilesCount + tx;
+      const tb = getTileAndBiomeFromSeed(tx, ty, elevPx, moistPx, tempPx);
+      tiles[idx] = tb.tile;
+      biomes[idx] = tb.biome;
+    }
+  }
+  // Sync sanity sample: seed=12345, tx=100, ty=100 => tile=3, biome=4
+  return { seed, tiles, biomes };
+}
 
 // ---------------------------------------------------------------------------
 // Damage particle colours per entity type
@@ -280,13 +364,7 @@ export class GameClient {
     this.isNight  = (data[5] as number) !== 0;
     this.gameTime = (data[6] as number | undefined) ?? 0;
 
-    // Build blank tile/biome arrays — client will render background colour only
-    // until map sync is implemented. WorldRenderer handles missing data gracefully.
-    const TILES_SIDE  = Math.floor(MAP_SIZE / 32); // 450
-    const TOTAL       = TILES_SIDE * TILES_SIDE;
-    const tilesRaw    = new Uint8Array(TOTAL);
-    const biomesRaw   = new Uint8Array(TOTAL);
-    this.mapData = { seed, tiles: tilesRaw, biomes: biomesRaw };
+    this.mapData = generateClientMap(seed);
 
     // Initialise rendering subsystems
     this.worldRenderer  = new WorldRenderer(this.renderer, this.mapData, this.assets);
