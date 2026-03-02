@@ -2,6 +2,7 @@ import { Renderer } from '../engine/Renderer';
 import { Camera } from '../engine/Camera';
 import { Input } from '../engine/Input';
 import { AssetLoader, ASSET_URLS } from '../engine/AssetLoader';
+import SoundManager from '../engine/SoundManager';
 import { WorldRenderer, WorldData } from './WorldRenderer';
 import { EntityRenderer, ClientEntity } from './EntityRenderer';
 import { ParticleSystem } from './ParticleSystem';
@@ -195,6 +196,7 @@ export class GameClient {
   private readonly chat:        Chat;
   private readonly craftMenu:   CraftMenu;
   private readonly minimap:     Minimap;
+  private readonly sound:       SoundManager;
 
   // Crafting recipes (derived from shared RECIPES + live inventory)
   private craftRecipes: RecipeEntry[] = [];
@@ -259,6 +261,7 @@ export class GameClient {
     this.chat        = new Chat();
     this.craftMenu   = new CraftMenu(this.renderer.ctx, canvas);
     this.minimap     = new Minimap();
+    this.sound       = new SoundManager();
     // Renderer already handles resize; no additional listener needed.
   }
 
@@ -341,6 +344,9 @@ export class GameClient {
         if (this.placementMode) {
           this.chat.addMessage(-1, 'System', 'Placement mode ON — right-click to place selected item. Press B to cancel.');
         }
+      } else if (key === 'm' || key === 'M') {
+        const on = this.sound.toggle();
+        this.chat.addMessage(-1, 'Sound', on ? 'Sound ON' : 'Sound OFF');
       } else if (key === 'Escape') {
         this.placementMode = false;
       }
@@ -592,6 +598,7 @@ export class GameClient {
     if (entity) {
       const color = DAMAGE_COLORS[entity.type] ?? '#ffffff';
       this.particles.emit(px, py, color, 8, 140, 4);
+      this.sound.play('hit', 0.08);
     } else {
       this.particles.emitSparks(px, py);
     }
@@ -604,6 +611,7 @@ export class GameClient {
 
     const points = (data[1] as number | undefined) ?? this.stats.points;
     this.deathScreen.show(points);
+    this.sound.play('death', 0.18);
     this.entities.clear();
     this.myPlayer = null;
     this.myId     = -1;
@@ -639,6 +647,8 @@ export class GameClient {
     const success = Boolean(data[1]);
     if (!success) {
       this.chat.addMessage(-1, 'System', 'Cannot craft — not enough resources.');
+    } else {
+      this.sound.play('craft', 0.1);
     }
   }
 
