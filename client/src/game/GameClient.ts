@@ -13,6 +13,7 @@ import Leaderboard, { LeaderboardEntry } from '../ui/Leaderboard';
 import Chat from '../ui/Chat';
 import CraftMenu, { RecipeEntry } from '../ui/CraftMenu';
 import Minimap, { MinimapEntity } from '../ui/Minimap';
+import TouchControls from '../ui/TouchControls';
 import { MAP_SIZE, PLAYER_MAX_HP, PLAYER_MAX_HUNGER, PLAYER_MAX_THIRST, PLAYER_MAX_TEMP } from '../../../shared/constants';
 import { RECIPES } from '../../../shared/items';
 
@@ -274,6 +275,13 @@ export class GameClient {
 
     // Attach input
     this.input.attach(this.canvas, this.camera);
+    if ('ontouchstart' in window) {
+      const tc = new TouchControls();
+      tc.init();
+      tc.onMoveDir((dir) => this.sendMove(dir));
+      tc.onAttack((angle) => this.sendAttack(angle));
+      (this as any).touchControls = tc;
+    }
 
     // Kick off asset loading in the background — non-blocking
     this._loadAssets();
