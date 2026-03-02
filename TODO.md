@@ -370,7 +370,7 @@ Client (`client/src/ui/HUD.ts`):
 
 ---
 
-### TASK-25 — Bear boss (forest biome)  [ ]
+### TASK-25 — Bear boss (forest biome)  [~] PR #29 open
 **Priority:** MEDIUM
 **Branch:** `feat/task-25-bear`
 **Source:** IDEA-13
@@ -400,7 +400,7 @@ Client (`client/src/game/EntityRenderer.ts`):
 
 ---
 
-### TASK-26 — Spider enemy with web slow  [ ]
+### TASK-26 — Spider enemy with web slow  [~] PR #31 open
 **Priority:** MEDIUM
 **Branch:** `feat/task-26-spider`
 **Source:** IDEA-14
