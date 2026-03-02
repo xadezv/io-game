@@ -4,6 +4,7 @@ import { PacketType } from '../../../shared/packets';
 import { handlePacket } from '../packet/PacketHandler';
 import { updateSurvival } from '../systems/SurvivalSystem';
 import { processAnimalAttacks } from '../systems/CombatSystem';
+import { processFireSpread } from '../systems/FireSystem';
 import {
   TICK_MS, DAY_DURATION, NIGHT_DURATION, PLAYER_MAX_HP,
   PLAYER_MAX_HUNGER, PLAYER_MAX_THIRST, PLAYER_MAX_TEMP,
@@ -143,6 +144,19 @@ export class Game {
 
     // World physics + animal AI
     this.world.update(dt);
+
+    // Fire spread / burning structures (TASK-27)
+    for (const s of this.world.structures.values()) s.isBurning = false;
+    const fireRemovedIds = processFireSpread(this.world);
+    for (const id of this.world.burningStructures) {
+      const s = this.world.structures.get(id);
+      if (!s || s.dead) continue;
+      s.isBurning = true;
+      this.io.emit('msg', [PacketType.DAMAGE, s.id, Math.max(1, Math.round(8 * dt)), Math.round(s.x), Math.round(s.y)]);
+    }
+    for (const id of fireRemovedIds) {
+      this.io.emit('msg', [PacketType.ENTITY_REMOVE, id]);
+    }
 
     // Spike damage events — BUG-17: emit DAMAGE packet + trigger killPlayer
     for (const hit of this.world.spikeHits) {
