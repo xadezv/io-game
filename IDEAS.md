@@ -406,3 +406,11 @@ Rare longer night event with stronger mobs and boosted drops/XP. Server announce
 - **Pack Alpha Hunts:** Rare elite wolf alpha spawns that buffs nearby wolves until defeated, dropping unique crafting tokens.
 - **Broken Ruins POIs:** Small ruined camps with randomized loot + environmental hazards to create roaming objectives.
 - **Duel Totem:** Optional 1v1 challenge structure that grants bonus XP to winner and temporary safe duel arena rules.
+
+## Additional Ideas (2026-03-02 cron)
+
+- Dynamic fog-of-war scouts: craftable flare that reveals minimap area for 20s.
+- Biome events: desert sandstorm that reduces visibility and drains extra thirst outside shelter.
+- Clan totems: placeable structure giving small regen aura to nearby clanmates.
+- Tracking footprints: temporary trails for recently moved players/animals (counterplay for stealth).
+- Seasonal world modifier voting in lobby (e.g. long night, rich resources, hardcore hunger).
