@@ -2,6 +2,7 @@ export const ASSET_URLS: Record<string, string> = {
   player:       "https://starve.io/img/player.png",
   rabbit:       "https://starve.io/img/rabbit.png",
   wolf:         "https://starve.io/img/wolf.png",
+  mammoth:      "https://starve.io/img/mammoth.png",
   tree:         "https://starve.io/img/tree.png",
   tree_snow:    "https://starve.io/img/tree_snow.png",
   stone:        "https://starve.io/img/stone.png",

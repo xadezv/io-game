@@ -48,6 +48,7 @@ const ET_WALL_STONE = 9;
 const ET_SPIKE      = 10;
 const ET_CACTUS     = 11;
 const ET_SNOW_TREE  = 12;
+const ET_MAMMOTH    = 13;
 
 // ---------------------------------------------------------------------------
 // Default maxHP per entity type
@@ -67,6 +68,7 @@ const DEFAULT_MAX_HP: Record<number, number> = {
   [ET_SPIKE]:      150,
   [ET_CACTUS]:     100,
   [ET_SNOW_TREE]:  200,
+  [ET_MAMMOTH]:    500,
 };
 
 // ---------------------------------------------------------------------------
@@ -93,6 +95,7 @@ const SPRITE_DEFS: Record<number, SpriteDef> = {
   [ET_WALL_STONE]: { key: 'wall_stone', w: 72, h: 72, rotate: false },
   [ET_SPIKE]:      { key: 'spike_wood', w: 60, h: 60, rotate: false },
   [ET_CACTUS]:     { key: 'cactus',     w: 52, h: 52, rotate: false },
+  [ET_MAMMOTH]:    { key: 'mammoth',    w: 96, h: 96, rotate: true  },
 };
 
 // Weapon sprite lookup by itemId numeric value
@@ -160,8 +163,8 @@ export class EntityRenderer {
 
     // 3. Sort: resources first (by Y), then animals, then players on top
     const sorted = Array.from(entities.values()).sort((a, b) => {
-      const rankA = a.type === ET_PLAYER ? 2 : (a.type === ET_RABBIT || a.type === ET_WOLF ? 1 : 0);
-      const rankB = b.type === ET_PLAYER ? 2 : (b.type === ET_RABBIT || b.type === ET_WOLF ? 1 : 0);
+      const rankA = a.type === ET_PLAYER ? 2 : (a.type === ET_RABBIT || a.type === ET_WOLF || a.type === ET_MAMMOTH ? 1 : 0);
+      const rankB = b.type === ET_PLAYER ? 2 : (b.type === ET_RABBIT || b.type === ET_WOLF || b.type === ET_MAMMOTH ? 1 : 0);
       if (rankA !== rankB) return rankA - rankB;
       return a.renderY - b.renderY;
     });
@@ -178,7 +181,8 @@ export class EntityRenderer {
         case ET_GOLD:       this.renderGold(e, camera);    break;
         case ET_BERRY:      this.renderBerry(e, camera);   break;
         case ET_RABBIT:
-        case ET_WOLF:       this.renderAnimal(e, camera);  break;
+        case ET_WOLF:
+        case ET_MAMMOTH:    this.renderAnimal(e, camera);  break;
         case ET_FIRE:       this.renderFire(e, camera);    break;
         case ET_WALL_WOOD:
         case ET_WALL_STONE: this.renderWall(e, camera);    break;
@@ -416,19 +420,42 @@ export class EntityRenderer {
     if (img && def) {
       this.renderer.drawImageCentered(img, screen.x, screen.y, def.w * z, def.h * z, e.angle);
     } else {
-      // Fallback coloured ellipse
-      const color = e.type === ET_WOLF ? '#5d4037' : '#f5f0e8';
-      const r     = (e.type === ET_WOLF ? 22 : 14) * z;
+      const { ctx } = this.renderer;
+      const isWolf = e.type === ET_WOLF;
+      const isMammoth = e.type === ET_MAMMOTH;
+      const color = isMammoth ? '#4a4a4a' : (isWolf ? '#5d4037' : '#f5f0e8');
+      const r = (isMammoth ? 40 : (isWolf ? 22 : 14)) * z;
       this.renderer.drawCircle(screen.x, screen.y, r, color);
 
+      if (isMammoth) {
+        // Tusk lines for mammoth silhouette
+        ctx.save();
+        ctx.strokeStyle = '#e8e0cf';
+        ctx.lineWidth = 3 * z;
+        ctx.lineCap = 'round';
+        const fx = screen.x + Math.cos(e.angle) * (r * 0.7);
+        const fy = screen.y + Math.sin(e.angle) * (r * 0.7);
+        const perp = e.angle + Math.PI * 0.5;
+        for (const side of [-1, 1]) {
+          const sx = fx + Math.cos(perp) * (side * r * 0.25);
+          const sy = fy + Math.sin(perp) * (side * r * 0.25);
+          const ex = sx + Math.cos(e.angle) * (r * 0.55) + Math.cos(perp) * (side * r * 0.15);
+          const ey = sy + Math.sin(e.angle) * (r * 0.55) + Math.sin(perp) * (side * r * 0.15);
+          ctx.beginPath();
+          ctx.moveTo(sx, sy);
+          ctx.lineTo(ex, ey);
+          ctx.stroke();
+        }
+        ctx.restore();
+      }
+
       // Eyes
-      const { ctx } = this.renderer;
-      const eyeColor = e.type === ET_WOLF ? '#ef5350' : '#333';
+      const eyeColor = isWolf ? '#ef5350' : '#333';
       ctx.save();
       ctx.fillStyle = eyeColor;
-      const eyeR   = 3 * z;
-      const eyeOff = 8 * z;
-      const perp   = e.angle + Math.PI * 0.5;
+      const eyeR = (isMammoth ? 4 : 3) * z;
+      const eyeOff = (isMammoth ? 12 : 8) * z;
+      const perp = e.angle + Math.PI * 0.5;
       ctx.beginPath();
       ctx.arc(
         screen.x + Math.cos(e.angle) * (r * 0.5) + Math.cos(perp) * eyeOff,
@@ -446,7 +473,7 @@ export class EntityRenderer {
       ctx.restore();
     }
 
-    this._drawHpBar(e, screen.x, screen.y, (def ? def.h * 0.5 : 22) * z + 8 * z, camera);
+    this._drawHpBar(e, screen.x, screen.y, (def ? def.h * 0.5 : (e.type === ET_MAMMOTH ? 40 : 22)) * z + 8 * z, camera);
   }
 
   // -------------------------------------------------------------------------
