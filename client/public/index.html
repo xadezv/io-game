@@ -48,7 +48,7 @@
     ============================================= */
     .chat-container {
       position: fixed;
-      bottom: 140px;
+      bottom: 230px;
       left: 14px;
       width: 280px;
       z-index: 100;
@@ -497,8 +497,43 @@
   <!-- Socket.IO (must load before bundle) -->
   <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
 
+  <!-- Hot reload: dev-only, listens for bundle rebuild signal from server -->
+  <script>
+    (function () {
+      var _hr = io('/', { transports: ['websocket'] });
+      _hr.on('__reload__', function () {
+        console.log('[HMR] Reloading…');
+        location.reload();
+      });
+    })();
+  </script>
+
+  <!-- Startup error catcher — visible red overlay if bundle crashes -->
+  <script>
+    window.onerror = function(msg, src, line, col, err) {
+      var d = document.getElementById('__err');
+      if (!d) {
+        d = document.createElement('div');
+        d.id = '__err';
+        d.style.cssText = 'position:fixed;inset:0;z-index:99999;background:#1a0000;color:#ff6666;font:14px monospace;padding:30px;white-space:pre-wrap;overflow:auto;';
+        document.body.appendChild(d);
+      }
+      d.textContent += 'ERROR: ' + msg + '\n  at ' + src + ':' + line + ':' + col + '\n' + (err && err.stack ? err.stack : '') + '\n\n';
+    };
+    window.onunhandledrejection = function(e) {
+      var d = document.getElementById('__err');
+      if (!d) {
+        d = document.createElement('div');
+        d.id = '__err';
+        d.style.cssText = 'position:fixed;inset:0;z-index:99999;background:#1a0000;color:#ff6666;font:14px monospace;padding:30px;white-space:pre-wrap;overflow:auto;';
+        document.body.appendChild(d);
+      }
+      d.textContent += 'UNHANDLED: ' + (e.reason && e.reason.stack ? e.reason.stack : String(e.reason)) + '\n\n';
+    };
+  </script>
+
   <!-- Game bundle -->
-  <script src="bundle.js" defer></script>
+  <script src="bundle.js?v=2" defer></script>
 
 </body>
 </html>

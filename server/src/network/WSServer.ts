@@ -1,6 +1,7 @@
 import express from 'express';
 import http from 'http';
 import path from 'path';
+import fs from 'fs';
 import { Server as SocketIOServer } from 'socket.io';
 import { Game } from '../core/Game';
 import { PacketType } from '../../../shared/packets';
@@ -13,8 +14,28 @@ export function createServer(port = 3000): void {
     transports: ['websocket'],
   });
 
-  const clientPublic = path.join(__dirname, '..', '..', '..', '..', 'client', 'public');
+  // Works for both ts-node (src/network/) and compiled (dist/network/)
+  const clientPublic = path.resolve(__dirname, '..', '..', '..', 'client', 'public');
   app.use(express.static(clientPublic));
+
+  // ── Hot reload ──────────────────────────────────────────────────────────────
+  // Watch bundle.js for changes (esbuild --watch rebuilds it).
+  // When it changes, emit 'reload' to all connected browsers.
+  const bundlePath = path.join(clientPublic, 'bundle.js');
+  let reloadDebounce: NodeJS.Timeout | null = null;
+  try {
+    fs.watch(bundlePath, () => {
+      if (reloadDebounce) return;
+      reloadDebounce = setTimeout(() => {
+        reloadDebounce = null;
+        console.log('[HMR] bundle.js changed — reloading clients');
+        io.emit('__reload__');
+      }, 120); // debounce: esbuild writes in multiple chunks
+    });
+    console.log('[HMR] Watching bundle.js for changes');
+  } catch {
+    // bundle.js may not exist yet on first run — that's fine
+  }
 
   const game = new Game(io);
   game.start();

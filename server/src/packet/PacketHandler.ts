@@ -74,7 +74,7 @@ export function handlePacket(
 
     case PacketType.CRAFT: {
       const itemId = (data[1] as number) | 0;
-      const result = processCraft(player, itemId);
+      const result = processCraft(player, itemId, world);
       const sock   = (player as any).socket as Socket | undefined;
       sock?.emit('msg', [PacketType.CRAFT_RESULT, result.success ? 1 : 0, result.itemId ?? -1, result.count ?? 0]);
       break;
@@ -85,6 +85,42 @@ export function handlePacket(
       const angle  = data[2] as number;
       processPlace(player, itemId, angle, world);
       // New structure included in next ENTITY_UPDATE
+      break;
+    }
+
+    case PacketType.CHEST_OPEN: {
+      const structureId = (data[1] as number) | 0;
+      const s = world.structures.get(structureId);
+      const sock = (player as any).socket as Socket | undefined;
+      if (!s || s.itemId !== ItemId.CHEST) break;
+      const dist = Math.hypot(s.x - player.x, s.y - player.y);
+      if (dist > 160) break;
+      sock?.emit('msg', [PacketType.CHEST_DATA, s.id, s.storage.map(x => [x.itemId, x.count])]);
+      break;
+    }
+
+    case PacketType.CHEST_STORE: {
+      const structureId = (data[1] as number) | 0;
+      const slotIndex   = (data[2] as number) | 0;
+      const itemId      = (data[3] as number) | 0;
+      const count       = Math.max(0, (data[4] as number) | 0);
+      const s           = world.structures.get(structureId);
+      const sock        = (player as any).socket as Socket | undefined;
+      if (!s || s.itemId !== ItemId.CHEST) break;
+      if (slotIndex < 0 || slotIndex >= 5) break;
+      if (count <= 0) break;
+      if (player.removeItem(itemId as ItemId, count)) {
+        const slot = s.storage[slotIndex];
+        if (slot.itemId === -1 || slot.itemId === itemId) {
+          slot.itemId = itemId;
+          slot.count += count;
+        } else {
+          // slot occupied by different item — return to player
+          player.addItem(itemId as ItemId, count);
+        }
+      }
+      sock?.emit('msg', [PacketType.CHEST_DATA, s.id, s.storage.map(x => [x.itemId, x.count])]);
+      sock?.emit('msg', [PacketType.PLAYER_STATS, player.serializeStats()]);
       break;
     }
 
