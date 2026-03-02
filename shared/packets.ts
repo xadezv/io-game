@@ -28,6 +28,7 @@ export const PacketType = {
   CRAFT_RESULT:       16,
   DEATH:              17,
   PONG:               21,
+  CHEST_DATA:         25,
 } as const;
 
 export type PacketType = typeof PacketType[keyof typeof PacketType];
