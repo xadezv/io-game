@@ -346,3 +346,11 @@ Allow CAMPFIRE and WORKSHOP upgrades (tier I/II/III) that improve radius, crafti
 
 ### IDEA-30 — World event: eclipse night
 Rare longer night event with stronger mobs and boosted drops/XP. Server announces countdown, and players can prepare defenses for high-risk/high-reward sessions.
+
+## Fresh gameplay ideas (2026-03-02, late run)
+
+- **Poison Swamp Micro-biome:** tiny toxic patches between forest/plains with unique herbs, slow movement, and periodic gas bursts.
+- **Portable Bedroll:** consumable structure that grants one safe logout/respawn anchor but can be looted if discovered.
+- **Beast Tracker Lens:** craftable utility item that highlights nearby elite creatures for a few seconds on use.
+- **Clan Banner Buffs:** placeable banner gives minor aura buffs to nearby allies but reveals base position on minimap.
+- **Meteor Ore Showers:** rare falling-star events spawn contested high-tier ore nodes with timed despawn.
