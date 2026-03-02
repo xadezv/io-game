@@ -65,6 +65,8 @@ export class Game {
     p.moveDir = 0;
     // Clear inventory on death (fresh start)
     p.inventory = Array(10).fill(null).map(() => ({ itemId: -1, count: 0 }));
+    p.selectedSlot = 0;
+    p.hatId = -1;
 
     const socket = this.io.sockets.sockets.get(socketId);
     if (socket) {
