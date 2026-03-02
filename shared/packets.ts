@@ -8,7 +8,7 @@ export const PacketType = {
   MOVE:               2,
   ATTACK:             5,
   SELECT_ITEM:        7,
-  USE_ITEM:           9,
+  USE_ITEM:           23,
   PLACE:              10,
   CRAFT:              11,
   PING:               20,

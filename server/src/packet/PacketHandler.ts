@@ -41,7 +41,8 @@ export function handlePacket(
       const item = player.getSelectedItem() as import('../../../shared/items').ItemId;
       const used = useFood(player, item);
       if (used) {
-        // Stats update will be sent in next tick
+        const sock = (player as any).socket as Socket | undefined;
+        sock?.emit('msg', [PacketType.PLAYER_STATS, player.serializeStats()]);
       }
       break;
     }
