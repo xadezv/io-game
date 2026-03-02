@@ -366,6 +366,33 @@ export class World {
     for (const p of this.players.values()) {
       if (p.dead) continue;
       const ox = p.x, oy = p.y;
+
+      const { dx, dy } = p.getMoveVector();
+      const speed = p.getEffectiveSpeed();
+      p.vx = dx * speed;
+      p.vy = dy * speed;
+
+      const rawNx = p.x + p.vx * dt;
+      const rawNy = p.y + p.vy * dt;
+      const actualDelta = Math.hypot(rawNx - p.x, rawNy - p.y);
+      const maxDelta = speed * dt * 1.15;
+
+      let nx = rawNx;
+      let ny = rawNy;
+      if (actualDelta > maxDelta && actualDelta > 0) {
+        const scale = maxDelta / actualDelta;
+        nx = p.x + (rawNx - p.x) * scale;
+        ny = p.y + (rawNy - p.y) * scale;
+        p.violationCount++;
+        console.warn(`[ANTICHEAT] player ${p.id} clamped move from ${actualDelta.toFixed(2)} to ${maxDelta.toFixed(2)}`);
+        if (p.violationCount > 20) {
+          p.pendingKick = true;
+        }
+      }
+
+      p.x = Math.max(p.radius, Math.min(MAP_SIZE - p.radius, nx));
+      p.y = Math.max(p.radius, Math.min(MAP_SIZE - p.radius, ny));
+
       p.update(dt);
       this.playerGrid.move(p.id, ox, oy, p.x, p.y);
       this.resolvePlayerCollisions(p);

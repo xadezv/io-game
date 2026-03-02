@@ -18,6 +18,7 @@ export class Game {
   private isNight   = false;
   private cycleMax  = DAY_DURATION;
   private lbTimer   = 0;
+  private antiCheatResetTimer = 0;
 
   // Snowstorm (TASK-20)
   stormActive = false;
@@ -73,6 +74,8 @@ export class Game {
     p.moveDir    = 0;
     p.killStreak = 0;
     p.kills      = 0;
+    p.violationCount = 0;
+    p.pendingKick = false;
     // Clear inventory on death (fresh start)
     p.inventory = Array(10).fill(null).map(() => ({ itemId: -1, count: 0 }));
 
@@ -160,6 +163,19 @@ export class Game {
       if (p.hp <= 0) this.killPlayer(p);
     }
 
+    // Anti-cheat kick handling
+    for (const p of this.world.players.values()) {
+      if (!p.pendingKick || p.dead) continue;
+      p.pendingKick = false;
+      this.killPlayer(p);
+      const s = this.io.sockets.sockets.get(p.socketId);
+      if (s) {
+        setTimeout(() => {
+          try { s.disconnect(true); } catch {}
+        }, 1000);
+      }
+    }
+
     // Animal attacks
     for (const { playerId, damage } of processAnimalAttacks(this.world)) {
       const p = this.world.players.get(playerId);
@@ -183,6 +199,13 @@ export class Game {
       s.emit('msg', [PacketType.ENTITY_UPDATE,  entities.map(e => e.serialize())]);
       s.emit('msg', [PacketType.PLAYER_STATS,   p.serializeStats()]);
       s.emit('msg', [PacketType.TIME_UPDATE,    this.isNight ? 1 : 0, this.gameTime, this.cycleMax]);
+    }
+
+    // Reset anti-cheat counters every 5s
+    this.antiCheatResetTimer += dt * 1000;
+    if (this.antiCheatResetTimer >= 5000) {
+      this.antiCheatResetTimer = 0;
+      for (const p of this.world.players.values()) p.violationCount = 0;
     }
 
     // Leaderboard every 3s

@@ -2,7 +2,7 @@ import { Entity } from './Entity';
 import { EntityType, MoveDir } from '../../../shared/packets';
 import {
   PLAYER_MAX_HP, PLAYER_MAX_HUNGER, PLAYER_MAX_TEMP, PLAYER_MAX_THIRST,
-  PLAYER_RADIUS, PLAYER_SPEED, ATTACK_COOLDOWN, MAP_SIZE,
+  PLAYER_RADIUS, PLAYER_SPEED,
 } from '../../../shared/constants';
 import { ItemId } from '../../../shared/items';
 import type { Socket } from 'socket.io';
@@ -49,6 +49,10 @@ export class Player extends Entity {
   kills      = 0;
   killStreak = 0;
 
+  // Anti-cheat
+  violationCount = 0;
+  pendingKick = false;
+
   // State
   nearFire = false;
 
@@ -90,9 +94,11 @@ export class Player extends Entity {
     return n;
   }
 
-  update(dt: number): void {
-    if (this.dead) return;
+  getEffectiveSpeed(): number {
+    return PLAYER_SPEED;
+  }
 
+  getMoveVector(): { dx: number; dy: number } {
     let dx = 0, dy = 0;
     if (this.moveDir & MoveDir.LEFT)  dx -= 1;
     if (this.moveDir & MoveDir.RIGHT) dx += 1;
@@ -101,11 +107,11 @@ export class Player extends Entity {
 
     const len = Math.sqrt(dx * dx + dy * dy);
     if (len > 0) { dx /= len; dy /= len; }
+    return { dx, dy };
+  }
 
-    this.vx = dx * PLAYER_SPEED;
-    this.vy = dy * PLAYER_SPEED;
-    this.x  = Math.max(PLAYER_RADIUS, Math.min(MAP_SIZE - PLAYER_RADIUS, this.x + this.vx * dt));
-    this.y  = Math.max(PLAYER_RADIUS, Math.min(MAP_SIZE - PLAYER_RADIUS, this.y + this.vy * dt));
+  update(dt: number): void {
+    if (this.dead) return;
 
     if (this.attackTimer     > 0) this.attackTimer     -= dt * 1000;
     if (this.attackAnimTimer > 0) {
