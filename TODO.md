@@ -310,6 +310,176 @@ Client (`client/src/ui/CraftMenu.ts`):
 
 ---
 
+### TASK-23 — Poison status effect + mushroom resource  [ ]
+**Priority:** MEDIUM
+**Branch:** `feat/task-23-poison`
+**Source:** IDEA-21
+
+Dark mushrooms spawn in forest biome. Eating raw → poison debuff (−2 HP/s for 10 s). Combine with gold at workshop → POISON_COATING item that adds DoT to attacks for 60 s.
+
+Shared (`shared/items.ts`):
+- Add `MUSHROOM: 37` and `POISON_COATING: 38` to `ItemId`
+- Add `MUSHROOM` entry: `isFood: true, foodHp: -5, foodHunger: 10, sprite: 'mushroom'` (negative foodHp = poison trigger)
+- Add `POISON_COATING` entry: `stackable: true, maxStack: 5, isWeapon: false, sprite: 'poison_coating'`
+- Add recipe (requires workshop): `{ result: ItemId.POISON_COATING, count: 1, ingredients: [{ item: ItemId.MUSHROOM, count: 3 }, { item: ItemId.GOLD, count: 5 }], requiresWorkbench: true }`
+
+Server (`server/src/entities/Player.ts`):
+- Add `poisonTimer: number = 0` and `poisonCoated: boolean = false`, `poisonCoatTimer: number = 0`
+
+Server (`server/src/systems/SurvivalSystem.ts`):
+- In `updateSurvival`: if `player.poisonTimer > 0`, drain `2 * dt` HP/s and `poisonTimer -= dt * 1000`
+- If `player.poisonCoatTimer > 0`, decrement `poisonCoatTimer -= dt * 1000`; when zero set `poisonCoated = false`
+
+Server (`server/src/systems/SurvivalSystem.ts` — `useFood`):
+- If `item.foodHp < 0` and item is mushroom, set `player.poisonTimer = 10000` instead of applying HP
+
+Server (`server/src/systems/CombatSystem.ts`):
+- If `attacker.poisonCoated`, apply 3-second DoT on hit: set `target.poisonTimer = 3000`
+
+Server (`server/src/packet/PacketHandler.ts`):
+- Handle `USE_ITEM` for `POISON_COATING`: set `player.poisonCoated = true`, `player.poisonCoatTimer = 60000`, remove 1 coating from inventory
+
+Map (`server/src/map/MapGen.ts`):
+- Spawn MUSHROOM resources in FOREST biome at ~1/4 the density of berries (reuse Resource entity)
+
+No new packets needed (PLAYER_STATS already sent on stat changes).
+
+---
+
+### TASK-24 — Gold tool durability  [ ]
+**Priority:** MEDIUM
+**Branch:** `feat/task-24-gold-durability`
+**Source:** IDEA-05
+
+Gold tools have 200 uses before breaking back to HAND.
+
+Shared (`shared/items.ts`):
+- Add optional `maxDurability?: number` field to `ItemDef`
+- Set `maxDurability: 200` for `GOLD_AXE`, `GOLD_SWORD`, `GOLD_PICK`
+
+Server (`server/src/entities/Player.ts`):
+- Add `durability: Map<number, number>` (slotIndex → remaining uses)
+- Add method `useTool(slotIndex: number): void` — decrements durability for the slot; if 0, replaces with HAND (itemId=0, count=1)
+
+Server (`server/src/systems/CombatSystem.ts`):
+- After a successful attack with a gold tool, call `attacker.useTool(attacker.selectedSlot)`
+
+Client (`client/src/ui/HUD.ts`):
+- In the inventory slot render, if `durability < 50%`, draw a small orange progress bar under the item icon
+- Include `durability` map in `PLAYER_STATS` packet as last element (index 11) — send as flat array `[slot, remaining, slot, remaining, ...]`
+
+---
+
+### TASK-25 — Bear boss (forest biome)  [ ]
+**Priority:** MEDIUM
+**Branch:** `feat/task-25-bear`
+**Source:** IDEA-13
+
+Rare bear boss in forest biome. 500 HP, wide arc attack, drops large meat haul + PELT item.
+
+Shared (`shared/packets.ts`):
+- Add `BEAR: 16` to `EntityType`
+
+Shared (`shared/items.ts`):
+- Add `PELT: 39` to `ItemId`
+- Add `PELT` entry: `stackable: true, maxStack: 10, sprite: 'pelt'`
+- Add `HAT_FUR: 54` to ItemId (crafted from pelt) with `isHat: true, tempBonus: 50, sprite: 'hat_fur'`
+- Add recipe: `{ result: ItemId.HAT_FUR, count: 1, ingredients: [{ item: ItemId.PELT, count: 5 }, { item: ItemId.THREAD, count: 10 }] }`
+
+Server (`server/src/entities/Animal.ts`):
+- Add `BEAR` to `ANIMAL_CONFIGS`: `hp: 500, speed: 90, radius: 40, aggroRange: 300, attackRange: 60, attackDamage: 35, attackCooldown: 1200, xpReward: 200`
+- Bear attack: apply damage in a 120° arc (3 targets max) — check angle between bear facing and direction to player
+- Bear drops: `RAW_MEAT x5` + `PELT x2` on death
+
+Server (`server/src/core/World.ts`):
+- Add `spawnBear()` method: places 1 bear in a random FOREST biome tile, only if no other bear is alive
+- Called from `Game.ts` on game start and every 10 minutes after death
+
+Client (`client/src/game/EntityRenderer.ts`):
+- Render bear as a large brown circle (r=40) with a health bar above; use `bear` sprite if available
+
+---
+
+### TASK-26 — Spider enemy with web slow  [ ]
+**Priority:** MEDIUM
+**Branch:** `feat/task-26-spider`
+**Source:** IDEA-14
+
+Spiders spawn at night in forest biome. Attack applies "webbed" debuff: −60% speed for 3 s. Drop thread.
+
+Shared (`shared/packets.ts`):
+- Add `SPIDER: 17` to `EntityType`
+
+Server (`server/src/entities/Animal.ts`):
+- Add `SPIDER` to `ANIMAL_CONFIGS`: `hp: 60, speed: 160, radius: 18, aggroRange: 200, attackRange: 30, attackDamage: 8, attackCooldown: 800, xpReward: 25`
+- Spider only active at night (check `game.isNight` — pass as param or via world flag)
+
+Server (`server/src/entities/Player.ts`):
+- Add `webTimer: number = 0` field
+
+Server (`server/src/systems/CombatSystem.ts`):
+- When a spider hits a player, set `target.webTimer = 3000`
+
+Server (`server/src/entities/Player.ts` — `getEffectiveSpeed`):
+- If `webTimer > 0`, apply extra 0.4 multiplier on top of hunger slowdown
+
+Server (`server/src/systems/SurvivalSystem.ts`):
+- Decrement `player.webTimer -= dt * 1000` each tick
+
+Server (`server/src/core/Game.ts`):
+- Spawn 5–8 spiders in forest biome on day→night transition; remove on night→day
+
+Spider drops: `THREAD x1` (50% chance)
+
+---
+
+### TASK-27 — Campfire fire spread to wood structures  [ ]
+**Priority:** MEDIUM
+**Branch:** `feat/task-27-fire-spread`
+**Source:** IDEA-06
+
+Campfires have a 0.5% chance per tick to ignite adjacent wood walls/spikes within 80px. Burning structures take 8 HP/s and emit a fire particle on client.
+
+Server — new `FireSystem.ts` in `server/src/systems/`:
+- `processFireSpread(world: World): void`
+- Iterate all FIRE structures (campfires); for each, call `world.getNearbyStructures(x, y, 80)`
+- For each wood structure (`WALL_WOOD`, `SPIKE_WOOD`) within range: roll `Math.random() < 0.005`; if hit, add to `world.burningStructures: Set<number>` (structure IDs)
+- Each tick: for each burning structure ID, damage it `8 * dt` HP; remove from burning set if dead
+- On structure death by fire, broadcast `ENTITY_REMOVE`
+
+Server (`server/src/core/Game.ts`):
+- Import and call `processFireSpread(world)` each tick
+
+Client (`client/src/game/EntityRenderer.ts`):
+- Structures with `isBurning` flag (send via entity update — add optional flag to entity serialize, or reuse a spare field): render orange/yellow glow ring around them
+
+No new packets needed — use `DAMAGE` packet to notify clients of burning damage.
+
+---
+
+### TASK-28 — Anti-cheat: server-side position validation  [ ]
+**Priority:** HIGH
+**Branch:** `feat/task-28-anticheat`
+
+Players currently move at any speed because the server trusts client direction input and applies speed server-side, but doesn't validate the resulting delta per tick. Add basic sanity checks.
+
+Server (`server/src/core/World.ts`):
+- In the player movement tick, after computing the new `(nx, ny)`:
+  - Calculate `maxDelta = player.getEffectiveSpeed() * dt * 1.15` (15% tolerance for network jitter)
+  - If `Math.hypot(nx - player.x, ny - player.y) > maxDelta`, clamp the move to `maxDelta` distance
+  - Log a warning `[ANTICHEAT] player ${id} clamped move from ${actual} to ${maxDelta}`
+
+Server (`server/src/entities/Player.ts`):
+- Add `violationCount: number = 0`
+- Increment on each clamped move; if `violationCount > 20` within 5 seconds, mark player for kick (emit DEATH + disconnect socket after 1s)
+
+Server (`server/src/core/Game.ts`):
+- Every 5 seconds, reset `violationCount = 0` for all players (sliding window reset)
+
+No client changes. No new packets. No new dependencies.
+
+---
+
 ## Completed Tasks
 
 - [x] **TASK-01** — Fix build errors (fixed on master, PRs #1 #7 closed)
@@ -324,6 +494,16 @@ Client (`client/src/ui/CraftMenu.ts`):
 - [x] **TASK-10** — Mobile touch controls baseline (PR #17, merged 2026-03-02)
 - [x] **TASK-11** — Sound effects Web Audio API (PR #18, merged 2026-03-02)
 - [x] **TASK-12** — Touch joystick visual + polish (fix/task-12-touch-polish, merged 2026-03-02)
+- [x] **TASK-13** — Kill streak counter + XP bonus (PR #20, merged 2026-03-02)
+- [x] **TASK-14** — Floating damage numbers (PR #21, merged 2026-03-02)
+- [x] **TASK-15** — Minimap entity icons (PR #22, merged 2026-03-02)
+- [x] **TASK-16** — Hunger slows movement (merged on master 2026-03-02)
+- [x] **TASK-17** — Leaderboard kills column (merged on master 2026-03-02)
+- [x] **TASK-18** — Wolf pack spawns at night (merged on master 2026-03-02)
+- [x] **TASK-19** — Furnace structure / cook raw meat (PR #24, merged 2026-03-02)
+- [x] **TASK-20** — Snowstorm dynamic weather (PR #25, merged 2026-03-02)
+- [x] **TASK-21** — Respawn with score penalty (merged on master 2026-03-02)
+- [x] **TASK-22** — Workshop structure / tier-gated crafting (PR #26, merged 2026-03-02)
 
 ## Ideas Source
 
