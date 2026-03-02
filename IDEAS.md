@@ -414,3 +414,20 @@ Rare longer night event with stronger mobs and boosted drops/XP. Server announce
 - Clan totems: placeable structure giving small regen aura to nearby clanmates.
 - Tracking footprints: temporary trails for recently moved players/animals (counterplay for stealth).
 - Seasonal world modifier voting in lobby (e.g. long night, rich resources, hardcore hunger).
+
+## Extra ideas — 2026-03-02 (cron run)
+
+26. **Seasonal migration events** *(Medium)*  
+   Every 12–15 minutes, herds (rabbits/wolves) migrate between biomes, temporarily changing local resource pressure and danger zones.
+
+27. **Craftable map pings** *(Low)*  
+   Add a consumable flare that places a temporary minimap ping visible to nearby allies for 20 seconds.
+
+28. **Biome relic shrines** *(High)*  
+   Rare shrine structures spawn per biome and grant a short regional buff when activated (e.g., snow = cold resistance, desert = thirst resistance).
+
+29. **Tool special attacks** *(Medium)*  
+   Gold tools gain a cooldown-based active ability (axe cleave, pick armor break, sword dash) to deepen combat choices.
+
+30. **Dynamic wildlife nesting** *(Medium)*  
+   Animals create temporary nests/dens; destroying them reduces local spawns, preserving them increases long-term population around that biome.
