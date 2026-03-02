@@ -528,6 +528,21 @@ export class EntityRenderer {
       ctx.restore();
     }
 
+    // Burning glow for low-HP wood walls (fire spread visual, TASK-27)
+    if (e.type === ET_WALL_WOOD) {
+      const maxHp = e.maxHp || DEFAULT_MAX_HP[e.type] || 200;
+      if (e.hp > 0 && e.hp < maxHp * 0.3) {
+        const { ctx } = this.renderer;
+        ctx.save();
+        ctx.globalAlpha = 0.45;
+        ctx.fillStyle   = 'rgba(255, 100, 0, 0.6)';
+        ctx.beginPath();
+        ctx.arc(screen.x, screen.y, size * 0.6, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.restore();
+      }
+    }
+
     this._drawHpBar(e, screen.x, screen.y, size * 0.5 + 8 * z, camera);
   }
 
@@ -567,6 +582,19 @@ export class EntityRenderer {
         ctx.fill();
         ctx.restore();
       }
+      ctx.restore();
+    }
+
+    // Burning glow for low-HP spikes (fire spread visual, TASK-27)
+    const maxHp = e.maxHp || DEFAULT_MAX_HP[e.type] || 150;
+    if (e.hp > 0 && e.hp < maxHp * 0.3) {
+      const { ctx } = this.renderer;
+      ctx.save();
+      ctx.globalAlpha = 0.45;
+      ctx.fillStyle   = 'rgba(255, 100, 0, 0.6)';
+      ctx.beginPath();
+      ctx.arc(screen.x, screen.y, 30 * z, 0, Math.PI * 2);
+      ctx.fill();
       ctx.restore();
     }
 

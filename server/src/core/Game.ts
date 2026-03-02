@@ -1,9 +1,11 @@
 import { World } from './World';
 import { Player } from '../entities/Player';
-import { PacketType } from '../../../shared/packets';
+import { Animal } from '../entities/Animal';
+import { PacketType, EntityType } from '../../../shared/packets';
 import { handlePacket } from '../packet/PacketHandler';
 import { updateSurvival } from '../systems/SurvivalSystem';
 import { processAnimalAttacks } from '../systems/CombatSystem';
+import { processFireSpread } from '../systems/FireSystem';
 import {
   TICK_MS, DAY_DURATION, NIGHT_DURATION, PLAYER_MAX_HP,
   PLAYER_MAX_HUNGER, PLAYER_MAX_THIRST, PLAYER_MAX_TEMP,
@@ -27,6 +29,10 @@ export class Game {
   private readonly STORM_MAX_INTERVAL = 10 * 60 * 1000;
   private readonly STORM_DURATION     = 60 * 1000;
 
+  // Bear boss respawn (TASK-25)
+  private bearRespawnTimer: number = 0;
+  private readonly BEAR_RESPAWN_DELAY = 600_000; // 10 minutes in ms
+
   constructor(io: any) {
     this.io    = io;
     this.world = new World();
@@ -36,6 +42,8 @@ export class Game {
   start(): void {
     this.lastTime = Date.now();
     this.tickInterval = setInterval(() => this.tick(), TICK_MS);
+    // Spawn bear boss on game start
+    this.world.spawnBear();
     console.log(`[Game] Running`);
   }
 
@@ -144,6 +152,9 @@ export class Game {
     // World physics + animal AI
     this.world.update(dt);
 
+    // Fire spread — campfires ignite adjacent wood structures (TASK-27)
+    processFireSpread(this.world, dt);
+
     // Spike damage events — BUG-17: emit DAMAGE packet + trigger killPlayer
     for (const hit of this.world.spikeHits) {
       const p = this.world.players.get(hit.socketId);
@@ -153,11 +164,22 @@ export class Game {
       if (p.hp <= 0) this.killPlayer(p);
     }
 
-    // Survival drain
+    // Survival drain + anti-cheat violation check
     for (const p of this.world.players.values()) {
       if (p.dead) continue;
       updateSurvival(p, this.world, dt, this.isNight, this.stormActive);
       if (p.hp <= 0) this.killPlayer(p);
+
+      // Anti-cheat: count down violation reset window; punish if threshold exceeded
+      p.violationResetTimer -= dt * 1000;
+      if (p.violationResetTimer <= 0) {
+        if (p.violationCount > 20) {
+          console.log(`[ANTICHEAT] kick player ${p.nickname} (violations: ${p.violationCount})`);
+          this.killPlayer(p);
+        }
+        p.violationCount      = 0;
+        p.violationResetTimer = 5000;
+      }
     }
 
     // Animal attacks

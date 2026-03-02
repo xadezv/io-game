@@ -7,6 +7,7 @@ export class Structure extends Entity {
   itemId:     ItemId;
   damageTimer: number = 0;
   spikeDamage: number = 20;
+  burning:     boolean = false;
   storage: { itemId: number; count: number }[] = Array(5).fill(null).map(() => ({ itemId: -1, count: 0 }));
 
   constructor(
