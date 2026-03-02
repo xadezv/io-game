@@ -30,6 +30,7 @@ export class Structure extends Entity {
       Math.round(this.angle * 100) / 100,
       this.hp,
       this.itemId, -1, '', 1, 0, 0,
+      0,
     ];
   }
 }

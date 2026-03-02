@@ -40,6 +40,7 @@ export function processAttack(
   attacker.attackAngle     = angle;
 
   const range  = item.range  ?? 70;
+  const selectedSlot = attacker.selectedSlot;
   const damage = item.damage ?? 10;
   const hitX   = attacker.x + Math.cos(angle) * range * 0.6;
   const hitY   = attacker.y + Math.sin(angle) * range * 0.6;
@@ -100,9 +101,13 @@ export function processAttack(
     p.hp -= damage;
     damages.push({ targetId: p.id, damage, targetType: 'player' });
 
+    if (attacker.poisonCoated) p.poisonTimer = 3000;
     if (p.hp <= 0) {
       p.hp = 0;
-      gainXP(attacker, 50);
+      attacker.kills++;
+      attacker.killStreak++;
+      p.killStreak = 0;
+      gainXP(attacker, 50 + Math.min(50, attacker.killStreak * 10));
       kills.push({ killerId: attacker.id, killerNickname: attacker.nickname, victimId: p.id, victimNickname: p.nickname });
     }
     break;
@@ -121,6 +126,7 @@ export function processAttack(
     break;
   }
 
+  attacker.useTool(selectedSlot);
   return { damages, kills };
 }
 
@@ -136,6 +142,7 @@ export function processAnimalAttacks(world: World): { playerId: string; damage: 
       if (a.canAttack(p)) {
         a.doAttack(p);
         p.hp = Math.max(0, p.hp - a.config.attackDamage);
+        if (a.type === 18) p.webTimer = 3000;
         results.push({ playerId: p.socketId, damage: a.config.attackDamage });
       }
     }

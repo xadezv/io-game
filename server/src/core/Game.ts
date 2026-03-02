@@ -1,9 +1,11 @@
 import { World } from './World';
 import { Player } from '../entities/Player';
-import { PacketType } from '../../../shared/packets';
+import { Animal } from '../entities/Animal';
+import { PacketType, EntityType } from '../../../shared/packets';
 import { handlePacket } from '../packet/PacketHandler';
 import { updateSurvival } from '../systems/SurvivalSystem';
 import { processAnimalAttacks } from '../systems/CombatSystem';
+import { processFireSpread } from '../systems/FireSystem';
 import {
   TICK_MS, DAY_DURATION, NIGHT_DURATION, PLAYER_MAX_HP,
   PLAYER_MAX_HUNGER, PLAYER_MAX_THIRST, PLAYER_MAX_TEMP,
@@ -18,6 +20,7 @@ export class Game {
   private isNight   = false;
   private cycleMax  = DAY_DURATION;
   private lbTimer   = 0;
+  private violationResetTimer = 0;
 
   // Snowstorm (TASK-20)
   stormActive = false;
@@ -130,6 +133,11 @@ export class Game {
       if (this.isNight && !wasNight) {
         // Day → Night: spawn wolf pack
         const nightWolves = this.world.spawnNightWolves();
+        for (let i = 0; i < 5 + Math.floor(Math.random() * 4); i++) {
+          const pos = this.world.findSpawnPos();
+          const spider = new Animal(EntityType.SPIDER, pos.x, pos.y);
+          this.world.addAnimal(spider);
+        }
         console.log(`[Night] Spawned ${nightWolves.length} night wolves`);
       } else if (!this.isNight && wasNight) {
         // Night → Day: remove night wolves, restore aggro
@@ -137,12 +145,19 @@ export class Game {
         for (const id of removedIds) {
           this.io.emit('msg', [PacketType.ENTITY_REMOVE, id]);
         }
+        for (const a of Array.from(this.world.animals.values())) {
+          if (a.type === EntityType.SPIDER) {
+            this.world.animals.delete(a.id);
+            this.io.emit('msg', [PacketType.ENTITY_REMOVE, a.id]);
+          }
+        }
         console.log(`[Day] Removed ${removedIds.length} night wolves`);
       }
     }
 
     // World physics + animal AI
     this.world.update(dt);
+    for (const id of processFireSpread(this.world, dt)) this.io.emit('msg', [PacketType.ENTITY_REMOVE, id]);
 
     // Spike damage events — BUG-17: emit DAMAGE packet + trigger killPlayer
     for (const hit of this.world.spikeHits) {
@@ -183,6 +198,19 @@ export class Game {
       s.emit('msg', [PacketType.ENTITY_UPDATE,  entities.map(e => e.serialize())]);
       s.emit('msg', [PacketType.PLAYER_STATS,   p.serializeStats()]);
       s.emit('msg', [PacketType.TIME_UPDATE,    this.isNight ? 1 : 0, this.gameTime, this.cycleMax]);
+    }
+
+
+    this.violationResetTimer += dt * 1000;
+    if (this.violationResetTimer >= 5000) {
+      this.violationResetTimer = 0;
+      for (const p of this.world.players.values()) p.violationCount = 0;
+    }
+    for (const p of this.world.players.values()) {
+      if (p.violationCount > 20) {
+        const s = this.io.sockets.sockets.get(p.socketId);
+        if (s) { s.emit('msg', [PacketType.DEATH, p.points]); setTimeout(() => s.disconnect(true), 1000); }
+      }
     }
 
     // Leaderboard every 3s
