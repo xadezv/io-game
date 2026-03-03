@@ -646,3 +646,11 @@ Server can enable weekly mutators (e.g., Double Night, Cold Front, Rich Veins) t
 - Ruins points-of-interest: rare mini-dungeons with timed PvE waves and guaranteed high-tier crafting materials.
 - Seasonal crop system: biome-dependent farming patches that rotate yields by in-game season/day cycle.
 - Caravan NPC encounters: neutral traders that appear on map edges and move across world, enabling risk/reward trade routes.
+
+## Extra ideas (2026-03-03, run 3)
+
+- **Underground Caverns:** rare sinkhole entrances lead to small instanced cave pockets with high ore density and low visibility.
+- **Weatherproof Clothing Set Bonuses:** wearing matched biome gear pieces grants bonus effects (e.g., reduced thirst drain in desert).
+- **Signal Fire Pings:** upgraded campfire can send a short minimap ping visible to allies, enabling lightweight team coordination.
+- **Beast Migration Seasons:** certain animals migrate between biomes by time-of-day, creating moving hunting hotspots.
+- **Relic Curses:** powerful relic pickups give strong buffs but apply drawbacks (slower healing, louder footsteps) until cleansed.
