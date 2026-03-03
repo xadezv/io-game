@@ -8,6 +8,9 @@ export class Structure extends Entity {
   damageTimer: number = 0;
   spikeDamage: number = 20;
   storage: { itemId: number; count: number }[] = Array(5).fill(null).map(() => ({ itemId: -1, count: 0 }));
+  cookTimer: number = 0;
+  isCooking: boolean = false;
+  cookingPlayerId: number = -1;
 
   constructor(
     type: EntityType,

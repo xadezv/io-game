@@ -15,6 +15,7 @@ export const PacketType = {
   RESPAWN:            22,
   CHEST_OPEN:         24,
   CHEST_STORE:        26,
+  INTERACT:           28,
 
   // Server → Client
   HANDSHAKE_RESPONSE: 3,
@@ -30,6 +31,7 @@ export const PacketType = {
   PONG:               21,
   KILL_FEED:          27,
   CHEST_DATA:         25,
+  INTERACT_RESULT:    29,
 } as const;
 
 export type PacketType = typeof PacketType[keyof typeof PacketType];
