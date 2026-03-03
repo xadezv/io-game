@@ -900,3 +900,14 @@ Add small ruin zones with dense resources, traps, and elite mobs. Entering ruins
 - Biome relic events: capture a relic in desert/snow/forest for temporary teamwide buffs.
 - Fishing spots along ocean edge with risk-reward catches (food vs. hostile sea creature aggro).
 - Totem structure that grants small passive regen to nearby allies but reveals area on enemy minimaps.
+
+## New Ideas (2026-03-03)
+
+- **Blizzard beacon event:** random beacon appears in snow biome; holding area for 60s grants team-wide warmth buff.
+- **Fishing at ocean edge:** craft rod + bait to catch food/fuel fish, with rare treasure drops.
+- **Biome contracts:** rotating mini-quests (e.g., gather cactus, hunt wolves) for bonus XP and cosmetics.
+- **Portable bedroll:** one-time fast respawn point that expires after use or night cycle.
+- **Totem of recall:** expensive structure that teleports player to last campfire after channeling.
+- **Seasonal world modifiers:** weekly modifiers like "double wolves", "rich gold veins", "long nights".
+- **Merchant caravan NPC:** periodic neutral trader near map center exchanging excess resources for rare items.
+- **Trap disarm kit:** utility tool to detect/disarm spikes and recover partial materials.
