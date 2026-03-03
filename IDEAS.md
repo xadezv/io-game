@@ -618,3 +618,14 @@ Server can enable weekly mutators (e.g., Double Night, Cold Front, Rich Veins) t
 - **Clan totems:** placeable clan structure that grants small regen/temperature aura to nearby clan members.
 - **Treasure map drops:** elite mobs can drop map fragments; combining fragments reveals a buried chest location.
 - **Seasonal world modifiers:** rotating weekly modifiers (e.g., "Harsh Winter", "Abundant Berries", "Aggressive Wildlife").
+
+## Extra ideas (2026-03-03)
+
+- **Blizzard Beacons:** craftable beacon that creates a small warm zone during snowstorms but attracts nearby predators.
+- **River Fishing:** add fish nodes in water-edge tiles; simple timing mini-game rewards food and rare crafting materials.
+- **Totem Buffs:** tribe totems that provide regional buffs (faster gather, cold resistance) while fueled by resources.
+- **World Events:** meteor shower/night comet event spawning temporary rare ore clusters with PvP hotspots.
+- **Animal Taming:** feed rabbits/wolves to temporarily tame them as scouts/guards with limited lifetime.
+- **Bandit Camps (PvE):** periodic hostile NPC camp spawns with loot chest and escalating difficulty over in-game days.
+- **Craft Queue:** optional 2-slot craft queue unlocked by workshop upgrade to reduce menu micromanagement.
+- **Biome Relics:** hidden relics per biome that unlock passive account-style cosmetics and emotes.
