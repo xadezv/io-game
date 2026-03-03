@@ -886,3 +886,10 @@ Add small ruin zones with dense resources, traps, and elite mobs. Entering ruins
 - **Biome relics:** rare interactable ruins in each biome that grant short buffs (e.g., cold resistance, faster gathering) with long cooldown.
 - **Ambush bushes:** dense foliage tiles that hide players until they move or attack, encouraging tactical PvP in forests.
 - **Caravan world event:** an AI merchant caravan crosses the map periodically; players can trade, escort, or raid it for loot.
+
+## Gameplay ideas (2026-03-03, cron batch 08:21 UTC)
+- **Hunting Horn item:** craftable consumable that briefly reveals nearby hostile animals and gives +10% movement speed for 6s to the user.
+- **Ashfall event:** rare post-meteor haze that lowers visibility and increases campfire warmth radius for 90s.
+- **Workshop upgrades:** upgrade path (I/II/III) reducing craft times and unlocking one extra queue slot per tier.
+- **Supply cache keys:** elite mobs can drop key fragments; combine 3 to open locked cache POIs with guaranteed rare mats.
+- **Rain collector structure:** passive structure that slowly restores thirst for nearby players during rain/snow events.
