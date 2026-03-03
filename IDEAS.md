@@ -672,3 +672,36 @@ Server can enable weekly mutators (e.g., Double Night, Cold Front, Rich Veins) t
 30. **Seasonal World Rotation** *(Complexity: High)*  
    Server rotates seasonal modifiers every real day (e.g., long nights, rich forests, harsh cold) to vary meta.
 
+
+## IDEA-26 — Seasonal migration events
+**Complexity:** Medium
+
+Every 12 in-game minutes, trigger a migration wave (e.g., rabbit herds in plains, wolves crossing forest edge). Players can track and hunt the wave for bonus loot and XP while risking PvP ambushes around predictable routes.
+
+---
+
+## IDEA-27 — Craftable map markers and shared pings
+**Complexity:** Low
+
+Allow players to place temporary map pings visible to nearby teammates (or party members when parties exist). Useful for coordinating resources, danger zones, and rally points without adding voice chat dependency.
+
+---
+
+## IDEA-28 — Biome relics and passive buffs
+**Complexity:** Medium
+
+Rare relic nodes spawn per biome (snow charm, desert idol, forest totem). Carrying a relic grants a small passive buff (temperature resist, thirst reduction, gather speed), but marks the carrier with a minimap pulse that attracts enemies.
+
+---
+
+## IDEA-29 — Dynamic trader caravan
+**Complexity:** Medium
+
+A neutral caravan periodically traverses the map edge-to-edge. Players can trade excess resources for rotating goods (food bundles, thread, hats). Caravans can be attacked for loot, turning them into moving PvP hotspots.
+
+---
+
+## IDEA-30 — Ruins micro-dungeons
+**Complexity:** High
+
+Add small ruin zones with dense resources, traps, and elite mobs. Entering ruins gives high-reward runs (gold/thread/pelts) but limited exits and high player collision density, encouraging risk-reward decision making.
