@@ -587,3 +587,11 @@ Server can enable weekly mutators (e.g., Double Night, Cold Front, Rich Veins) t
 - Biome mastery perks: survive X minutes in a biome to unlock a passive bonus (e.g., snow cold resistance, desert thirst efficiency).
 - Totem capture points: small world objectives that grant nearby teamless aura buffs to whoever controls them.
 - Echo footprints: high-speed movement leaves short-lived tracks visible to nearby players for tracking and counterplay.
+
+## Gameplay ideas (2026-03-03, cron run 03:51 UTC)
+
+- **Night lantern item:** portable light cone at night that slightly increases visibility but makes the holder easier to spot by enemies.
+- **River fishing spots:** interactable water-edge nodes with timed mini-loot (food, junk, rare pearls for crafting).
+- **Storm shelters:** craftable temporary lean-to that halves weather penalties for players inside a small radius.
+- **Bounty ping system:** top leaderboard player periodically gets a minimap ping for others, increasing PvP pressure.
+- **Animal den mechanic:** wolves/rabbits spawn from den structures that can be destroyed for temporary biome control.
