@@ -471,3 +471,10 @@ Server can enable weekly mutators (e.g., Double Night, Cold Front, Rich Veins) t
 - **Seasonal World Events**: periodic meteor shower that drops temporary high-value resource nodes in random biomes.
 - **Tribe Banner Buff**: build a banner that grants minor regen/speed bonus to nearby tribe members.
 - **Poison Antidote Craft**: brew antidote from berries + mushroom to clear poison/web effects instantly.
+
+## Gameplay ideas (2026-03-03)
+- Dynamic world events: roaming merchant caravan that appears randomly and trades rare resources for limited time.
+- Biome relics: hidden shrines in each biome that grant temporary buffs when activated.
+- Clan totems: placeable structure that grants small aura buffs to nearby allies and can be raided.
+- Seasonal fish system: ponds/ocean edges yield different catches by day/night affecting hunger and buffs.
+- Fog-of-war map fragments: exploration reveals permanent minimap fragments that can be traded.
