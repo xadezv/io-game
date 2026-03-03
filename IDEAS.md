@@ -564,3 +564,11 @@ Server can enable weekly mutators (e.g., Double Night, Cold Front, Rich Veins) t
 - **Capture campfires mode:** neutral campfires scattered around map grant periodic points to the nearest team/player controlling the zone.
 - **Tracking footprints:** temporary ground decals showing recent movement direction in snow/desert tiles to support hunting and ambush gameplay.
 - **Tool mastery perks:** repeated use of a tool class unlocks tiny passive bonuses (e.g., +5% wood yield for axe mastery), reset on death for roguelite progression.
+
+## Gameplay ideas (2026-03-03)
+
+- Dynamic world events: meteor showers that spawn rare ore hotspots for 3 minutes.
+- Seasonal migration: herds move between biomes daily, creating temporary hunting routes.
+- Totem buffs: placeable team totems grant nearby passive bonuses but can be raided.
+- Poison biome pockets: brief hazard zones with unique antidote crafting loop.
+- Contract board: rotating PvE/PvP mini-objectives for bonus XP and cosmetic rewards.
