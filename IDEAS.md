@@ -463,3 +463,11 @@ Server can enable weekly mutators (e.g., Double Night, Cold Front, Rich Veins) t
 
 35. **Crafting queue at structures** *(Complexity: M)*  
    Workshop/furnace can queue 2–3 jobs with progress bars, reducing repetitive interaction spam in mid/late game.
+
+## New Ideas (2026-03-03)
+
+- **Blizzard Totem Structure**: placeable totem that creates a small warm zone in snow biome but attracts wolves at night.
+- **Fishing System**: craft fishing rod, fish at ocean edge for food and rare loot; different fish by time of day.
+- **Seasonal World Events**: periodic meteor shower that drops temporary high-value resource nodes in random biomes.
+- **Tribe Banner Buff**: build a banner that grants minor regen/speed bonus to nearby tribe members.
+- **Poison Antidote Craft**: brew antidote from berries + mushroom to clear poison/web effects instantly.
