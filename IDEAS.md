@@ -572,3 +572,11 @@ Server can enable weekly mutators (e.g., Double Night, Cold Front, Rich Veins) t
 - Totem buffs: placeable team totems grant nearby passive bonuses but can be raided.
 - Poison biome pockets: brief hazard zones with unique antidote crafting loop.
 - Contract board: rotating PvE/PvP mini-objectives for bonus XP and cosmetic rewards.
+
+## Gameplay ideas (2026-03-03, cron batch)
+
+- **Heatwave event:** daytime desert heatwave lowers vision shimmer and doubles thirst drain for 90 seconds, with oasis tiles granting temporary resistance.
+- **Portable bedroll:** one-time craftable that lets a player set a safer respawn point for a short duration, then burns out.
+- **Bandit camp raid:** roaming PvE camp appears with guards and a loot chest; clearing it grants team-wide score bonus.
+- **Resource quality tiers:** occasional "rich" trees/ores spawn with distinct tint and yield +50% materials.
+- **Hunter marks:** landing consecutive hits on the same target applies a brief tracking mark visible on minimap to nearby allies.
