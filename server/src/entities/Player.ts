@@ -52,6 +52,10 @@ export class Player extends Entity {
   // State
   nearFire = false;
 
+  // Anti-cheat
+  violationCount = 0;
+
+
   constructor(socketId: string, nickname: string, x: number, y: number) {
     super(EntityType.PLAYER, x, y, PLAYER_MAX_HP, PLAYER_RADIUS);
     this.socketId = socketId;
@@ -90,6 +94,10 @@ export class Player extends Entity {
     return n;
   }
 
+  getEffectiveSpeed(): number {
+    return PLAYER_SPEED;
+  }
+
   update(dt: number): void {
     if (this.dead) return;
 
@@ -102,8 +110,9 @@ export class Player extends Entity {
     const len = Math.sqrt(dx * dx + dy * dy);
     if (len > 0) { dx /= len; dy /= len; }
 
-    this.vx = dx * PLAYER_SPEED;
-    this.vy = dy * PLAYER_SPEED;
+    const speed = this.getEffectiveSpeed();
+    this.vx = dx * speed;
+    this.vy = dy * speed;
     this.x  = Math.max(PLAYER_RADIUS, Math.min(MAP_SIZE - PLAYER_RADIUS, this.x + this.vx * dt));
     this.y  = Math.max(PLAYER_RADIUS, Math.min(MAP_SIZE - PLAYER_RADIUS, this.y + this.vy * dt));
 

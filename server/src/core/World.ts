@@ -367,6 +367,20 @@ export class World {
       if (p.dead) continue;
       const ox = p.x, oy = p.y;
       p.update(dt);
+
+      // Anti-cheat: clamp excessive movement delta per tick
+      const actualDx = p.x - ox;
+      const actualDy = p.y - oy;
+      const actualDelta = Math.hypot(actualDx, actualDy);
+      const maxDelta = p.getEffectiveSpeed() * dt * 1.15;
+      if (actualDelta > maxDelta && actualDelta > 0.0001) {
+        const ratio = maxDelta / actualDelta;
+        p.x = ox + actualDx * ratio;
+        p.y = oy + actualDy * ratio;
+        p.violationCount += 1;
+        console.warn(`[ANTICHEAT] player ${p.id} clamped move from ${actualDelta.toFixed(2)} to ${maxDelta.toFixed(2)}`);
+      }
+
       this.playerGrid.move(p.id, ox, oy, p.x, p.y);
       this.resolvePlayerCollisions(p);
     }
