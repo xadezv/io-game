@@ -926,3 +926,18 @@ Each biome has one shrine that activates team-wide buffs when supplied with reso
 
 ## IDEA-71 — Fishing mini-loop
 At ocean/lake edge, players can craft a fishing rod and catch fish by timing-based input. Fish can be cooked for high hunger restore; rare catches grant XP bursts.
+
+## IDEA-72 — Storm shelter structure
+Small craftable shelter that reduces temperature/thirst penalties from active weather events for players inside its radius.
+
+## IDEA-73 — Beast taming whistle
+Late-game whistle item that temporarily tames one nearby neutral animal to follow and gather small resources.
+
+## IDEA-74 — Resource hotspot pulses
+Every few minutes, one biome receives a short-lived hotspot bonus (e.g., +30% wood/stone/gold yields) visible on minimap.
+
+## IDEA-75 — Campfire cooking queue UI
+Allow campfire/furnace to queue multiple raw foods with visible progress bars, reducing interaction spam.
+
+## IDEA-76 — Downed state for team modes
+Instead of instant death in duo/squad mode, players enter a short downed state and can be revived by allies.
