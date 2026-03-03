@@ -941,3 +941,10 @@ Allow campfire/furnace to queue multiple raw foods with visible progress bars, r
 
 ## IDEA-76 — Downed state for team modes
 Instead of instant death in duo/squad mode, players enter a short downed state and can be revived by allies.
+
+## Gameplay ideas (2026-03-03, cron batch 09:21 UTC)
+- **Heatstroke mechanic (desert noon):** during peak daytime in desert, thirst drains faster unless player is in shade or near a water structure.
+- **Hunter tracks skill:** craftable lens item that highlights fresh animal tracks for 15 seconds on cooldown, helping food routing.
+- **Siege ram structure:** slow, high-cost pushable tool for breaking fortified walls in PvP endgame.
+- **Beehive resource node:** rare forest node that yields honey (food + minor heal) but spawns aggressive bees when harvested.
+- **Signal flare consumable:** launches a visible sky flare that marks location on minimap for allies for 20 seconds.
