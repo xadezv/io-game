@@ -763,3 +763,15 @@ Add small ruin zones with dense resources, traps, and elite mobs. Entering ruins
 - Territory banners: placeable structures that grant minor buffs in a radius when defended by tribe members.
 - Seasonal relic drops: low-chance drops from elite mobs that unlock temporary passive effects (e.g., faster gather speed).
 
+
+---
+
+## New ideas (2026-03-03)
+
+- **Blizzard camp event:** temporary campfires spawn in snow during storms; first team to hold area for 60s gets loot crates.
+- **Tracking footprints:** players and large animals leave short-lived biome-specific footprints; enables hunting and ambush gameplay.
+- **Totem buffs:** placeable tribe totems grant small aura bonuses (gather speed, warmth, move speed) with diminishing returns when stacked.
+- **Fishing spots:** ocean-edge nodes that can be harvested with crafted fishing spear for hydration-rich food.
+- **Raider NPC caravan:** periodic neutral caravan that can be traded with or attacked for rare materials, affecting reputation.
+- **Biome contracts:** rotating objectives (e.g., "hunt 3 wolves", "deliver 20 wood") granting XP and cosmetic unlock tokens.
+- **Fog-of-war minimap memory:** explored map stays faintly visible; unexplored regions remain dark, encouraging scouting roles.
