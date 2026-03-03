@@ -446,3 +446,20 @@ Allow players to craft a fishing rod and fish at ocean/lake borders for food and
 
 ## IDEA-30 — Seasonal server mutators (Complexity: L)
 Server can enable weekly mutators (e.g., Double Night, Cold Front, Rich Veins) that alter balance and spawn tables, shown in lobby before join.
+
+## Extra ideas — 2026-03-03 (cron run)
+
+31. **Camp raids (PvE waves)** *(Complexity: M)*  
+   When a player keeps a campfire lit for too long, periodic hostile waves spawn nearby, creating risk/reward for staying in one place.
+
+32. **Biome mastery perks** *(Complexity: M)*  
+   Track time survived per biome and unlock minor passive perks (e.g., slower thirst drain in desert, better warmth retention in snow).
+
+33. **Trap variants with status effects** *(Complexity: S)*  
+   Add upgraded spikes (bleed spike, frost spike) that apply short debuffs and open more base-defense strategies.
+
+34. **Caravan loot event** *(Complexity: L)*  
+   A guarded NPC caravan crosses the map on a schedule; players can escort for rewards or ambush for high-risk loot.
+
+35. **Crafting queue at structures** *(Complexity: M)*  
+   Workshop/furnace can queue 2–3 jobs with progress bars, reducing repetitive interaction spam in mid/late game.
