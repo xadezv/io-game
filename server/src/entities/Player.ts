@@ -49,6 +49,11 @@ export class Player extends Entity {
   kills      = 0;
   killStreak = 0;
 
+  // Status effects
+  poisonTimer = 0;
+  poisonCoated = false;
+  poisonCoatTimer = 0;
+
   // State
   nearFire = false;
 

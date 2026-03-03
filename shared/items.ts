@@ -24,6 +24,8 @@ export const ItemId = {
   COAL:         34,
   CACTUS_FLESH: 35,
   WHEAT:        36,
+  MUSHROOM:     37,
+  POISON_COATING: 38,
 
   // Structures (placeable)
   CAMPFIRE:     40,
@@ -74,6 +76,7 @@ export const RECIPES: Recipe[] = [
 
   // Food
   { result: ItemId.COOKIE,     count: 1, ingredients: [{ item: ItemId.BERRIES, count: 7 }, { item: ItemId.WHEAT, count: 3 }] },
+  { result: ItemId.POISON_COATING, count: 1, ingredients: [{ item: ItemId.MUSHROOM, count: 3 }, { item: ItemId.GOLD, count: 5 }], requiresWorkbench: true },
 
   // Clothing
   { result: ItemId.HAT_WINTER, count: 1, ingredients: [{ item: ItemId.THREAD, count: 15 }] },
@@ -97,6 +100,7 @@ export interface ItemDef {
   foodThirst?: number;
   structureHp?: number;
   tempBonus?: number;
+  maxDurability?: number;
   sprite: string;
 }
 
@@ -107,9 +111,9 @@ export const ITEMS: Record<number, ItemDef> = {
   [ItemId.SWORD]:       { id: ItemId.SWORD,         name: 'Sword',        stackable: false, maxStack: 1,   isWeapon: true,  isStructure: false, isFood: false, isHat: false, damage: 25, range: 80,  attackCooldown: 500, sprite: 'sword' },
   [ItemId.BIG_AXE]:    { id: ItemId.BIG_AXE,       name: 'Big Axe',      stackable: false, maxStack: 1,   isWeapon: true,  isStructure: false, isFood: false, isHat: false, damage: 25, range: 80,  attackCooldown: 600, sprite: 'big_axe' },
   [ItemId.BIG_PICK]:   { id: ItemId.BIG_PICK,      name: 'Big Pick',     stackable: false, maxStack: 1,   isWeapon: true,  isStructure: false, isFood: false, isHat: false, damage: 30, range: 80,  attackCooldown: 600, sprite: 'big_pick' },
-  [ItemId.GOLD_AXE]:   { id: ItemId.GOLD_AXE,      name: 'Gold Axe',     stackable: false, maxStack: 1,   isWeapon: true,  isStructure: false, isFood: false, isHat: false, damage: 35, range: 80,  attackCooldown: 500, sprite: 'gold_axe' },
-  [ItemId.GOLD_SWORD]: { id: ItemId.GOLD_SWORD,    name: 'Gold Sword',   stackable: false, maxStack: 1,   isWeapon: true,  isStructure: false, isFood: false, isHat: false, damage: 45, range: 90,  attackCooldown: 500, sprite: 'gold_sword' },
-  [ItemId.GOLD_PICK]:  { id: ItemId.GOLD_PICK,     name: 'Gold Pick',    stackable: false, maxStack: 1,   isWeapon: true,  isStructure: false, isFood: false, isHat: false, damage: 40, range: 80,  attackCooldown: 500, sprite: 'gold_pick' },
+  [ItemId.GOLD_AXE]:   { id: ItemId.GOLD_AXE,      name: 'Gold Axe',     stackable: false, maxStack: 1,   isWeapon: true,  isStructure: false, isFood: false, isHat: false, damage: 35, range: 80,  attackCooldown: 500, maxDurability: 200, sprite: 'gold_axe' },
+  [ItemId.GOLD_SWORD]: { id: ItemId.GOLD_SWORD,    name: 'Gold Sword',   stackable: false, maxStack: 1,   isWeapon: true,  isStructure: false, isFood: false, isHat: false, damage: 45, range: 90,  attackCooldown: 500, maxDurability: 200, sprite: 'gold_sword' },
+  [ItemId.GOLD_PICK]:  { id: ItemId.GOLD_PICK,     name: 'Gold Pick',    stackable: false, maxStack: 1,   isWeapon: true,  isStructure: false, isFood: false, isHat: false, damage: 40, range: 80,  attackCooldown: 500, maxDurability: 200, sprite: 'gold_pick' },
 
   [ItemId.BERRIES]:    { id: ItemId.BERRIES,       name: 'Berries',      stackable: true,  maxStack: 50,  isWeapon: false, isStructure: false, isFood: true,  isHat: false, foodHp: 5,  foodHunger: 15, foodThirst: 5,  sprite: 'berries' },
   [ItemId.RAW_MEAT]:   { id: ItemId.RAW_MEAT,      name: 'Raw Meat',     stackable: true,  maxStack: 20,  isWeapon: false, isStructure: false, isFood: true,  isHat: false, foodHp: 5,  foodHunger: 10, foodThirst: 0,  sprite: 'raw_meat' },
@@ -123,6 +127,8 @@ export const ITEMS: Record<number, ItemDef> = {
   [ItemId.WHEAT]:      { id: ItemId.WHEAT,         name: 'Wheat',        stackable: true,  maxStack: 999, isWeapon: false, isStructure: false, isFood: false, isHat: false, sprite: 'wheat' },
   [ItemId.COAL]:        { id: ItemId.COAL,         name: 'Coal',         stackable: true,  maxStack: 999, isWeapon: false, isStructure: false, isFood: false, isHat: false, sprite: 'coal' },
   [ItemId.CACTUS_FLESH]:{ id: ItemId.CACTUS_FLESH, name: 'Cactus Flesh', stackable: true,  maxStack: 50,  isWeapon: false, isStructure: false, isFood: true,  isHat: false, foodHp: 3, foodHunger: 8, foodThirst: 12, sprite: 'cactus_flesh' },
+  [ItemId.MUSHROOM]:   { id: ItemId.MUSHROOM,      name: 'Mushroom',     stackable: true,  maxStack: 50,  isWeapon: false, isStructure: false, isFood: true,  isHat: false, foodHp: -5, foodHunger: 10, sprite: 'mushroom' },
+  [ItemId.POISON_COATING]: { id: ItemId.POISON_COATING, name: 'Poison Coating', stackable: true, maxStack: 5, isWeapon: false, isStructure: false, isFood: false, isHat: false, sprite: 'poison_coating' },
 
   [ItemId.CAMPFIRE]:   { id: ItemId.CAMPFIRE,      name: 'Campfire',     stackable: true,  maxStack: 10,  isWeapon: false, isStructure: true,  isFood: false, isHat: false, structureHp: 100, sprite: 'campfire' },
   [ItemId.WALL_WOOD]:  { id: ItemId.WALL_WOOD,     name: 'Wood Wall',    stackable: true,  maxStack: 20,  isWeapon: false, isStructure: true,  isFood: false, isHat: false, structureHp: 200, sprite: 'wall_wood' },
