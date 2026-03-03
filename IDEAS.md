@@ -638,3 +638,11 @@ Server can enable weekly mutators (e.g., Double Night, Cold Front, Rich Veins) t
 - **Portable Bedroll:** one-time deployable respawn point with decay timer; destroyed if enemy stands near for 5 seconds.
 - **Caravan Event:** neutral merchant caravan crosses map twice per day cycle; escort/ambush opportunities with dynamic loot.
 - **Trap Toolkit:** craftable rope/net traps that briefly root players/animals, with visible counterplay and break-on-damage behavior.
+
+## Auto Ideas Batch — 2026-03-03
+
+- Dynamic world events: migrating herds that temporarily change predator/prey density in nearby biomes.
+- Totem buffs: placeable tribal totems granting small area buffs (gather speed, warmth, stamina regen) with clear counterplay.
+- Ruins points-of-interest: rare mini-dungeons with timed PvE waves and guaranteed high-tier crafting materials.
+- Seasonal crop system: biome-dependent farming patches that rotate yields by in-game season/day cycle.
+- Caravan NPC encounters: neutral traders that appear on map edges and move across world, enabling risk/reward trade routes.
