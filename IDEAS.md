@@ -948,3 +948,29 @@ Instead of instant death in duo/squad mode, players enter a short downed state a
 - **Siege ram structure:** slow, high-cost pushable tool for breaking fortified walls in PvP endgame.
 - **Beehive resource node:** rare forest node that yields honey (food + minor heal) but spawns aggressive bees when harvested.
 - **Signal flare consumable:** launches a visible sky flare that marks location on minimap for allies for 20 seconds.
+
+## IDEA-26 — Dynamic biome events: meteor showers
+- Random meteor impacts in plains/snow every 8-12 minutes
+- Impact zone deals burst damage and leaves temporary hot crater
+- Crater yields rare ore nodes for 2 minutes
+- Encourages rotating hotspots and short PvP contests
+
+## IDEA-27 — Tribe beacon + shared spawn
+- Craftable beacon lets nearby allied players bind a respawn point
+- Beacon can be damaged/destroyed by enemies
+- Adds strategic base pressure without permanent wipes
+
+## IDEA-28 — Animal migration cycles
+- Rabbits and wolves shift preferred zones each day/night cycle
+- UI hint in minimap (soft heatmap overlay)
+- Makes map feel alive and prevents static farm routes
+
+## IDEA-29 — Temperature shelters
+- New build pieces (tent/insulated wall) reduce temp drain in radius
+- Creates meaningful base-building in snow/desert
+- Synergizes with weather and campfire mechanics
+
+## IDEA-30 — Relic caravan event
+- Neutral caravan moves across map with guarded loot crates
+- Players can escort for rewards or ambush for stolen goods
+- Produces moving objective instead of static boss camps
