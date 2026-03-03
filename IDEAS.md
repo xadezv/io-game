@@ -533,3 +533,10 @@ Server can enable weekly mutators (e.g., Double Night, Cold Front, Rich Veins) t
 28. **Ritual totems** (High) — Placeable totems that grant area buffs (warmth, speed, regen) but can be destroyed by enemies.
 29. **Tracking footprints** (Low) — Recent player/animal paths leave fading footprints in snow/desert to support hunting and PvP ambushes.
 30. **Biome relic dungeons** (High) — Rare instanced mini-arenas with a timed boss challenge and unique cosmetic drops.
+
+## Gameplay ideas (2026-03-03, batch 6)
+- **Storm shelters:** small buildable shelter that reduces snowstorm and heatwave penalties for nearby players.
+- **Beast trails:** periodic animal migration lanes with higher spawn density and rare predator ambush chances.
+- **Salvage pits:** diggable debris nodes that yield random mixed resources with a chance for traps.
+- **Signal flare item:** consumable that reveals your position but grants short global loot radar to your team.
+- **Ruined outposts:** procedurally spawned micro-POIs with breakable containers, light AI defense, and map flavor lore.
