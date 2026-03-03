@@ -705,3 +705,35 @@ A neutral caravan periodically traverses the map edge-to-edge. Players can trade
 **Complexity:** High
 
 Add small ruin zones with dense resources, traps, and elite mobs. Entering ruins gives high-reward runs (gold/thread/pelts) but limited exits and high player collision density, encouraging risk-reward decision making.
+
+## Additional Gameplay Ideas — 2026-03-03
+
+- **Dynamic world events: Meteor Shower**  
+  Rare nighttime event where small meteorites land in random biomes, creating temporary high-value mining nodes (gold/thread/rare drops) but spawning aggressive mobs nearby.
+
+- **Clan Totem Structure**  
+  Placeable team structure that grants a small aura buff (e.g., +5% gather speed) to nearby allied players and can be contested/destroyed in PvP.
+
+- **Seasonal Migration Herds**  
+  Neutral animal herds periodically traverse the map; players can hunt or protect them for different rewards and reputation-style bonuses.
+
+- **Biome Relics & Passive Perks**  
+  Hidden relic pickups in each biome that grant one passive bonus (cold resistance, thirst reduction, faster crafting) until death.
+
+- **Risk Zones (High-Loot Circles)**  
+  Temporary marked areas with boosted resource yields and chest spawns that attract players and increase PvP tension.
+
+- **Companion Pet (Non-combat)**  
+  Craftable pet that follows the player and performs utility actions (auto-pick nearby dropped items, minor warning pings when enemies approach).
+
+- **Cooking Depth: Stews & Buff Foods**  
+  Extend food system with multi-ingredient meals that grant short buffs (regen, speed, cold resist), encouraging resource diversity.
+
+- **Fog-of-War Scout Tower**  
+  Buildable structure revealing a wider minimap radius and tracking nearby enemy movement pulses every few seconds.
+
+- **World Quests / Daily Contracts**  
+  Rotating objectives (gather, hunt, survive night, craft tier item) that reward XP, cosmetics, or utility materials.
+
+- **Raft & Coastal Exploration**  
+  Limited-use raft for shallow ocean traversal to reach tiny offshore islands with unique resources and miniboss encounters.
