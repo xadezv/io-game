@@ -514,3 +514,14 @@ Server can enable weekly mutators (e.g., Double Night, Cold Front, Rich Veins) t
 - **Totem of Return:** Craftable structure that sets a one-time respawn anchor with long cooldown and visible map marker to encourage raiding.
 - **Fishing System:** Lakes/ocean edges allow fishing mini-loot table (food, junk, rare treasure map fragments).
 - **Fog of War Camps:** Unclaimed mini-camps with AI guards spawn around the map and reward materials if captured.
+
+## Idea Drop — 2026-03-03
+
+- Dynamic footprints: leave temporary footprints in snow/sand that fade and can be tracked by players.
+- Biome events: desert heatwave and forest fog cycles with temporary visibility/survival modifiers.
+- Totem system: placeable tribe totems that grant small aura buffs and can be contested in PvP.
+- Fishing spots: ocean-edge nodes with a timing minigame for food and rare crafting materials.
+- Craft queue at structures: furnace/workshop process multiple queued recipes with visible progress.
+- Seasonal world seeds: weekly rotating seed modifiers (double berries, harsher nights, richer caves).
+- Simple quests from campfire: short survival objectives granting XP and cosmetic rewards.
+- Taming system lite: feed rabbits/wolves special bait to gain short-lived companion bonuses.
