@@ -834,3 +834,29 @@ Add small ruin zones with dense resources, traps, and elite mobs. Entering ruins
 **Category:** event
 **Description:** Random wreck sites spawn with breakable debris piles containing mixed loot (wood/stone/thread/chance for rare item). Wrecks despawn quickly, encouraging short contested skirmishes.
 **Implementation hint:** spawn timed event entities in `server/src/core/Game.ts`; represent wreck as resource variants in `server/src/entities/Resource.ts`; render marker in `client/src/game/WorldRenderer.ts`.
+
+---
+
+## IDEA-26 — Seasonal world events (meteor shower / blood moon)
+**Complexity:** Medium
+
+- Every 12-18 minutes, trigger a global event for 60-120 seconds.
+- **Meteor shower:** random impact zones telegraphed for 1.5s, then AoE damage + rare ore drops.
+- **Blood moon:** hostile mobs gain +20% speed and +15% damage, but drop +30% XP.
+- Broadcast event warnings through chat and a top-screen banner.
+
+## IDEA-27 — Fishing mini-system (shoreline gameplay)
+**Complexity:** Medium
+
+- Add fishable shoreline spots in plains/forest water edges.
+- New item: **Fishing Rod** (craftable mid-game).
+- Hold interaction to fish; timing mini-window improves catch quality.
+- Fish can be eaten raw/cooked; rare catches can include treasure materials.
+
+## IDEA-28 — Tribe totem (small team progression anchor)
+**Complexity:** High
+
+- Placeable **Totem** structure that defines a team territory radius.
+- Team members can respawn at totem (long cooldown), deposit shared resources, and gain minor warmth bonus nearby.
+- Totem can be raided/disabled by enemies after a channel interaction.
+- Encourages group play and localized PvP objectives.
