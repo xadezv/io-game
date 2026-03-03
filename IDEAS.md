@@ -485,3 +485,10 @@ Server can enable weekly mutators (e.g., Double Night, Cold Front, Rich Veins) t
 - **Echo caves biome pocket:** rare underground entrances with dense ore and spider nests, high risk/high reward.
 - **Tameable rabbit scout:** feed berries to a rabbit to briefly reveal nearby predators/resources on minimap.
 - **Storm lantern item:** consumable that halves weather penalties for 90 seconds and lights a wider vision radius.
+
+## Gameplay ideas (2026-03-03, batch 3)
+- **Ruin dungeons:** small instanced ruins with timed puzzle-combat rooms and a chest at the end.
+- **Campfire cooking buffs:** specific cooked meals grant short buffs (cold resist, move speed, bonus gather yield).
+- **Night owl set bonus:** wearing a full hat/gear combo grants vision boost and reduced aggro at night.
+- **Resource overharvest system:** frequently farmed zones temporarily deplete, nudging players to rotate territories.
+- **Bounty board contracts:** optional server-generated hunts (kill X wolves, gather Y gold) for XP and cosmetic rewards.
