@@ -810,3 +810,27 @@ Add small ruin zones with dense resources, traps, and elite mobs. Entering ruins
 **Category:** quality-of-life
 **Description:** Let players queue up to 3 craft actions and let campfires process one utility action in parallel (e.g. drying thread or warming meal). Queue executes over time with clear progress UI; interrupted if inventory requirements are no longer met. This reduces repetitive clicking while adding mild base-management depth.
 **Implementation hint:** extend `server/src/systems/CraftSystem.ts` with per-player queue state; UI queue panel in `client/src/ui/CraftMenu.ts`; reuse existing tick loop for progress updates.
+
+---
+
+## [IDEA-29] Heatstroke + Shade Gameplay in Desert
+**Complexity:** medium
+**Category:** survival
+**Description:** During peak daytime in desert biome, players accumulate heatstroke if they stay in direct sun too long. Standing near cacti, structures, or crafted shade tents slows/pauses buildup. At high heatstroke, vision blurs slightly and stamina/move speed penalties apply until cooled.
+**Implementation hint:** add heatstroke meter in `server/src/systems/SurvivalSystem.ts`; biome/time checks in `server/src/core/Game.ts`; overlay effect in `client/src/game/GameClient.ts`.
+
+---
+
+## [IDEA-30] Animal Territory System
+**Complexity:** medium
+**Category:** AI
+**Description:** Predators claim soft territories and become more aggressive when players gather/fight inside them. Territory borders shift over time based on spawns and deaths, creating dynamic danger zones instead of static behavior.
+**Implementation hint:** maintain territory clusters in `server/src/core/World.ts`; apply aggro multipliers in `server/src/entities/Animal.ts`; optional minimap warning tint in `client/src/ui/Minimap.ts`.
+
+---
+
+## [IDEA-31] Salvage Wrecks Event
+**Complexity:** low
+**Category:** event
+**Description:** Random wreck sites spawn with breakable debris piles containing mixed loot (wood/stone/thread/chance for rare item). Wrecks despawn quickly, encouraging short contested skirmishes.
+**Implementation hint:** spawn timed event entities in `server/src/core/Game.ts`; represent wreck as resource variants in `server/src/entities/Resource.ts`; render marker in `client/src/game/WorldRenderer.ts`.
