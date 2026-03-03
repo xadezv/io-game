@@ -499,3 +499,10 @@ Server can enable weekly mutators (e.g., Double Night, Cold Front, Rich Veins) t
 - **Territory claim stones:** optional PvP structure that grants minor defense buffs near home base but reveals location on minimap.
 - **Herbalism kit:** gather biome plants to craft temporary resistance potions (cold, heat, poison).
 - **World boss rotation:** one biome boss is "empowered" each hour with unique drops and global announcement.
+
+## Gameplay ideas (2026-03-03, batch 5)
+- **River biome strips:** narrow rivers that slow movement, enable fishing spots, and act as natural PvP chokepoints.
+- **Tracking footprints:** temporary footprints in snow/sand reveal recent player movement for hunting/ambush play.
+- **Forge heat tiers:** furnaces gain speed when fueled continuously, encouraging defended production hubs.
+- **Totem corruption event:** cursed totems periodically spawn mobs until destroyed, rewarding nearby participants.
+- **Rescue downed teammate:** short downed state in team modes where allies can revive before full death.
