@@ -786,3 +786,27 @@ Add small ruin zones with dense resources, traps, and elite mobs. Entering ruins
 - **Totem revival mechanic:** craft/place a fragile totem that stores a one-time delayed respawn nearby if destroyed player reaches it in time.
 - **Supply drop meteor:** random visible sky marker lands with high-tier loot but spawns elite mobs around impact zone.
 - **Track footprints system:** recent movement leaves temporary footprints in snow/sand, enabling hunting/tracking gameplay.
+
+---
+
+## [IDEA-26] Biome Relics and Temporary Global Buffs
+**Complexity:** medium
+**Category:** gameplay
+**Description:** Add rare relic objects that spawn once per biome (forest totem, desert obelisk, snow crystal). Interacting with a relic starts a short capture channel; on success, all nearby teammates get a 3-minute buff themed to that biome (e.g. +gather speed in forest, slower thirst drain in desert, cold resistance in snow). Relics then go on cooldown before relocating. This creates rotating map objectives and dynamic PvP hotspots.
+**Implementation hint:** `server/src/core/World.ts` for relic spawn/cooldown state, `server/src/core/Game.ts` for timed buffs, `client/src/game/WorldRenderer.ts` for relic markers/effects.
+
+---
+
+## [IDEA-27] Dynamic Footprints and Tracking
+**Complexity:** medium
+**Category:** immersion
+**Description:** Players and animals leave temporary footprints (or trails) that persist longer at night and in snow biomes. Trails gradually fade and can be followed to find prey, enemies, or recent fight locations. Rain/snowstorm can erase tracks faster. This adds scouting gameplay and improves world atmosphere.
+**Implementation hint:** client-side render trail decals in `client/src/game/ParticleSystem.ts`/`WorldRenderer.ts`; optional server broadcast for important tracks if anti-cheat visibility rules are needed.
+
+---
+
+## [IDEA-28] Craft Queue with Campfire Utility Slots
+**Complexity:** low
+**Category:** quality-of-life
+**Description:** Let players queue up to 3 craft actions and let campfires process one utility action in parallel (e.g. drying thread or warming meal). Queue executes over time with clear progress UI; interrupted if inventory requirements are no longer met. This reduces repetitive clicking while adding mild base-management depth.
+**Implementation hint:** extend `server/src/systems/CraftSystem.ts` with per-player queue state; UI queue panel in `client/src/ui/CraftMenu.ts`; reuse existing tick loop for progress updates.
