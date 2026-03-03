@@ -775,3 +775,14 @@ Add small ruin zones with dense resources, traps, and elite mobs. Entering ruins
 - **Raider NPC caravan:** periodic neutral caravan that can be traded with or attacked for rare materials, affecting reputation.
 - **Biome contracts:** rotating objectives (e.g., "hunt 3 wolves", "deliver 20 wood") granting XP and cosmetic unlock tokens.
 - **Fog-of-war minimap memory:** explored map stays faintly visible; unexplored regions remain dark, encouraging scouting roles.
+
+## New ideas (2026-03-03)
+
+- **Migrating trader caravan event:** once per day cycle, an NPC caravan crosses the map edge-to-edge, offering limited-time trades (gold/resources for rare utility items). Adds moving objective and PvP hotspots.
+- **Biome relic shrines:** each biome has a capturable shrine that grants localized buffs (snow: cold resist, desert: thirst resist, forest: gather speed). Ownership rotates via contesting radius.
+- **Fishing + river nodes:** add fishable spots on water edges with a simple timing mini-game; fish can be cooked or used in new crafting recipes.
+- **Fog-of-war scouting towers:** buildable towers reveal minimap activity in a radius for your team/clan and ping hostile movement.
+- **Seasonal world modifiers:** every real-time week rotates a global rule (e.g., "long nights", "double berry growth", "aggressive fauna") to keep runs fresh.
+- **Totem revival mechanic:** craft/place a fragile totem that stores a one-time delayed respawn nearby if destroyed player reaches it in time.
+- **Supply drop meteor:** random visible sky marker lands with high-tier loot but spawns elite mobs around impact zone.
+- **Track footprints system:** recent movement leaves temporary footprints in snow/sand, enabling hunting/tracking gameplay.
