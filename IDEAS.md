@@ -754,3 +754,12 @@ Add small ruin zones with dense resources, traps, and elite mobs. Entering ruins
 
 - **Storm Lantern Utility Item**  
   Equipable lantern that improves visibility during night/weather events and slightly slows nearby temperature loss.
+
+## Additional Ideas (2026-03-03)
+
+- Dynamic biome events: desert heatwaves and forest fog that temporarily change visibility and survival drain.
+- Ritual totem structure: players can spend rare resources to summon a world event boss for server-wide cooperation/competition.
+- Caravan NPC traders: periodic neutral NPCs appear at map edges to exchange surplus materials for unique utility items.
+- Territory banners: placeable structures that grant minor buffs in a radius when defended by tribe members.
+- Seasonal relic drops: low-chance drops from elite mobs that unlock temporary passive effects (e.g., faster gather speed).
+
