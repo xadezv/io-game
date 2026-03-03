@@ -860,3 +860,14 @@ Add small ruin zones with dense resources, traps, and elite mobs. Entering ruins
 - Team members can respawn at totem (long cooldown), deposit shared resources, and gain minor warmth bonus nearby.
 - Totem can be raided/disabled by enemies after a channel interaction.
 - Encourages group play and localized PvP objectives.
+
+## Additional Gameplay Ideas (2026-03-03)
+
+- **Heat haze in desert**: when temperature is high, apply subtle screen shimmer; can be reduced by hat/campfire proximity.
+- **Tracking footprints**: recent player/animal movement leaves short-lived footprints in snow/sand, useful for hunting and ambush.
+- **Totem buffs**: placeable tribal totems grant small aura buffs (gather speed, warmth, regen) and create strategic base zones.
+- **Supply balloon event**: periodic world event drops a contested loot crate with rare mats, encouraging PvP hotspots.
+- **Fishing system**: craft rod, fish at ocean edge/pond tiles; fish can be cooked or used in advanced recipes.
+- **Seasonal migration**: herds move across biomes on long cycles, changing resource pressure and encounter density.
+- **Smoke signal**: campfire can be upgraded to send visible smoke column on minimap to rally teammates (and attract enemies).
+- **Traps & alarms**: craftable tripwire bell that emits a local sound/chat alert when triggered near your structures.
