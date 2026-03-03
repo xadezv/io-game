@@ -431,3 +431,18 @@ Rare longer night event with stronger mobs and boosted drops/XP. Server announce
 
 30. **Dynamic wildlife nesting** *(Medium)*  
    Animals create temporary nests/dens; destroying them reduces local spawns, preserving them increases long-term population around that biome.
+
+## IDEA-26 — Biome world events (Complexity: M)
+Random biome-specific events every 6–10 minutes (sand gust in desert, blizzard pulse in snow, dense fog in forest) that temporarily change visibility or stat drain, with short global warnings.
+
+## IDEA-27 — Hunter contracts board (Complexity: M)
+Add a craftable board where players can accept rotating PvE contracts (e.g., hunt 3 wolves, gather 20 berries) for XP and resource rewards; contracts refresh every few minutes.
+
+## IDEA-28 — Structure decay + repair hammer (Complexity: S)
+Unmaintained player structures slowly decay over time; introduce a repair hammer item that restores structure HP using wood/stone, encouraging base upkeep.
+
+## IDEA-29 — Fishing at biome water edges (Complexity: M)
+Allow players to craft a fishing rod and fish at ocean/lake borders for food and rare drops; night fishing has higher rare chance but increased danger.
+
+## IDEA-30 — Seasonal server mutators (Complexity: L)
+Server can enable weekly mutators (e.g., Double Night, Cold Front, Rich Veins) that alter balance and spawn tables, shown in lobby before join.
