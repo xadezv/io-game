@@ -871,3 +871,10 @@ Add small ruin zones with dense resources, traps, and elite mobs. Entering ruins
 - **Seasonal migration**: herds move across biomes on long cycles, changing resource pressure and encounter density.
 - **Smoke signal**: campfire can be upgraded to send visible smoke column on minimap to rally teammates (and attract enemies).
 - **Traps & alarms**: craftable tripwire bell that emits a local sound/chat alert when triggered near your structures.
+
+## Gameplay ideas (2026-03-03, cron batch 07:51 UTC)
+- **Moonwell structure:** placeable support structure that slowly restores temperature/hunger to nearby allies at night, but consumes wood as fuel.
+- **Predator alpha marks:** occasional elite wolves/bears drop alpha marks used to craft one-time temporary combat buffs.
+- **Resource convoy cart:** pushable world cart event that must be escorted between biome checkpoints for shared rewards.
+- **Scouting kite item:** consumable that briefly reveals a circular minimap area and nearby hostile entities.
+- **Biome ritual circles:** timed capture circles that grant short biome-themed buffs and attract contested PvP fights.
