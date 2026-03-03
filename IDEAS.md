@@ -525,3 +525,11 @@ Server can enable weekly mutators (e.g., Double Night, Cold Front, Rich Veins) t
 - Seasonal world seeds: weekly rotating seed modifiers (double berries, harsher nights, richer caves).
 - Simple quests from campfire: short survival objectives granting XP and cosmetic rewards.
 - Taming system lite: feed rabbits/wolves special bait to gain short-lived companion bonuses.
+
+## Additional gameplay ideas (2026-03-03)
+
+26. **Fog of war towers** (Medium) — Build watchtowers that permanently reveal a circular area on the minimap for your team.
+27. **Seasonal migration events** (Medium) — Every few in-game days, herds cross the map and can be hunted/guarded for rewards.
+28. **Ritual totems** (High) — Placeable totems that grant area buffs (warmth, speed, regen) but can be destroyed by enemies.
+29. **Tracking footprints** (Low) — Recent player/animal paths leave fading footprints in snow/desert to support hunting and PvP ambushes.
+30. **Biome relic dungeons** (High) — Rare instanced mini-arenas with a timed boss challenge and unique cosmetic drops.
