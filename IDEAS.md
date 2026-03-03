@@ -878,3 +878,11 @@ Add small ruin zones with dense resources, traps, and elite mobs. Entering ruins
 - **Resource convoy cart:** pushable world cart event that must be escorted between biome checkpoints for shared rewards.
 - **Scouting kite item:** consumable that briefly reveals a circular minimap area and nearby hostile entities.
 - **Biome ritual circles:** timed capture circles that grant short biome-themed buffs and attract contested PvP fights.
+
+## Extra Gameplay Ideas (2026-03-03)
+
+- **Seasonal migration events:** once per in-game day, herds migrate between biomes, creating temporary high-risk/high-reward hunting zones.
+- **Signal fires:** upgraded campfire that broadcasts a temporary minimap ping visible to clan/party members in a large radius.
+- **Biome relics:** rare interactable ruins in each biome that grant short buffs (e.g., cold resistance, faster gathering) with long cooldown.
+- **Ambush bushes:** dense foliage tiles that hide players until they move or attack, encouraging tactical PvP in forests.
+- **Caravan world event:** an AI merchant caravan crosses the map periodically; players can trade, escort, or raid it for loot.
