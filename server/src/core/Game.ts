@@ -19,6 +19,10 @@ export class Game {
   private cycleMax  = DAY_DURATION;
   private lbTimer   = 0;
 
+  // Anti-cheat
+  private antiCheatResetTimer = 0;
+  private pendingAntiCheatKicks: Map<string, number> = new Map();
+
   // Snowstorm (TASK-20)
   stormActive = false;
   private stormTimer  = 7 * 60 * 1000; // ms until next storm onset
@@ -143,6 +147,31 @@ export class Game {
 
     // World physics + animal AI
     this.world.update(dt);
+
+    // Anti-cheat: schedule kicks for repeated movement violations
+    for (const p of this.world.players.values()) {
+      if (p.dead) continue;
+      if (p.violationCount > 20 && !this.pendingAntiCheatKicks.has(p.socketId)) {
+        p.dead = true;
+        p.hp = 0;
+        const s = this.io.sockets.sockets.get(p.socketId);
+        if (s) s.emit('msg', [PacketType.DEATH, p.points]);
+        this.pendingAntiCheatKicks.set(p.socketId, now + 1000);
+      }
+    }
+
+    for (const [socketId, kickAt] of this.pendingAntiCheatKicks) {
+      if (now < kickAt) continue;
+      const s = this.io.sockets.sockets.get(socketId);
+      if (s) s.disconnect(true);
+      this.pendingAntiCheatKicks.delete(socketId);
+    }
+
+    this.antiCheatResetTimer += dt * 1000;
+    if (this.antiCheatResetTimer >= 5000) {
+      this.antiCheatResetTimer = 0;
+      for (const p of this.world.players.values()) p.violationCount = 0;
+    }
 
     // Spike damage events — BUG-17: emit DAMAGE packet + trigger killPlayer
     for (const hit of this.world.spikeHits) {
