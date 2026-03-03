@@ -737,3 +737,20 @@ Add small ruin zones with dense resources, traps, and elite mobs. Entering ruins
 
 - **Raft & Coastal Exploration**  
   Limited-use raft for shallow ocean traversal to reach tiny offshore islands with unique resources and miniboss encounters.
+
+## Additional Gameplay Ideas — 2026-03-03 (run 2)
+
+- **Heatstroke Debuff in Desert**  
+  During extreme daytime heat, players without headgear slowly accumulate heatstroke stacks that reduce accuracy and vision range until cooled.
+
+- **Portable Bedroll Respawn Point**  
+  Craftable consumable to set a one-time respawn location; destroyed on use to prevent permanent safe spawn abuse.
+
+- **Resource Bloom Cycles**  
+  Biomes enter short "bloom" states (berry bloom, stone surge, thread-rich snow) that shift farming routes and map traffic.
+
+- **Hunter Trails System**  
+  Injured animals leave temporary tracks visible on nearby ground, letting skilled players track prey through forests/snow.
+
+- **Storm Lantern Utility Item**  
+  Equipable lantern that improves visibility during night/weather events and slightly slows nearby temperature loss.
