@@ -629,3 +629,12 @@ Server can enable weekly mutators (e.g., Double Night, Cold Front, Rich Veins) t
 - **Bandit Camps (PvE):** periodic hostile NPC camp spawns with loot chest and escalating difficulty over in-game days.
 - **Craft Queue:** optional 2-slot craft queue unlocked by workshop upgrade to reduce menu micromanagement.
 - **Biome Relics:** hidden relics per biome that unlock passive account-style cosmetics and emotes.
+
+## Extra ideas (2026-03-03, run 2)
+
+- **Fog of War Camps:** unexplored map chunks remain dark on minimap until discovered; campfires slowly reveal nearby fog for teammates.
+- **Heatstroke Meter:** staying in desert at noon without water/hat builds heatstroke stacks causing aim wobble and thirst spikes.
+- **Hunter Trails:** wounded animals leave short-lived blood tracks, making tracking/hunting a skill play.
+- **Portable Bedroll:** one-time deployable respawn point with decay timer; destroyed if enemy stands near for 5 seconds.
+- **Caravan Event:** neutral merchant caravan crosses map twice per day cycle; escort/ambush opportunities with dynamic loot.
+- **Trap Toolkit:** craftable rope/net traps that briefly root players/animals, with visible counterplay and break-on-damage behavior.
