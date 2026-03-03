@@ -11,6 +11,7 @@ export interface PlayerStats {
   selectedSlot: number;
   hatId: number;
   killStreak: number;
+  durability?: number[];
 }
 
 interface Bar {
@@ -368,6 +369,12 @@ export default class HUD {
       ctx.fillText(String(i === 9 ? 0 : i + 1), sx + 4, sy + 3);
 
       // Item content
+      const durabilityPairs = stats.durability ?? [];
+      const durabilityMap = new Map<number, number>();
+      for (let d = 0; d < durabilityPairs.length; d += 2) {
+        durabilityMap.set(durabilityPairs[d], durabilityPairs[d + 1]);
+      }
+
       if (itemId > 0) {
         // Item icon placeholder — colored square with item id
         const itemColor = this._itemColor(itemId);
@@ -386,6 +393,17 @@ export default class HUD {
           sx + SLOT_SIZE / 2,
           sy + SLOT_SIZE / 2 - 2
         );
+
+        const durability = durabilityMap.get(i);
+        if (typeof durability === 'number') {
+          const ratio = Math.max(0, Math.min(1, durability / 200));
+          if (ratio < 0.5) {
+            ctx.fillStyle = 'rgba(20,20,20,0.7)';
+            ctx.fillRect(sx + 8, sy + SLOT_SIZE - 8, SLOT_SIZE - 16, 4);
+            ctx.fillStyle = '#f39c12';
+            ctx.fillRect(sx + 8, sy + SLOT_SIZE - 8, (SLOT_SIZE - 16) * ratio, 4);
+          }
+        }
 
         // Count badge
         if (count > 1) {

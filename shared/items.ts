@@ -97,6 +97,7 @@ export interface ItemDef {
   foodThirst?: number;
   structureHp?: number;
   tempBonus?: number;
+  maxDurability?: number;
   sprite: string;
 }
 
@@ -107,9 +108,9 @@ export const ITEMS: Record<number, ItemDef> = {
   [ItemId.SWORD]:       { id: ItemId.SWORD,         name: 'Sword',        stackable: false, maxStack: 1,   isWeapon: true,  isStructure: false, isFood: false, isHat: false, damage: 25, range: 80,  attackCooldown: 500, sprite: 'sword' },
   [ItemId.BIG_AXE]:    { id: ItemId.BIG_AXE,       name: 'Big Axe',      stackable: false, maxStack: 1,   isWeapon: true,  isStructure: false, isFood: false, isHat: false, damage: 25, range: 80,  attackCooldown: 600, sprite: 'big_axe' },
   [ItemId.BIG_PICK]:   { id: ItemId.BIG_PICK,      name: 'Big Pick',     stackable: false, maxStack: 1,   isWeapon: true,  isStructure: false, isFood: false, isHat: false, damage: 30, range: 80,  attackCooldown: 600, sprite: 'big_pick' },
-  [ItemId.GOLD_AXE]:   { id: ItemId.GOLD_AXE,      name: 'Gold Axe',     stackable: false, maxStack: 1,   isWeapon: true,  isStructure: false, isFood: false, isHat: false, damage: 35, range: 80,  attackCooldown: 500, sprite: 'gold_axe' },
-  [ItemId.GOLD_SWORD]: { id: ItemId.GOLD_SWORD,    name: 'Gold Sword',   stackable: false, maxStack: 1,   isWeapon: true,  isStructure: false, isFood: false, isHat: false, damage: 45, range: 90,  attackCooldown: 500, sprite: 'gold_sword' },
-  [ItemId.GOLD_PICK]:  { id: ItemId.GOLD_PICK,     name: 'Gold Pick',    stackable: false, maxStack: 1,   isWeapon: true,  isStructure: false, isFood: false, isHat: false, damage: 40, range: 80,  attackCooldown: 500, sprite: 'gold_pick' },
+  [ItemId.GOLD_AXE]:   { id: ItemId.GOLD_AXE,      name: 'Gold Axe',     stackable: false, maxStack: 1,   isWeapon: true,  isStructure: false, isFood: false, isHat: false, damage: 35, range: 80,  attackCooldown: 500, maxDurability: 200, sprite: 'gold_axe' },
+  [ItemId.GOLD_SWORD]: { id: ItemId.GOLD_SWORD,    name: 'Gold Sword',   stackable: false, maxStack: 1,   isWeapon: true,  isStructure: false, isFood: false, isHat: false, damage: 45, range: 90,  attackCooldown: 500, maxDurability: 200, sprite: 'gold_sword' },
+  [ItemId.GOLD_PICK]:  { id: ItemId.GOLD_PICK,     name: 'Gold Pick',    stackable: false, maxStack: 1,   isWeapon: true,  isStructure: false, isFood: false, isHat: false, damage: 40, range: 80,  attackCooldown: 500, maxDurability: 200, sprite: 'gold_pick' },
 
   [ItemId.BERRIES]:    { id: ItemId.BERRIES,       name: 'Berries',      stackable: true,  maxStack: 50,  isWeapon: false, isStructure: false, isFood: true,  isHat: false, foodHp: 5,  foodHunger: 15, foodThirst: 5,  sprite: 'berries' },
   [ItemId.RAW_MEAT]:   { id: ItemId.RAW_MEAT,      name: 'Raw Meat',     stackable: true,  maxStack: 20,  isWeapon: false, isStructure: false, isFood: true,  isHat: false, foodHp: 5,  foodHunger: 10, foodThirst: 0,  sprite: 'raw_meat' },

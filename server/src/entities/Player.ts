@@ -4,7 +4,7 @@ import {
   PLAYER_MAX_HP, PLAYER_MAX_HUNGER, PLAYER_MAX_TEMP, PLAYER_MAX_THIRST,
   PLAYER_RADIUS, PLAYER_SPEED, ATTACK_COOLDOWN, MAP_SIZE,
 } from '../../../shared/constants';
-import { ItemId } from '../../../shared/items';
+import { ItemId, ITEMS } from '../../../shared/items';
 import type { Socket } from 'socket.io';
 
 export interface InventorySlot {
@@ -36,6 +36,7 @@ export class Player extends Entity {
 
   // Inventory (10 slots)
   inventory: InventorySlot[] = Array(10).fill(null).map(() => ({ itemId: -1, count: 0 }));
+  durability: Map<number, number> = new Map();
 
   // Equipment
   hatId: number = -1;
@@ -90,6 +91,28 @@ export class Player extends Entity {
     return n;
   }
 
+
+  useTool(slotIndex: number): void {
+    if (slotIndex < 0 || slotIndex >= this.inventory.length) return;
+    const slot = this.inventory[slotIndex];
+    if (!slot || slot.count <= 0) return;
+
+    const item = ITEMS[slot.itemId];
+    if (!item?.maxDurability) return;
+
+    const current = this.durability.get(slotIndex) ?? item.maxDurability;
+    const next = current - 1;
+
+    if (next <= 0) {
+      slot.itemId = ItemId.HAND;
+      slot.count = 1;
+      this.durability.delete(slotIndex);
+      return;
+    }
+
+    this.durability.set(slotIndex, next);
+  }
+
   update(dt: number): void {
     if (this.dead) return;
 
@@ -142,6 +165,7 @@ export class Player extends Entity {
       this.selectedSlot,
       this.hatId,
       this.killStreak,
+      Array.from(this.durability.entries()).flatMap(([slot, remaining]) => [slot, remaining]),
     ];
   }
 }
