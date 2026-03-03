@@ -506,3 +506,11 @@ Server can enable weekly mutators (e.g., Double Night, Cold Front, Rich Veins) t
 - **Forge heat tiers:** furnaces gain speed when fueled continuously, encouraging defended production hubs.
 - **Totem corruption event:** cursed totems periodically spawn mobs until destroyed, rewarding nearby participants.
 - **Rescue downed teammate:** short downed state in team modes where allies can revive before full death.
+
+## Fresh ideas (2026-03-03)
+
+- **Meteor Shower Event (night-only):** Random meteor impacts create temporary fire zones and rare ore nodes for 60 seconds, forcing short risk/reward fights.
+- **Tracking Footprints:** Moving entities leave short-lived biome-dependent footprints (snow/sand/mud) that players can follow for ambushes.
+- **Totem of Return:** Craftable structure that sets a one-time respawn anchor with long cooldown and visible map marker to encourage raiding.
+- **Fishing System:** Lakes/ocean edges allow fishing mini-loot table (food, junk, rare treasure map fragments).
+- **Fog of War Camps:** Unclaimed mini-camps with AI guards spawn around the map and reward materials if captured.
