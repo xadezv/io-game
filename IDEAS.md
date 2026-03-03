@@ -983,3 +983,25 @@ Instead of instant death in duo/squad mode, players enter a short downed state a
 - **Footprint Tracking:** temporary tracks in snow/sand reveal recent player/animal movement, creating hunting and ambush gameplay.
 - **Dynamic Merchant Caravan:** NPC wagon appears periodically with rotating trades (resources, hats, rare utility items).
 - **Seasonal World Seed Modifier:** optional weekly modifier (e.g., "Drought", "Abundant Forest") changing resource distribution server-wide.
+
+---
+
+## IDEA-26 — Dynamic river currents + drift risk *(Complexity: M)*
+
+Add directional currents in river/ocean-border zones that slowly push players and dropped items. Players can counteract with movement, but low stamina/hunger makes drift stronger. This creates map awareness pressure and ambush opportunities near crossings.
+
+## IDEA-27 — Seasonal migration events *(Complexity: M)*
+
+Every 12–15 minutes, herds (rabbits/wolves + rare special unit) migrate across biomes along a visible path. Players can hunt for loot bursts or defend routes. Migration route is announced in chat 30s before start.
+
+## IDEA-28 — Ritual totem world objective *(Complexity: H)*
+
+Spawn a neutral totem in mid-map that teams/solo players can channel for 20 seconds to claim a global buff (e.g., +10% gather rate for 3 minutes). Totem becomes contested PvP hotspot and adds match pacing spikes.
+
+## IDEA-29 — Weather-dependent crafting bonuses *(Complexity: M)*
+
+Certain recipes get temporary bonuses based on current weather/biome conditions (e.g., snowstorm: fur hat costs -1 pelt; desert noon: water flask craft yields +1). Encourages adaptive decision-making rather than static build orders.
+
+## IDEA-30 — Ruins mini-dungeons with key fragments *(Complexity: H)*
+
+Procedurally place 3–4 ruins containing AI guards, traps, and fragment drops. Collect all fragments to open a central vault for high-tier loot. Strong long-form objective for mid/late game.
