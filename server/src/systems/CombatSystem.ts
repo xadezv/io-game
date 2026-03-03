@@ -42,6 +42,11 @@ export function processAttack(
   const range  = item.range  ?? 70;
   const damage = item.damage ?? 10;
   const hitX   = attacker.x + Math.cos(angle) * range * 0.6;
+  const maybeUseTool = () => {
+    if (itemId === ItemId.GOLD_AXE || itemId === ItemId.GOLD_SWORD || itemId === ItemId.GOLD_PICK) {
+      attacker.useTool(attacker.selectedSlot);
+    }
+  };
   const hitY   = attacker.y + Math.sin(angle) * range * 0.6;
   const hitR   = range * 0.55;
 
@@ -66,6 +71,7 @@ export function processAttack(
       }
       gainXP(attacker, r.config.xpReward);
     }
+    maybeUseTool();
     break; // one resource per swing
   }
 
@@ -87,6 +93,7 @@ export function processAttack(
       }
       gainXP(attacker, a.config.xpReward);
     }
+    maybeUseTool();
     break;
   }
 
@@ -105,6 +112,7 @@ export function processAttack(
       gainXP(attacker, 50);
       kills.push({ killerId: attacker.id, killerNickname: attacker.nickname, victimId: p.id, victimNickname: p.nickname });
     }
+    maybeUseTool();
     break;
   }
 
@@ -118,6 +126,7 @@ export function processAttack(
     s.hp -= damage;
     damages.push({ targetId: s.id, damage, targetType: 'structure' });
     if (s.hp <= 0) s.dead = true;
+    maybeUseTool();
     break;
   }
 
