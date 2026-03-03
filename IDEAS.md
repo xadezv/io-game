@@ -540,3 +540,16 @@ Server can enable weekly mutators (e.g., Double Night, Cold Front, Rich Veins) t
 - **Salvage pits:** diggable debris nodes that yield random mixed resources with a chance for traps.
 - **Signal flare item:** consumable that reveals your position but grants short global loot radar to your team.
 - **Ruined outposts:** procedurally spawned micro-POIs with breakable containers, light AI defense, and map flavor lore.
+
+---
+
+## Fresh Gameplay Ideas (2026-03-03)
+
+- **Blood Moon Event:** once per night cycle there is a small chance of a blood moon that increases hostile mob spawn rate and grants +25% XP for all kills until dawn.
+- **Fishing System:** craft a fishing rod, fish in ocean-edge tiles, and cook or trade rare fish for buffs.
+- **Biome Relics:** each biome has a rare relic drop; collecting all relics grants a temporary global passive bonus.
+- **Tribal Totems:** place a team totem that gives nearby allies minor regen/temperature resistance, but can be raided.
+- **Footprint Tracking:** players and animals leave short-lived tracks in snow/sand to support hunting and ambush gameplay.
+- **Season Rotation:** every 30 real minutes, world shifts season (dry, rainy, frost) and resource yields + survival pressure adjust.
+- **Rift Crystals:** periodic map objective that spawns contested crystal nodes; holding a crystal slowly grants score but reveals holder on minimap.
+- **Companion Pet (non-combat):** tame a rabbit/fox companion that auto-loots nearby drops with small carry limit.
