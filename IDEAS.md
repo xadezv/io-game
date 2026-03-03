@@ -553,3 +553,14 @@ Server can enable weekly mutators (e.g., Double Night, Cold Front, Rich Veins) t
 - **Season Rotation:** every 30 real minutes, world shifts season (dry, rainy, frost) and resource yields + survival pressure adjust.
 - **Rift Crystals:** periodic map objective that spawns contested crystal nodes; holding a crystal slowly grants score but reveals holder on minimap.
 - **Companion Pet (non-combat):** tame a rabbit/fox companion that auto-loots nearby drops with small carry limit.
+
+## Fresh ideas (2026-03-03)
+
+- **Migrating sandstorms (desert event):** a moving hazard band crosses the desert for 60–90s, reducing vision range and applying minor thirst drain; players can hide behind walls/rocks to reduce effect.
+- **Totem of Recall:** craftable single-use structure that lets a player set a temporary bind point and respawn there once (with heavy score penalty) if they die within 5 minutes.
+- **Beekeeper ecosystem:** wild hives in forest; harvesting grants honey (food + poison resistance) but may spawn angry bees that chase nearby players.
+- **Seasonal world seed modifiers:** every server restart can roll a “season” (drought, long night, fertile forest) that tweaks spawn/decay values and changes meta without code changes.
+- **Trade caravan NPC:** periodically spawns at map edge and slowly moves across biomes; players can exchange surplus resources for rare crafting components.
+- **Capture campfires mode:** neutral campfires scattered around map grant periodic points to the nearest team/player controlling the zone.
+- **Tracking footprints:** temporary ground decals showing recent movement direction in snow/desert tiles to support hunting and ambush gameplay.
+- **Tool mastery perks:** repeated use of a tool class unlocks tiny passive bonuses (e.g., +5% wood yield for axe mastery), reset on death for roguelite progression.
