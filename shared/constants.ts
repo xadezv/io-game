@@ -15,6 +15,11 @@ export const PLAYER_MAX_HUNGER = 100;
 export const PLAYER_MAX_THIRST = 100;
 export const PLAYER_MAX_TEMP = 100;
 
+export const HUNGER_SLOW_THRESHOLD_1 = 0.25;
+export const HUNGER_SLOW_THRESHOLD_2 = 0.10;
+export const HUNGER_SPEED_MULT_1 = 0.7;
+export const HUNGER_SPEED_MULT_2 = 0.5;
+
 export const HUNGER_DRAIN = 0.8;  // per second
 export const THIRST_DRAIN = 1.0;
 export const TEMP_COLD_DRAIN = 1.5;
