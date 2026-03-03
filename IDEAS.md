@@ -974,3 +974,12 @@ Instead of instant death in duo/squad mode, players enter a short downed state a
 - Neutral caravan moves across map with guarded loot crates
 - Players can escort for rewards or ambush for stolen goods
 - Produces moving objective instead of static boss camps
+
+## Additional Gameplay Ideas (2026-03-03)
+
+- **Blood Moon Nights:** rare night event that boosts hostile mob speed/damage but doubles XP and drop rates until dawn.
+- **Fishing System:** craft fishing rod, fish in ocean-edge tiles, with biome-specific catches and cooking bonuses.
+- **Clan Totem:** placeable structure that grants small regen/temperature aura for nearby clan members and can be contested in PvP.
+- **Footprint Tracking:** temporary tracks in snow/sand reveal recent player/animal movement, creating hunting and ambush gameplay.
+- **Dynamic Merchant Caravan:** NPC wagon appears periodically with rotating trades (resources, hats, rare utility items).
+- **Seasonal World Seed Modifier:** optional weekly modifier (e.g., "Drought", "Abundant Forest") changing resource distribution server-wide.
