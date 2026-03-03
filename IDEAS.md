@@ -893,3 +893,10 @@ Add small ruin zones with dense resources, traps, and elite mobs. Entering ruins
 - **Workshop upgrades:** upgrade path (I/II/III) reducing craft times and unlocking one extra queue slot per tier.
 - **Supply cache keys:** elite mobs can drop key fragments; combine 3 to open locked cache POIs with guaranteed rare mats.
 - **Rain collector structure:** passive structure that slowly restores thirst for nearby players during rain/snow events.
+
+## 2026-03-03 — New gameplay ideas (auto)
+- Dynamic fog-of-war pulses at dusk that shrink vision radius for all players except those near campfires.
+- Traveling merchant caravan NPC that appears every 8-12 minutes and offers rotating barter trades.
+- Biome relic events: capture a relic in desert/snow/forest for temporary teamwide buffs.
+- Fishing spots along ocean edge with risk-reward catches (food vs. hostile sea creature aggro).
+- Totem structure that grants small passive regen to nearby allies but reveals area on enemy minimaps.
