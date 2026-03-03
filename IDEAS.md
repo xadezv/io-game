@@ -492,3 +492,10 @@ Server can enable weekly mutators (e.g., Double Night, Cold Front, Rich Veins) t
 - **Night owl set bonus:** wearing a full hat/gear combo grants vision boost and reduced aggro at night.
 - **Resource overharvest system:** frequently farmed zones temporarily deplete, nudging players to rotate territories.
 - **Bounty board contracts:** optional server-generated hunts (kill X wolves, gather Y gold) for XP and cosmetic rewards.
+
+## Gameplay ideas (2026-03-03, batch 4)
+- **Aurora night bonus:** during rare aurora nights, snow biome grants bonus XP but spawns stronger predators.
+- **Portable drying rack:** deployable utility that slowly converts raw meat to jerky without needing a furnace.
+- **Territory claim stones:** optional PvP structure that grants minor defense buffs near home base but reveals location on minimap.
+- **Herbalism kit:** gather biome plants to craft temporary resistance potions (cold, heat, poison).
+- **World boss rotation:** one biome boss is "empowered" each hour with unique drops and global announcement.
