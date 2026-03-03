@@ -478,3 +478,10 @@ Server can enable weekly mutators (e.g., Double Night, Cold Front, Rich Veins) t
 - Clan totems: placeable structure that grants small aura buffs to nearby allies and can be raided.
 - Seasonal fish system: ponds/ocean edges yield different catches by day/night affecting hunger and buffs.
 - Fog-of-war map fragments: exploration reveals permanent minimap fragments that can be traded.
+
+## Gameplay ideas (2026-03-03, batch 2)
+- **Nomad camp event:** temporary neutral camp spawns with craftable-only recipes and disappears after 5 minutes.
+- **Heatstroke mechanic:** during desert noon, stamina regen slows unless player is near shade or has water flask.
+- **Echo caves biome pocket:** rare underground entrances with dense ore and spider nests, high risk/high reward.
+- **Tameable rabbit scout:** feed berries to a rabbit to briefly reveal nearby predators/resources on minimap.
+- **Storm lantern item:** consumable that halves weather penalties for 90 seconds and lights a wider vision radius.
