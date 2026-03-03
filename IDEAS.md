@@ -654,3 +654,21 @@ Server can enable weekly mutators (e.g., Double Night, Cold Front, Rich Veins) t
 - **Signal Fire Pings:** upgraded campfire can send a short minimap ping visible to allies, enabling lightweight team coordination.
 - **Beast Migration Seasons:** certain animals migrate between biomes by time-of-day, creating moving hunting hotspots.
 - **Relic Curses:** powerful relic pickups give strong buffs but apply drawbacks (slower healing, louder footsteps) until cleansed.
+
+## Additional Ideas — 2026-03-03
+
+26. **Biome Events: Sandstorm in desert** *(Complexity: Medium)*  
+   Random desert-only storm that reduces visibility and slightly pushes players with wind direction.
+
+27. **Tracking Footprints** *(Complexity: Medium)*  
+   Players and large animals leave short-lived footprints; useful for hunting and PvP tracking.
+
+28. **Totem Buff Structure** *(Complexity: High)*  
+   Placeable totem gives nearby allies minor buffs (gather speed / cold resistance), creating team hotspots.
+
+29. **Fishing at Water Edge** *(Complexity: Medium)*  
+   Craft fishing rod, stand near ocean tiles to catch food/resources with timing mini-game.
+
+30. **Seasonal World Rotation** *(Complexity: High)*  
+   Server rotates seasonal modifiers every real day (e.g., long nights, rich forests, harsh cold) to vary meta.
+
