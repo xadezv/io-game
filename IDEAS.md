@@ -610,3 +610,11 @@ Server can enable weekly mutators (e.g., Double Night, Cold Front, Rich Veins) t
 - Craftable totems grant small aura buffs (warmth, faster gathering, minor speed).
 - Totems have upkeep fuel cost so they are strategic, not permanent power spikes.
 - Enemy players can destroy totems to break local control.
+
+## Extra Gameplay Ideas (2026-03-03)
+
+- **Blood Moon event:** once every few nights, stronger hostile mobs spawn and players gain +25% XP for all kills during the event.
+- **Fishing system:** craft a fishing rod, fish at ocean/river edges for food and rare crafting drops.
+- **Clan totems:** placeable clan structure that grants small regen/temperature aura to nearby clan members.
+- **Treasure map drops:** elite mobs can drop map fragments; combining fragments reveals a buried chest location.
+- **Seasonal world modifiers:** rotating weekly modifiers (e.g., "Harsh Winter", "Abundant Berries", "Aggressive Wildlife").
