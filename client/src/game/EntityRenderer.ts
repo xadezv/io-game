@@ -664,23 +664,6 @@ export class EntityRenderer {
     );
   }
 
-  private _drawBurningGlow(sx: number, sy: number, r: number): void {
-    const { ctx } = this.renderer;
-    ctx.save();
-    ctx.globalAlpha = 0.22;
-    ctx.fillStyle = '#ff9800';
-    ctx.beginPath();
-    ctx.arc(sx, sy, r, 0, Math.PI * 2);
-    ctx.fill();
-    ctx.globalAlpha = 0.35;
-    ctx.strokeStyle = '#ffeb3b';
-    ctx.lineWidth = 2;
-    ctx.beginPath();
-    ctx.arc(sx, sy, r * 0.72, 0, Math.PI * 2);
-    ctx.stroke();
-    ctx.restore();
-  }
-
   /** Draw a weapon-swing arc centred at (sx, sy). */
   private _drawSwingArc(
     ctx:    CanvasRenderingContext2D,

@@ -335,32 +335,6 @@ export class World {
     return removedIds;
   }
 
-  spawnNightSpiders(): Animal[] {
-    const count = 5 + Math.floor(this.rng.nextFloat(0, 1) * 4);
-    const spawned: Animal[] = [];
-    for (let i = 0; i < count; i++) {
-      const pos = this.randPos([BiomeType.FOREST]);
-      if (!pos) continue;
-      const spider = new Animal(EntityType.SPIDER, pos.x, pos.y);
-      spider.isNightSpider = true;
-      this.addAnimal(spider);
-      spawned.push(spider);
-    }
-    return spawned;
-  }
-
-  removeNightSpiders(): number[] {
-    const removedIds: number[] = [];
-    for (const a of this.animals.values()) {
-      if (!a.isNightSpider) continue;
-      this.animals.delete(a.id);
-      this.allById.delete(a.id);
-      this.animalGrid.remove(a.id, a.x, a.y);
-      removedIds.push(a.id);
-    }
-    return removedIds;
-  }
-
   // ─── Update ───────────────────────────────────────────────────────────────
 
   removedEntityIds: number[] = [];
@@ -395,7 +369,7 @@ export class World {
         continue;
       }
       const ox = a.x, oy = a.y;
-      a.update(dt, this.players, this.isNight);
+      a.update(dt, this.players);
       this.animalGrid.move(a.id, ox, oy, a.x, a.y);
       this.resolveAnimalCollisions(a);
     }
