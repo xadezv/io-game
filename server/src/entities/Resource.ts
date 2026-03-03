@@ -65,6 +65,14 @@ export const RESOURCE_CONFIGS: Record<number, ResourceConfig> = {
     xpReward: 12,
     preferredTool: [ItemId.AXE, ItemId.BIG_AXE, ItemId.GOLD_AXE],
   },
+
+  [EntityType.MUSHROOM]: {
+    type: EntityType.MUSHROOM,
+    hp: 30,
+    radius: 18,
+    drops: [{ itemId: ItemId.MUSHROOM, minCount: 1, maxCount: 2 }],
+    xpReward: 4,
+  },
 };
 
 export class Resource extends Entity {
