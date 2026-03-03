@@ -595,3 +595,18 @@ Server can enable weekly mutators (e.g., Double Night, Cold Front, Rich Veins) t
 - **Storm shelters:** craftable temporary lean-to that halves weather penalties for players inside a small radius.
 - **Bounty ping system:** top leaderboard player periodically gets a minimap ping for others, increasing PvP pressure.
 - **Animal den mechanic:** wolves/rabbits spawn from den structures that can be destroyed for temporary biome control.
+
+## IDEA-29 — Dynamic biome events
+- Random short-lived biome events (heat wave in desert, berry bloom in forest, blizzard in snow).
+- Each event modifies one survival stat drain and one resource spawn rate for 2–4 minutes.
+- Broadcast event start/end in chat and render a subtle HUD icon.
+
+## IDEA-30 — Tracking footprints
+- Players and large animals leave temporary footprints on matching terrain.
+- Footprints fade after ~20s; snow footprints last longer than plains.
+- Can be used to track recent enemy movement and encourage scouting.
+
+## IDEA-31 — Totem buff structures
+- Craftable totems grant small aura buffs (warmth, faster gathering, minor speed).
+- Totems have upkeep fuel cost so they are strategic, not permanent power spikes.
+- Enemy players can destroy totems to break local control.
