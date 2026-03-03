@@ -911,3 +911,18 @@ Add small ruin zones with dense resources, traps, and elite mobs. Entering ruins
 - **Seasonal world modifiers:** weekly modifiers like "double wolves", "rich gold veins", "long nights".
 - **Merchant caravan NPC:** periodic neutral trader near map center exchanging excess resources for rare items.
 - **Trap disarm kit:** utility tool to detect/disarm spikes and recover partial materials.
+
+## IDEA-67 — Dynamic footprints by biome
+Players and large animals leave temporary footprints (snow/sand/mud variants) that fade over 20–40 seconds. Trackers can follow recent trails; rain/snowstorm clears prints faster.
+
+## IDEA-68 — Throwable torch
+Add a craftable torch that can be thrown to briefly illuminate fog-of-war and scare passive mobs. Torch burns for 25 seconds, then becomes ash loot.
+
+## IDEA-69 — Caravan world event
+Every 12–18 minutes, an AI merchant caravan crosses one side of the map. Players can trade excess resources for rare items, but wolf/bandit ambushes may occur nearby.
+
+## IDEA-70 — Biome relic shrines
+Each biome has one shrine that activates team-wide buffs when supplied with resources (e.g., snow shrine reduces cold drain by 15% for 3 minutes).
+
+## IDEA-71 — Fishing mini-loop
+At ocean/lake edge, players can craft a fishing rod and catch fish by timing-based input. Fish can be cooked for high hunger restore; rare catches grant XP bursts.
